@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, isb!</string>
+    <string name="app_name">Isb</string>
+    <string name="id">ID</string>
+    <string name="pw">PW</string>
+    <string name="remember">Remember me</string>
+    <string name="start">Go!</string>
+    <string name="stop">Log out</string>
+    <string name="goSurf">Go Surfing</string>
+    
+    <string name="compose">New Thread</string>
+    <string name="composeTitleHint">Title</string>
+    <string name="composeContentHint">Content</string>
+
+	<string name="write">Write</string>
+	<string name="delete">Delete</string>
+	<string name="cancle">Cancle</string>
+	<string name="delete_confirm">정말로 지우시겠습니까?</string>
+	<string name="inverse">Inverse</string>
+	<string name="mark">Mark</string>
+	<string name="edit">Edit</string>
+
+<!--  for read board  -->
+	<string name="readBoardTitle">Read Board</string>
+	<string name="readBoardPrevPage"> &gt;&gt; </string>
+	<string name="readBoardNextPage"> &lt;&lt; </string>
+<!--  for read board  -->
+	
+<!--  for read Thread  -->	
+	<string name="readThreadTitle">Read Threads</string>
+	<string name="readThreadPrev"> &gt;&gt; </string>
+	<string name="readThreadNext"> &lt;&lt; </string>
+<!--  for read Thread  -->
+
+
+<!--  for board list -->	
+	<string name="boardListTitle">Select board</string>
+	<string name="noEntry">게시판 목록이 없습니다.</string>
+	<string name="refresh">Refresh</string>
+	<string name="favorite">Toggle Favorite</string>
+	<string name="list_favorite_only">Show Favorite Only</string>
+	<string name="list_new">Search New Post</string>
+	<string name="list_all">Show All</string>
+<!--  for board list -->
+
+<!--  for Compose -->
+    <string name="menu_delete">Delete</string>
+    <string name="menu_edit">Edit Draft</string>
+    <string name="menu_send">Send Draft</string>
+    <string name="menu_insert">Add Draft</string>
+    <string name="menu_revert">Revert</string>
+    <string name="menu_discard">Discard</string>
+    <string name="menu_finish">Submit</string>
+
+    <string name="resolve_edit">Edit Draft</string>
+    <string name="resolve_title">Edit title</string>  
+
+    <string name="title_create">Create draft</string>
+    <string name="title_edit">Edit draft</string>
+	<string name="title_notes_list">Isb Drafts</string>   
+	<string name="title_note">Note</string>  
+	<string name="title_edit_title">Note title:</string>  
+		
+	<string name="button_ok">OK</string>
+	<string name="button_cancel">CANCEL</string>  
+	<string name="error_title">Error</string>
+	<string name="error_message">Error loading note</string>
+<!--  for Compose -->
+
+</resources>

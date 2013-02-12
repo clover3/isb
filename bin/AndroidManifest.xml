@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="com.postech.isb"
+      android:versionCode="12"
+      android:versionName="1.053">
+    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <application android:icon="@drawable/icon" android:label="@string/app_name" android:name="PostechIsb">
+        
+        <provider android:authorities="com.postech.provider.Isb" android:name=".compose.IsbProvider"/>
+        
+        <activity android:name=".IsbTabWidget" android:label="@string/app_name"
+        	android:theme="@android:style/Theme.NoTitleBar">
+        	<intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        
+        <activity android:label="@string/boardListTitle" android:name=".boardList.BoardList">
+        	<intent-filter>
+        		<action android:name="android.intent.action.PICK"></action>
+        		<category android:name="android.intent.category.DEFAULT"></category>
+        		<data android:path="boards" android:scheme="content"></data>
+        	</intent-filter>
+		</activity>
+        
+		<activity android:label="@string/readBoardTitle" android:name=".readBoard.ReadBoards">
+		</activity>
+		
+		<activity android:label="@string/readThreadTitle" android:name=".readThread.ReadThread"
+		android:windowSoftInputMode="stateAlwaysHidden">
+		
+		</activity>
+
+		<activity android:name=".login.Login">
+        </activity>
+        
+        <activity android:label="@string/title_notes_list" android:name=".compose.NotesList">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.EDIT" />
+                <action android:name="android.intent.action.PICK" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="vnd.android.cursor.dir/vnd.postech.isb" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.GET_CONTENT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="vnd.android.cursor.item/vnd.postech.isb" />
+            </intent-filter>
+        </activity>
+
+        <activity android:theme="@android:style/Theme.Light"
+            android:label="@string/title_note"
+            android:screenOrientation="sensor"
+            android:configChanges="keyboardHidden|orientation" android:name=".compose.NoteEditor">
+            <!-- This filter says that we can view or edit the data of
+                 a single note -->
+            <intent-filter android:label="@string/resolve_edit">
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.EDIT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="vnd.android.cursor.item/vnd.postech.isb" />
+            </intent-filter>
+            
+            <!-- This filter says that we can create a new note inside
+                 of a directory of notes. -->
+            <intent-filter>
+                <action android:name="android.intent.action.INSERT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="vnd.android.cursor.dir/vnd.postech.isb" />
+            </intent-filter>
+        </activity>
+        						
+	</application>
+	<uses-sdk android:minSdkVersion="7"></uses-sdk>
+</manifest> 

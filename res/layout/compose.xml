@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent">
+
+	<LinearLayout
+		android:id="@+id/composeNew"
+		android:orientation="vertical"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:visibility="gone">
+		
+		<EditText
+			android:id="@+id/composeNewTitle"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:maxLines="1"
+			android:maxLength="73"
+			android:hint="@string/composeTitleHint"/>
+		<EditText
+			android:id="@+id/composeNewContent"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:hint="@string/composeContentHint"/>
+			
+	</LinearLayout>
+	
+	 <ListView
+	 	android:id="@android:id/list"
+	 	android:layout_width="fill_parent"
+	 	android:layout_height="wrap_content"
+	 	android:textFilterEnabled="true"
+	 	android:fastScrollEnabled="true"
+	 	android:focusable="true">
+	 </ListView>
+	
+	 <TextView
+	 	android:id="@android:id/empty" 
+	 	android:layout_width="wrap_content"
+	 	android:layout_height="wrap_content"
+	 	android:layout_gravity="center" 
+	 	android:text="저장된 초안이 없습니다."/>
+
+  
+</LinearLayout>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent"
+  android:orientation="vertical">
+  
+    <RelativeLayout
+       	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:background="#911">
+    	    	
+		<Button
+			android:id="@+id/nextThread"
+    		android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:layout_alignParentLeft="true"	
+    		android:text="@string/readThreadNext">
+    	</Button>
+    	
+    	<TextView
+    		android:id="@+id/curBoardinReadThead"
+    		android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:layout_centerInParent="true"
+    		android:gravity="center"
+    		android:textSize="16sp"
+    		android:textColor="#FFEF3F"
+    		android:textStyle="bold"
+    		android:text="BoardName">
+    	</TextView>
+    	
+    	<Button
+    		android:id="@+id/prevThread"
+    		android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:layout_alignParentRight="true"
+    		android:text="@string/readThreadPrev">
+    	</Button>
+  	</RelativeLayout>
+  	
+  	<TextView
+  		android:id="@+id/threadHead"
+  		android:layout_width="fill_parent"
+  		android:layout_height="wrap_content"
+  		android:text="Head"
+  		android:textSize="15sp"
+  		android:background="#222">
+  	</TextView>
+ 
+  	<ScrollView
+  		android:id="@+id/readThreadScroll"
+  		android:layout_width="fill_parent" 
+    	android:layout_height="fill_parent">
+    	<LinearLayout
+    		android:layout_width="fill_parent" 
+    		android:layout_height="fill_parent"
+    		android:orientation="vertical">    		
+		  	<TextView
+		  		android:id="@+id/threadBody"
+		  		android:layout_width="fill_parent"
+		  		android:layout_height="wrap_content"
+		  		android:text="Contents"
+		  		android:textSize="15sp"
+		  		android:textColor="#fff">
+		  	</TextView>
+		  	<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			  	android:id="@+id/threadComment"
+			  	android:layout_width="fill_parent"
+			  	android:layout_height="wrap_content"
+			  	android:layout_marginTop="25sp"
+			  	android:shrinkColumns="2"
+			  	android:background="#222">  	
+			</TableLayout>
+			
+			<EditText
+				android:id="@+id/commentText"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="15sp"
+				android:lines="1"
+	  			android:inputType="text"
+	  			android:nextFocusDown="@+id/commentBtn">
+			</EditText>
+			
+			<Button
+				android:id="@+id/commentBtn"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:text="Leave comment">
+			</Button>
+			
+	  	</LinearLayout>
+  	</ScrollView>
+  
+</LinearLayout>
