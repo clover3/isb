@@ -130,6 +130,8 @@ public class ReadBoards extends ListActivity {
 			@Override
 			public void onClick(View v) {
 				try {
+
+	        		Log.i("clover", "onClickPrev ");
 		        	if (isb.isMain()) {        		
 			        	ArrayList<ThreadList> lastPage = isb.getThreadList(board, Math.max(curFstIdx - threadPerPage,1), Math.max(curFstIdx - 1, 1));
 			        	Collections.sort(lastPage);
@@ -141,6 +143,10 @@ public class ReadBoards extends ListActivity {
 			        		curLstIdx = lastPage.get(0).num;
 			        		if (curLstIdx > lastIdx)
 			        			lastIdx = curLstIdx;
+
+			        		Log.i("clover", "curFstIdx : " + curFstIdx);
+			        		Log.i("clover", "curLstIdx : " + curLstIdx);
+			        		Log.i("clover", "lastIdx : " + lastIdx);
 			        		
 			        		if (curFstIdx > 1)
 			        			prevBtn.setVisibility(View.VISIBLE);
@@ -169,6 +175,7 @@ public class ReadBoards extends ListActivity {
 			@Override
 			public void onClick(View v) {
 				try {
+					Log.i("clover", "onClickNext");
 		        	if (isb.isMain()) {        		
 		        		ArrayList<ThreadList> lastPage = isb.getThreadList(board, Math.min(curLstIdx + 1, lastIdx), curLstIdx + threadPerPage);
 		        		Collections.sort(lastPage);
@@ -179,8 +186,11 @@ public class ReadBoards extends ListActivity {
 				        	
 			        		curFstIdx = lastPage.get(lastPage.size()-1).num;
 			        		curLstIdx = lastPage.get(0).num;
+			        		Log.i("clover", "curFstIdx : " + curFstIdx);
+			        		Log.i("clover", "curLstIdx : " + curLstIdx);
+			        		Log.i("clover", "lastIdx : " + lastIdx);
 			        		
-			        		if (lastIdx > curFstIdx)
+			        		if (lastIdx > curLstIdx)
 			        			nextBtn.setVisibility(View.VISIBLE);
 			        		else
 			        			nextBtn.setVisibility(View.INVISIBLE);
@@ -205,6 +215,8 @@ public class ReadBoards extends ListActivity {
     
     @Override
     public void onResume() {
+
+		Log.i("debug", "onResume ");
     	super.onResume();
     	try {
         	if (isb.isMain()) {

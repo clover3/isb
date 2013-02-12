@@ -245,7 +245,7 @@ public class ReadThread extends Activity {
 		textview.setText(text);
 		
 		//Pattern pattern = Pattern.compile("\\s[a-zA-z]/[a-zA-z]\\s\\d{1,}\\s");
-		Pattern linkPattern = Pattern.compile("(\\s|^)[a-zA-z]/[a-zA-z]\\s\\d{1,}[\\s$]");
+		Pattern linkPattern = Pattern.compile("(\\s|^)[a-zA-z]/[a-zA-z]\\s\\d{1,}(\\s|$)");
 		Matcher match = linkPattern.matcher(strThreadBody);
 		final Context context = this;
 		while (match.find()) { // Find each match in turn; String can't do this.
@@ -293,7 +293,7 @@ public class ReadThread extends Activity {
 		}
 		if( lastChar >= 0 && lastChar < str.length() )
 		{
-			str = str.substring(0,lastChar);
+			str = str.substring(0,lastChar+1);
 		}
 		return str;
 	}
@@ -315,12 +315,7 @@ public class ReadThread extends Activity {
 					
 					Linkify.addLinks(threadBody, Linkify.WEB_URLS);
 					
-					Pattern patternLink = Pattern.compile(" [a-zA-z]/[a-zA-z] \\d{1,} ");
-					String wikiViewURL =    "content://com.google.android.wikinotes.db.wikinotes/wikinotes/";
-					Linkify.addLinks(threadBody, patternLink, wikiViewURL);
-					
-					
-					
+			
 					//t.comments
 					Scanner s = new Scanner(t.comments);
 					s.useDelimiter("\n");
