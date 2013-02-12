@@ -245,7 +245,7 @@ public class ReadThread extends Activity {
 		textview.setText(text);
 		
 		//Pattern pattern = Pattern.compile("\\s[a-zA-z]/[a-zA-z]\\s\\d{1,}\\s");
-		Pattern linkPattern = Pattern.compile("(\\s|^)[a-zA-z]/[a-zA-z]\\s\\d{1,}(\\s|$)");
+		Pattern linkPattern = Pattern.compile("(\\s|^)[a-zA-z0-9°¡-ÆR]/[a-zA-z0-9°¡-ÆR]\\s\\d{1,}(\\s|$)");
 		Matcher match = linkPattern.matcher(strThreadBody);
 		final Context context = this;
 		while (match.find()) { // Find each match in turn; String can't do this.
