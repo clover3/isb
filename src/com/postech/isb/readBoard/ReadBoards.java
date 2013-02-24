@@ -16,6 +16,7 @@ import com.postech.isb.readThread.ReadThread;
 import com.postech.isb.util.*;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -44,6 +45,7 @@ public class ReadBoards extends ListActivity {
 	static final private int INVERSE = Menu.FIRST + 2;
 	static final private int MARK = Menu.FIRST + 3;
 	static final private int EDIT = Menu.FIRST + 4;
+	static final private int READER = Menu.FIRST + 5;
 	
 	private ArrayList<ThreadList> isbThreadItems;
 	private ThreadListAdapter listAdapter;
@@ -131,7 +133,6 @@ public class ReadBoards extends ListActivity {
 			public void onClick(View v) {
 				try {
 
-	        		Log.i("clover", "onClickPrev ");
 		        	if (isb.isMain()) {        		
 			        	ArrayList<ThreadList> lastPage = isb.getThreadList(board, Math.max(curFstIdx - threadPerPage,1), Math.max(curFstIdx - 1, 1));
 			        	Collections.sort(lastPage);
@@ -144,10 +145,6 @@ public class ReadBoards extends ListActivity {
 			        		if (curLstIdx > lastIdx)
 			        			lastIdx = curLstIdx;
 
-			        		Log.i("clover", "curFstIdx : " + curFstIdx);
-			        		Log.i("clover", "curLstIdx : " + curLstIdx);
-			        		Log.i("clover", "lastIdx : " + lastIdx);
-			        		
 			        		if (curFstIdx > 1)
 			        			prevBtn.setVisibility(View.VISIBLE);
 			        		else
@@ -175,7 +172,6 @@ public class ReadBoards extends ListActivity {
 			@Override
 			public void onClick(View v) {
 				try {
-					Log.i("clover", "onClickNext");
 		        	if (isb.isMain()) {        		
 		        		ArrayList<ThreadList> lastPage = isb.getThreadList(board, Math.min(curLstIdx + 1, lastIdx), curLstIdx + threadPerPage);
 		        		Collections.sort(lastPage);
@@ -186,10 +182,6 @@ public class ReadBoards extends ListActivity {
 				        	
 			        		curFstIdx = lastPage.get(lastPage.size()-1).num;
 			        		curLstIdx = lastPage.get(0).num;
-			        		Log.i("clover", "curFstIdx : " + curFstIdx);
-			        		Log.i("clover", "curLstIdx : " + curLstIdx);
-			        		Log.i("clover", "lastIdx : " + lastIdx);
-			        		
 			        		if (lastIdx > curLstIdx)
 			        			nextBtn.setVisibility(View.VISIBLE);
 			        		else
@@ -229,9 +221,6 @@ public class ReadBoards extends ListActivity {
 	        		curFstIdx = lastPage.get(lastPage.size()-1).num;
 	        		curLstIdx = lastPage.get(0).num;
 	        		lastIdx = curLstIdx;
-	        		
-	        		Log.i("debug", "CurLst : " + curLstIdx);
-	        		Log.i("debug", "CurFst : " + curFstIdx);
 	        		
 	        		if (curFstIdx > 1)
 	        			prevBtn.setVisibility(View.VISIBLE);
@@ -387,6 +376,7 @@ public class ReadBoards extends ListActivity {
       menu.add(0, MARK, Menu.NONE, R.string.mark);
       menu.add(0, EDIT, Menu.NONE, R.string.edit);
       menu.add(0, DELETE, Menu.NONE, R.string.delete);
+      menu.add(0, READER, Menu.NONE, R.string.reader);
       
     }
     
@@ -479,6 +469,42 @@ public class ReadBoards extends ListActivity {
 					} else {
 						Toast.makeText(getApplicationContext(), "Mark fail.", Toast.LENGTH_SHORT).show();
 					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					Toast.makeText(getApplicationContext(), "Connection lost", Toast.LENGTH_SHORT).show();
+					isb.disconnect();
+				}
+        	} else
+        		Toast.makeText(getApplicationContext(), "Login first plz...", Toast.LENGTH_SHORT).show();
+            
+        	return true;
+        }  
+        case (READER): {
+        	AdapterView.AdapterContextMenuInfo menuInfo;
+            menuInfo =(AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+            int index = menuInfo.position;
+            ThreadList t = listAdapter.getItem(index);
+            
+            if (isb.isMain()) {
+            	try {
+            		String strReader = isb.viewThreadReader(board, t.num);
+            		
+            		if( strReader == null )
+            		{
+            			strReader = "권한이 없습니다.";
+            		}
+            		String title = String.format("이 글을 읽은 사용자(%d)", t.cnt);
+            		new AlertDialog.Builder(ReadBoards.this)
+            		.setTitle(title)
+            		.setMessage(strReader)
+            		.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+            			public void onClick(DialogInterface dialog, int whichButton) {                                        
+            				//...할일
+            			}
+            		})   
+            		.show();
+
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

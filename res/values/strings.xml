@@ -20,6 +20,7 @@
 	<string name="inverse">Inverse</string>
 	<string name="mark">Mark</string>
 	<string name="edit">Edit</string>
+	<string name="reader">Readers</string>
 
 <!--  for read board  -->
 	<string name="readBoardTitle">Read Board</string>
@@ -67,5 +68,9 @@
 	<string name="error_title">Error</string>
 	<string name="error_message">Error loading note</string>
 <!--  for Compose -->
+
+
+	<string name="preference">Preference</string>
+	<string name="check_version">최신버전 확인</string>
 
 </resources>

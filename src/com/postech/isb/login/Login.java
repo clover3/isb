@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -26,10 +28,13 @@ import com.postech.isb.R.id;
 import com.postech.isb.R.layout;
 import com.postech.isb.boardList.Board;
 import com.postech.isb.boardList.BoardList;
+import com.postech.isb.preference.PreferenceList;
 import com.postech.isb.util.IsbSession;
 
 public class Login extends Activity {
 
+	static final private int PREFERENCE = Menu.FIRST;
+	
 	private IsbSession isb;
 	private EditText loginId;
 	private EditText loginPw;
@@ -48,6 +53,7 @@ public class Login extends Activity {
 	private ProgressDialog pd;
 	
 	private Intent goSurf;
+	private Intent goSetting;
 	
 	// Handler for thread. Show error messages.
 	private Handler handler = new Handler() {
@@ -142,10 +148,40 @@ public class Login extends Activity {
 		});
 		
 		goSurf = new Intent(this, BoardList.class);
-				
+		goSetting = new Intent(this, PreferenceList.class);		
 		restoreUIState();
 	}
-	
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+      super.onCreateOptionsMenu(menu);
+      
+ //     menu.add(0, PREFERENCE, Menu.NONE,R.string.preference)
+ //     				.setIcon(android.R.drawable.ic_menu_preferences);
+      return true;
+    }
+    
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+      super.onPrepareOptionsMenu(menu);
+      
+      return true;
+    }    
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+      super.onOptionsItemSelected(item);
+      
+      switch (item.getItemId()) {
+      case PREFERENCE: {
+    	  startActivity(goSetting);
+    	  return true;   
+      }
+      }
+      
+      return false;
+    }
+    
 	private void restoreUIState() {
 		SharedPreferences settings = getPreferences(MODE_PRIVATE);
 				

@@ -155,70 +155,76 @@ public final class R {
         public static final int new_threads=0x7f030007;
         public static final int note_editor=0x7f030008;
         public static final int noteslist_item=0x7f030009;
-        public static final int read_board=0x7f03000a;
-        public static final int read_thread=0x7f03000b;
-        public static final int title_editor=0x7f03000c;
+        public static final int preferencelist=0x7f03000a;
+        public static final int read_board=0x7f03000b;
+        public static final int read_thread=0x7f03000c;
+        public static final int title_editor=0x7f03000d;
     }
     public static final class string {
         public static final int app_name=0x7f060001;
         /**   for read Thread  
   for board list 
          */
-        public static final int boardListTitle=0x7f060018;
-        public static final int button_cancel=0x7f06002e;
-        public static final int button_ok=0x7f06002d;
+        public static final int boardListTitle=0x7f060019;
+        public static final int button_cancel=0x7f06002f;
+        public static final int button_ok=0x7f06002e;
         public static final int cancle=0x7f06000d;
+        public static final int check_version=0x7f060033;
         public static final int compose=0x7f060008;
         public static final int composeContentHint=0x7f06000a;
         public static final int composeTitleHint=0x7f060009;
         public static final int delete=0x7f06000c;
         public static final int delete_confirm=0x7f06000e;
         public static final int edit=0x7f060011;
-        public static final int error_message=0x7f060030;
-        public static final int error_title=0x7f06002f;
-        public static final int favorite=0x7f06001b;
+        public static final int error_message=0x7f060031;
+        public static final int error_title=0x7f060030;
+        public static final int favorite=0x7f06001c;
         public static final int goSurf=0x7f060007;
         public static final int hello=0x7f060000;
         public static final int id=0x7f060002;
         public static final int inverse=0x7f06000f;
-        public static final int list_all=0x7f06001e;
-        public static final int list_favorite_only=0x7f06001c;
-        public static final int list_new=0x7f06001d;
+        public static final int list_all=0x7f06001f;
+        public static final int list_favorite_only=0x7f06001d;
+        public static final int list_new=0x7f06001e;
         public static final int mark=0x7f060010;
         /**   for board list 
   for Compose 
          */
-        public static final int menu_delete=0x7f06001f;
-        public static final int menu_discard=0x7f060024;
-        public static final int menu_edit=0x7f060020;
-        public static final int menu_finish=0x7f060025;
-        public static final int menu_insert=0x7f060022;
-        public static final int menu_revert=0x7f060023;
-        public static final int menu_send=0x7f060021;
-        public static final int noEntry=0x7f060019;
+        public static final int menu_delete=0x7f060020;
+        public static final int menu_discard=0x7f060025;
+        public static final int menu_edit=0x7f060021;
+        public static final int menu_finish=0x7f060026;
+        public static final int menu_insert=0x7f060023;
+        public static final int menu_revert=0x7f060024;
+        public static final int menu_send=0x7f060022;
+        public static final int noEntry=0x7f06001a;
+        /**   for Compose 
+         */
+        public static final int preference=0x7f060032;
         public static final int pw=0x7f060003;
-        public static final int readBoardNextPage=0x7f060014;
-        public static final int readBoardPrevPage=0x7f060013;
+        public static final int readBoardNextPage=0x7f060015;
+        public static final int readBoardPrevPage=0x7f060014;
         /**   for read board  
          */
-        public static final int readBoardTitle=0x7f060012;
-        public static final int readThreadNext=0x7f060017;
-        public static final int readThreadPrev=0x7f060016;
+        public static final int readBoardTitle=0x7f060013;
+        public static final int readThreadNext=0x7f060018;
+        public static final int readThreadPrev=0x7f060017;
         /**   for read board  
   for read Thread  
          */
-        public static final int readThreadTitle=0x7f060015;
-        public static final int refresh=0x7f06001a;
+        public static final int readThreadTitle=0x7f060016;
+        public static final int reader=0x7f060012;
+        public static final int refresh=0x7f06001b;
         public static final int remember=0x7f060004;
-        public static final int resolve_edit=0x7f060026;
-        public static final int resolve_title=0x7f060027;
+        public static final int resolve_edit=0x7f060027;
+        public static final int resolve_title=0x7f060028;
         public static final int start=0x7f060005;
         public static final int stop=0x7f060006;
-        public static final int title_create=0x7f060028;
-        public static final int title_edit=0x7f060029;
-        public static final int title_edit_title=0x7f06002c;
-        public static final int title_note=0x7f06002b;
-        public static final int title_notes_list=0x7f06002a;
+        public static final int title_create=0x7f060029;
+        public static final int title_edit=0x7f06002a;
+        public static final int title_edit_title=0x7f06002d;
+        public static final int title_note=0x7f06002c;
+        public static final int title_notes_list=0x7f06002b;
         public static final int write=0x7f06000b;
     }
 }

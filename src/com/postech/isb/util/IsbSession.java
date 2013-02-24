@@ -8,6 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.util.Log;
+import android.view.Menu;
 
 import com.postech.isb.boardList.Board;
 
@@ -31,6 +32,8 @@ public class IsbSession {
 	public final int THREAD_DELETE = 1;
 	public final int THREAD_INVERSE = 2;
 	public final int THREAD_MARK = 3;
+	public final int THREAD_READERS = 4;
+	
 	
 	public final int NUM_ROWS = 80; //FIX HERE FOR THE NEW NUMBER OF ROWS
 	
@@ -888,6 +891,68 @@ public class IsbSession {
 		return true;
 	}
 	
+	public String viewThreadReader(String board, int idx) throws IOException {
+		String [] response = new String[2];
+		String strReader;
+		boolean result = false;
+		if (!goToBoard(board)) {
+			debugMessage("deleteThread: go to board fail.", INFO);
+			return null;
+		}
+
+		debugMessage ("deleteThread: go to board success.", INFO);
+
+		//TODO check idx
+		String msg = telnet.waitfor(expect(BOARD));
+		int lastIdx = getLastThreadNum(msg);
+
+		if (idx < 1 || lastIdx < idx) {
+			debugMessage("Invalid thread number", WARN);
+
+			if (gotoMenu(MAIN))
+				debugMessage("Go back to main successfully", WARN);
+			return null;
+		}
+		
+		telnet.send(String.valueOf(idx));
+		telnet.waitfor("(?s).*(?:;2H|>)$");
+		telnet.send_wo_r("\025");
+
+		String [] response1 = new String[2];
+		response1[0] = "(?s).*\\]$"; // Already last page.
+		response1[1] = "\007"; // No thread
+
+		msg = telnet.waitfor(response1);
+		Log.i("clover",msg);
+		if (msg.equals("\007")) // Case : Ctrl+U is unavailable
+			strReader = null;
+		else
+		{
+			int idxBeg = msg.indexOf(':');
+			int idxEnd = msg.lastIndexOf("80;1H");
+			if( idxEnd < 0)
+			{
+				debugMessage("Parsing Error : view Readers", WARN);
+			}
+			else
+				msg = msg.substring(idxBeg+1, idxEnd - 2);
+			strReader = msg.replace("\n\r\000", "");
+		}
+		debugMessage ("View readers finish.", INFO);
+
+		telnet.send_wo_r("$"); // in case of having been visited.
+
+		response[0] = "(?s).*>$"; // Already last page.
+		response[1] = "(?s).*;2H$"; // Page change && cursor was not on top.
+
+		msg = telnet.waitfor(response);
+
+		//debugMessage("DeleteThread successfully.", INFO);
+		if (gotoMenu(MAIN))
+			debugMessage("Go back to main successfully", WARN);
+
+		return strReader;
+	}
 	public boolean modifyThread(String board, int idx, int command) throws IOException {
 		String [] response = new String[2];
 		boolean result = false;
@@ -958,6 +1023,7 @@ public class IsbSession {
 				result = true;
 			debugMessage ("Inverse finish.", INFO);
 		}
+	
 		//TODO Move cursor to the last thread. It's better safe than sorry...
 		telnet.send_wo_r("$"); // in case of having been visited.
 
