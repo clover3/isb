@@ -225,7 +225,7 @@ public class BoardList extends ListActivity {
 						isb.disconnect();
 					}
 					handler.sendEmptyMessage(3);
-					setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+					setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
 				}
 			}).start(); // 스레드 실행
 

@@ -1,6 +1,8 @@
 package com.postech.isb.readThread;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Scanner;
@@ -256,6 +258,52 @@ public class ReadThread extends Activity {
 		textview.setText(text, BufferType.SPANNABLE);
 
 	}
+	private boolean isUrl(String str)
+	{
+		boolean f = true;
+		try {
+			URL url = new URL(str);
+		} catch (MalformedURLException e) {
+			f = false;// it wasn't a URL
+		}
+		return f;
+	}
+	private String preprocessLink(String str)
+	{
+		StringBuffer result = new StringBuffer();
+		String regUrl = "https?://([\\w-]+\\.)+[\\w-]+(/[\\w-./?&%=]*)?";
+		String regUrlTail = "[a-zA-Z0-9\\-\\._\\?\\,\\'/\\\\+&amp;%\\$#\\=~]*";
+		String delimiter = "\n";
+		String[] astr = str.split(delimiter);
+		
+		boolean fReadingUrl = true;
+		boolean fAddLF = true;
+		for(int i=0 ; i < astr.length ; i++)
+		{
+//			Log.i("clover", String.format("%d : ", i) + astr[i] );
+			if( isUrl(astr[i]) && astr[i].length() >= 79 )
+				fReadingUrl = true;
+			else if ( fReadingUrl && astr[i].matches(regUrlTail) )
+			{
+				fAddLF = false;
+				if( astr[i].length() < 70 )
+					fReadingUrl = false;
+			}
+			else
+				fReadingUrl = false;
+
+//			Log.i("clover", String.format("fReadingUrl= %b , fAddLF=%b ", fReadingUrl, fAddLF) );
+
+			if( fAddLF  )
+				result.append(delimiter);
+			result.append(astr[i]);
+			if( !fReadingUrl )
+				fAddLF = true;
+		}
+		result.append(delimiter);
+		
+		return result.toString();
+	}
 	
 	static String TrimLine(String str)
 	{
@@ -308,9 +356,9 @@ public class ReadThread extends Activity {
 					threadHead.setText(t.writer + "\n" + t.date + "\n" + t.title);
 					Log.i("debug", "write : " + t.writer);
 
-
 					//// link ref maker
-					addRefLink(threadBody, TrimLine(t.contents) );
+					String strContent = preprocessLink(TrimLine(t.contents));
+					addRefLink(threadBody, strContent );
 
 					
 					Linkify.addLinks(threadBody, Linkify.WEB_URLS);

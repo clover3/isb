@@ -758,7 +758,6 @@ public class IsbSession {
 		// Get Contents
 		String tail = new String("(?s).*\033\\[27m(?:\033\\[K)?$");
 		debugMessage ("Get body.", INFO);
-
 		msg = telnet.waitfor(tail);
 		
 		StringBuffer result = new StringBuffer();
