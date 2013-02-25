@@ -286,7 +286,7 @@ public class ReadThread extends Activity {
 			else if ( fReadingUrl && astr[i].matches(regUrlTail) )
 			{
 				fAddLF = false;
-				if( astr[i].length() < 70 )
+				if( astr[i].length() < 79 )
 					fReadingUrl = false;
 			}
 			else
