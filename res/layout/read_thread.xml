@@ -3,6 +3,7 @@
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="fill_parent"
   android:layout_height="fill_parent"
+  android:id="@+id/linearLayout"
   android:orientation="vertical">
   
     <RelativeLayout
@@ -11,11 +12,11 @@
     	android:background="#911">
     	    	
 		<Button
-			android:id="@+id/nextThread"
+			android:id="@+id/prevThread"
     		android:layout_width="wrap_content"
     		android:layout_height="wrap_content"
     		android:layout_alignParentLeft="true"	
-    		android:text="@string/readThreadNext">
+    		android:text="@string/readThreadPrev">
     	</Button>
     	
     	<TextView
@@ -31,11 +32,11 @@
     	</TextView>
     	
     	<Button
-    		android:id="@+id/prevThread"
+    		android:id="@+id/nextThread"
     		android:layout_width="wrap_content"
     		android:layout_height="wrap_content"
     		android:layout_alignParentRight="true"
-    		android:text="@string/readThreadPrev">
+    		android:text="@string/readThreadNext">
     	</Button>
   	</RelativeLayout>
   	
@@ -52,10 +53,11 @@
   		android:id="@+id/readThreadScroll"
   		android:layout_width="fill_parent" 
     	android:layout_height="fill_parent">
-    	<LinearLayout
+    	<LinearLayout    		
+  			android:id="@+id/linearLayoutInsideScroll"
     		android:layout_width="fill_parent" 
     		android:layout_height="fill_parent"
-    		android:orientation="vertical">    		
+    		android:orientation="vertical">
 		  	<TextView
 		  		android:id="@+id/threadBody"
 		  		android:layout_width="fill_parent"
@@ -91,6 +93,6 @@
 			</Button>
 			
 	  	</LinearLayout>
-  	</ScrollView>
+	</ScrollView>
   
 </LinearLayout>

@@ -1042,7 +1042,7 @@ public class IsbSession {
 	public native int[] hangulCutter(String jstr);
 	public native int[] hangulAscii(String jstr);
 	public native int[] hangulDebug(String jstr);
-	public native int hangulLength(String jstr);
+	public static native int hangulLength(String jstr);
 	static {
 		System.loadLibrary("hangul_cutter");
 	}

@@ -30,8 +30,8 @@
 	
 <!--  for read Thread  -->	
 	<string name="readThreadTitle">Read Threads</string>
-	<string name="readThreadPrev"> &gt;&gt; </string>
-	<string name="readThreadNext"> &lt;&lt; </string>
+	<string name="readThreadPrev"> &lt;Prev </string>
+	<string name="readThreadNext"> Next&gt; </string>
 <!--  for read Thread  -->
 
 
