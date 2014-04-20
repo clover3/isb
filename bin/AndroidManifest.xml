@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.postech.isb"
-      android:versionCode="12"
-      android:versionName="1.053">
+      android:versionCode="19" android:versionName="1.066">
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
     <application android:icon="@drawable/icon" android:label="@string/app_name" android:name="PostechIsb">
         
         <provider android:authorities="com.postech.provider.Isb" android:name=".compose.IsbProvider"/>
         
         <activity android:name=".IsbTabWidget" android:label="@string/app_name"
-        	android:theme="@android:style/Theme.NoTitleBar">
+        	android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="unspecified">
         	<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -21,6 +20,7 @@
         		<action android:name="android.intent.action.PICK"></action>
         		<category android:name="android.intent.category.DEFAULT"></category>
         		<data android:path="boards" android:scheme="content"></data>
+        		
         	</intent-filter>
 		</activity>
         
@@ -52,7 +52,6 @@
 
         <activity android:theme="@android:style/Theme.Light"
             android:label="@string/title_note"
-            android:screenOrientation="sensor"
             android:configChanges="keyboardHidden|orientation" android:name=".compose.NoteEditor">
             <!-- This filter says that we can view or edit the data of
                  a single note -->
@@ -71,6 +70,7 @@
                 <data android:mimeType="vnd.android.cursor.dir/vnd.postech.isb" />
             </intent-filter>
         </activity>
+        <activity android:name=".preference.PreferenceList"></activity>
         						
 	</application>
 	<uses-sdk android:minSdkVersion="7"></uses-sdk>

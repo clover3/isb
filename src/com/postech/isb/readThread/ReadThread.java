@@ -23,8 +23,10 @@ import com.postech.isb.util.IsbThread;
 import com.postech.isb.util.ThreadList;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Point;
@@ -437,10 +439,6 @@ public class ReadThread extends Activity {
 					next.setVisibility(View.VISIBLE);
 					readThreadScroll.smoothScrollTo(0, 0);
 					
-//					if( readNext )
-//						linearLayout.setAnimation(AnimationUtils.loadAnimation(ReadThread.this, R.anim.slide_in_right));
-//					else
-//						linearLayout.setAnimation(AnimationUtils.loadAnimation(ReadThread.this, android.R.anim.slide_in_left));
 					return true;
 				} else {
 					Toast.makeText(getApplicationContext(), "No more thread!",
@@ -486,22 +484,39 @@ public class ReadThread extends Activity {
 		}
 		case DELETE: {
 			if (isb.isMain()) {
-				try {
-					if (isb.modifyThread(board, num, isb.THREAD_DELETE)) {
-						Toast.makeText(getApplicationContext(),
-								"Delete success", Toast.LENGTH_SHORT).show();
-						finish();
-					} else {
-						Toast.makeText(getApplicationContext(), "Delete fail.",
-								Toast.LENGTH_SHORT).show();
-					}
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					Toast.makeText(getApplicationContext(), "Connection lost",
-							Toast.LENGTH_SHORT).show();
-					isb.disconnect();
-				}
+//				try {
+					AlertDialog.Builder alert_confirm = new AlertDialog.Builder(ReadThread.this);
+					alert_confirm.setMessage(R.string.delete_confirm).setCancelable(false).setPositiveButton(R.string.delete,
+					new DialogInterface.OnClickListener() {
+					    @Override
+					    public void onClick(DialogInterface dialog, int which) {
+					        // 'YES'
+					    	try{
+								if (isb.modifyThread(board, num, isb.THREAD_DELETE)) {
+									Toast.makeText(getApplicationContext(),
+											"Delete success", Toast.LENGTH_SHORT).show();
+									finish();
+								} else {
+									Toast.makeText(getApplicationContext(), "Delete fail.",
+											Toast.LENGTH_SHORT).show();
+								}					}
+							catch (IOException e) {
+								e.printStackTrace();
+								Toast.makeText(getApplicationContext(), "Connection lost", Toast.LENGTH_SHORT).show();
+								isb.disconnect();
+							}
+					    }
+					}).setNegativeButton(R.string.cancle,
+					new DialogInterface.OnClickListener() {
+					    @Override
+					    public void onClick(DialogInterface dialog, int which) {
+					        // 'No'
+					    return;
+					    }
+					});
+					AlertDialog alert = alert_confirm.create();
+					alert.show();
+
 			} else
 				Toast.makeText(getApplicationContext(), "Login first plz...",
 						Toast.LENGTH_SHORT).show();

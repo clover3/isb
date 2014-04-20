@@ -24,8 +24,8 @@
 
 <!--  for read board  -->
 	<string name="readBoardTitle">Read Board</string>
-	<string name="readBoardPrevPage"> &gt;&gt; </string>
-	<string name="readBoardNextPage"> &lt;&lt; </string>
+	<string name="readBoardPrevPage"> &gt;&gt;</string>
+	<string name="readBoardNextPage">&lt;&lt; </string>
 <!--  for read board  -->
 	
 <!--  for read Thread  -->	
