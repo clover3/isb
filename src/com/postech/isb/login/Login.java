@@ -28,12 +28,14 @@ import com.postech.isb.R.id;
 import com.postech.isb.R.layout;
 import com.postech.isb.boardList.Board;
 import com.postech.isb.boardList.BoardList;
+import com.postech.isb.info.Info;
 import com.postech.isb.preference.PreferenceList;
 import com.postech.isb.util.IsbSession;
 
 public class Login extends Activity {
 
-	static final private int PREFERENCE = Menu.FIRST;
+	static final private int INFO = Menu.FIRST;
+	static final private int PREFERENCE = Menu.FIRST+1;
 	
 	private IsbSession isb;
 	private EditText loginId;
@@ -54,6 +56,7 @@ public class Login extends Activity {
 	
 	private Intent goSurf;
 	private Intent goSetting;
+	private Intent goInfo;
 	
 	// Handler for thread. Show error messages.
 	private Handler handler = new Handler() {
@@ -149,15 +152,18 @@ public class Login extends Activity {
 		
 		goSurf = new Intent(this, BoardList.class);
 		goSetting = new Intent(this, PreferenceList.class);		
+		goInfo = new Intent(this, Info.class);		
 		restoreUIState();
 	}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
       super.onCreateOptionsMenu(menu);
-      
- //     menu.add(0, PREFERENCE, Menu.NONE,R.string.preference)
- //     				.setIcon(android.R.drawable.ic_menu_preferences);
+
+      menu.add(0, INFO, Menu.NONE,R.string.info)
+      				.setIcon(android.R.drawable.ic_menu_info_details);
+      //menu.add(1, PREFERENCE, Menu.NONE,R.string.preference)
+      //				.setIcon(android.R.drawable.ic_menu_preferences);
       return true;
     }
     
@@ -173,6 +179,10 @@ public class Login extends Activity {
       super.onOptionsItemSelected(item);
       
       switch (item.getItemId()) {
+      case INFO: {
+    	  startActivity(goInfo);
+    	  return true;   
+      }
       case PREFERENCE: {
     	  startActivity(goSetting);
     	  return true;   

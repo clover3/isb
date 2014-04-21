@@ -641,7 +641,12 @@ public class IsbSession {
 		String commentHeader = "式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式 醴詮お √ 式";
 		String commentTail = "式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式 醴詮お ﹦ 式";
 
+		
 		StringBuffer contents = new StringBuffer();
+		// new line bug (github #4)
+		String contentFirstLine = s.next();
+		contents.append(contentFirstLine);
+		
 		while (s.hasNext())
 		{
 			String token = s.next();

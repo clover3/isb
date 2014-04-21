@@ -72,5 +72,6 @@
 
 	<string name="preference">Preference</string>
 	<string name="check_version">최신버전 확인</string>
+	<string name="info">information</string>
 
 </resources>

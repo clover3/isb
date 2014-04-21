@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2007 The Android Open Source Project
+<!--
+     Copyright (C) 2007 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -12,30 +13,33 @@
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
      See the License for the specific language governing permissions and
      limitations under the License.
+     
 -->
- 
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical">
+    android:orientation="vertical" >
 
-    <Button xmlns:android="http://schemas.android.com/apk/res/android"
-    	android:id="@+id/targetBoard"
-    	android:layout_width="fill_parent"
-    	android:layout_height="wrap_content"
-    	android:text="Select Target Board">
-    </Button>    	    
-    	 
-	<view xmlns:android="http://schemas.android.com/apk/res/android"
-	    class="com.postech.isb.compose.NoteEditor$LinedEditText"
-	    android:id="@+id/note"
-	    android:layout_width="fill_parent"
-	    android:layout_height="fill_parent"
-	    android:background="@android:color/transparent"
-	    android:padding="5dip"
-	    android:scrollbars="vertical"
-	    android:fadingEdge="vertical"
-	    android:gravity="top"
-	    android:textSize="22sp"
-	    android:capitalize="sentences"/>
+    <Button
+        android:id="@+id/targetBoard"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Select Target Board" >
+    </Button>
+
+    <view
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/note"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        class="com.postech.isb.compose.NoteEditor$LinedEditText"
+        android:background="@android:color/transparent"
+        android:capitalize="sentences"
+        android:fadingEdge="vertical"
+        android:gravity="top"
+        android:padding="5dip"
+        android:scrollbars="vertical"
+        android:textSize="22sp" />
+
 </LinearLayout>

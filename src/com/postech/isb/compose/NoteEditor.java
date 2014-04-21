@@ -208,6 +208,7 @@ public class NoteEditor extends Activity {
     protected void onResume() {
         super.onResume();
 
+        mCursor = getContentResolver().query(mUri, PROJECTION, null, null, null);
         // If we didn't have any trouble retrieving the data, it is now
         // time to get at the stuff.
         if (mCursor != null) {
