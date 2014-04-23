@@ -363,10 +363,6 @@ public class ReadThread extends Activity {
 		try {
 			if (isb.isMain()) {
 				boolean readNext = (_num >= num ); 
-				if( readNext )
-					linearLayout.setAnimation(AnimationUtils.loadAnimation(ReadThread.this, R.anim.slide_out_left));
-				else
-					linearLayout.setAnimation(AnimationUtils.loadAnimation(ReadThread.this, android.R.anim.slide_out_right));
 				IsbThread t = isb.readThread(board, _num);
 				
 				if (t != null) {
@@ -557,7 +553,7 @@ public class ReadThread extends Activity {
 					int gap = width / 5;
 					if ( nTouchPosX - m_nPreTouchPosX < -gap && m_nPreTouchPosX > width * (3./4) ) 
 					{
-						updateThread(num + 1);
+						updateThread(num + 1);				
 					} 
 					else if (nTouchPosX - m_nPreTouchPosX > gap && m_nPreTouchPosX < width / 4. ) 
 					{
