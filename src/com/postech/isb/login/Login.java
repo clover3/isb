@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -57,6 +58,8 @@ public class Login extends Activity {
 	private Intent goSurf;
 	private Intent goSetting;
 	private Intent goInfo;
+	
+	private LoginThread loginThread;
 	
 	// Handler for thread. Show error messages.
 	private Handler handler = new Handler() {
@@ -192,6 +195,16 @@ public class Login extends Activity {
       return false;
     }
     
+    public boolean onKeyDown(int keyCode, KeyEvent event) { 
+    	if(keyCode == KeyEvent.KEYCODE_BACK) {
+    		if( null != loginThread )
+    		{
+    			loginThread.interrupt();
+    		}
+    	}
+    	return false;
+    }
+    
 	private void restoreUIState() {
 		SharedPreferences settings = getPreferences(MODE_PRIVATE);
 				
@@ -261,9 +274,9 @@ public class Login extends Activity {
 			return;
 		}
 		
-		pd = ProgressDialog.show(Login.this, "Isb", "Logging in...", true, false);
+		pd = ProgressDialog.show(Login.this, "Isb", "Logging in...", true, true);
 		
-		new LoginThread(signedInId, pw).start(); // 스레드 실행  
+		(loginThread = new LoginThread(signedInId, pw)).start(); // 스레드 실행  
 	}
 	
 	private void logout() {
