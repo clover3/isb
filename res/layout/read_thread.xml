@@ -66,8 +66,8 @@
 		  		android:textSize="15sp"
 		  		android:textColor="#fff">
 		  	</TextView>
-		  	<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-			  	android:id="@+id/threadComment"
+		  	<TableLayout
+		  	    android:id="@+id/threadComment"
 			  	android:layout_width="fill_parent"
 			  	android:layout_height="wrap_content"
 			  	android:layout_marginTop="25sp"

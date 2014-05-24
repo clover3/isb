@@ -28,7 +28,7 @@ import com.postech.isb.R.id;
 import com.postech.isb.R.layout;
 import com.postech.isb.boardList.Board;
 import com.postech.isb.boardList.BoardList;
-import com.postech.isb.info.Info;
+//import com.postech.isb.info.Info;
 import com.postech.isb.preference.PreferenceList;
 import com.postech.isb.util.IsbSession;
 

@@ -9,7 +9,6 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 import com.postech.isb.PostechIsb;
 import com.postech.isb.R;
 import com.postech.isb.R.id;
@@ -57,6 +56,8 @@ import android.text.style.ClickableSpan;
 import android.text.util.Linkify;
 import android.widget.Toast;
 import android.widget.TextView.BufferType;
+import android.text.TextWatcher;
+import android.text.Editable;
 
 public class ReadThread extends Activity {
 
@@ -204,10 +205,11 @@ public class ReadThread extends Activity {
 		linearLayoutInner = (LinearLayout) findViewById(R.id.linearLayoutInsideScroll);
 		linearLayoutInner.setOnTouchListener(MyTouchListener);	
 		threadBody.setOnTouchListener(MyTouchListener);
+		commentMessage.addTextChangedListener(commentWatcherInput);
 
 		registerForContextMenu(boardName);
 		updateThread(num);
-	}
+	} // End of onCreate
 
 	public class ClickableSpanLink extends ClickableSpan {
 		String m_str;
@@ -552,15 +554,21 @@ public class ReadThread extends Activity {
 				{
 					// Do Nothing 
 				}
-				else
+				else if(commentMessage.getText().length() == 0)
 				{
 					int gap = width / 5;
+					
 					if ( nTouchPosX - m_nPreTouchPosX < -gap && m_nPreTouchPosX > width * (3./4) ) 
 					{
+						/*Toast.makeText(getApplicationContext(), "nTouchPosX: "+nTouchPosX+" m_nPreTouchPosX: "+m_nPreTouchPosX+" gap: "+gap+" width: "+width,
+								Toast.LENGTH_LONG).show();*/
 						updateThread(num + 1);
 					} 
 					else if (nTouchPosX - m_nPreTouchPosX > gap && m_nPreTouchPosX < width / 4. ) 
 					{
+						/*Toast.makeText(getApplicationContext(), "nTouchPosX: "+nTouchPosX+" m_nPreTouchPosX: "+m_nPreTouchPosX+" gap: "+gap+" width: "+width,
+								Toast.LENGTH_LONG).show();
+								*/
 						updateThread(num - 1);
 					}
 				}
@@ -647,6 +655,29 @@ public class ReadThread extends Activity {
 			break;
 		}
 		}
+	}
+	TextWatcher commentWatcherInput = new TextWatcher() {
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before, int count) {
+			// TODO Auto-generated method stub
+			int[] ret=hangulCountLines(s.toString());
+			if ((ret[0] > 0 && ret[1] > 0) || ret[0] > 1)
+				leaveCommentBtn.setText("Leave comment. "+ret[0]+"lines + "+ret[1]+"bytes");
+			else
+				leaveCommentBtn.setText("Leave comment");
+		}
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count,
+				int after) {			
+		}
+		@Override
+		public void afterTextChanged(Editable s) {	
+		}
+		
+	};	
+	public native int[] hangulCountLines(String jstr);
+	static {
+		System.loadLibrary("hangul_cutter");
 	}
 
 }
