@@ -860,22 +860,22 @@ public class IsbSession {
 		telnet.send(String.valueOf(idx));
 		telnet.waitfor("(?s).*(?:;2H|>)$");
 
-		String remaining = cmt;
-		int[] cut = hangulCutter(remaining);
+		//String remaining = cmt;
+		int[] cut = hangulCutter(cmt);
 		int cut_len = cut.length;
 		
 		int begin = 0, end = 0;
 		for (int i = 0; i < cut_len; i++)
 		{		
 			end = cut[i];
-			Log.i("newmbewb", "error:"+Integer.toString(remaining.length())+Integer.toString(end));
+			Log.i("newmbewb", "error:"+Integer.toString(cmt.length())+Integer.toString(end));
 			telnet.send_wo_r("c");
-			telnet.send(remaining.substring(begin, end));
+			telnet.send(cmt.substring(begin, end));
 			telnet.waitfor(expect(BOARD));
 			begin = end;
 		}
 		telnet.send_wo_r("c");
-		telnet.send(remaining.substring(begin, remaining.length()));
+		telnet.send(cmt.substring(begin, cmt.length()));
 		telnet.waitfor(expect(BOARD));
 		debugMessage ("LeaveMessage finish.", INFO);
 
