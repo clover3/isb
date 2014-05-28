@@ -205,6 +205,7 @@ public class ReadThread extends Activity {
 		linearLayoutInner = (LinearLayout) findViewById(R.id.linearLayoutInsideScroll);
 		linearLayoutInner.setOnTouchListener(MyTouchListener);	
 		threadBody.setOnTouchListener(MyTouchListener);
+		comments.setOnTouchListener(MyTouchListener);
 		commentMessage.addTextChangedListener(commentWatcherInput);
 
 		registerForContextMenu(boardName);
@@ -528,16 +529,24 @@ public class ReadThread extends Activity {
 
 	private int m_nPreTouchPosY = 0;
 	private int m_nPreTouchPosX = 0;
+	private boolean on_drag = false;
 	View.OnTouchListener MyTouchListener = new View.OnTouchListener() {
+		@Override
 		public boolean onTouch(View v, MotionEvent event) {
-			if (event.getAction() == MotionEvent.ACTION_DOWN) {
+			//Log.i("newm", "v.getClass(): "+v.getClass());
+			if ((event.getAction() == MotionEvent.ACTION_MOVE && !on_drag) ||
+					event.getAction() == MotionEvent.ACTION_DOWN) {
+				on_drag = true;
 				m_nPreTouchPosX = (int) event.getX();
 				m_nPreTouchPosY = (int) event.getY();
+				Log.i("newm", "m_nPreTouchPosX: "+m_nPreTouchPosX+" m_nPreTouchPosY: "+m_nPreTouchPosY);
 			}
-
-			if (event.getAction() == MotionEvent.ACTION_UP) {
+			else if (event.getAction() == MotionEvent.ACTION_UP && on_drag) {
 				int nTouchPosX = (int) event.getX();
 				int nTouchPosY = (int) event.getY();
+				on_drag = false;
+				
+				Log.i("newm", "nTouchPosX: "+nTouchPosX+" nTouchPosY: "+nTouchPosY);
 				
 				Display display = getWindowManager().getDefaultDisplay();
 				int width = display.getWidth();
@@ -556,20 +565,18 @@ public class ReadThread extends Activity {
 					
 					if ( nTouchPosX - m_nPreTouchPosX < -gap && m_nPreTouchPosX > width * (3./4) ) 
 					{
-						/*Toast.makeText(getApplicationContext(), "nTouchPosX: "+nTouchPosX+" m_nPreTouchPosX: "+m_nPreTouchPosX+" gap: "+gap+" width: "+width,
-								Toast.LENGTH_LONG).show();*/
 						updateThread(num + 1);				
 					} 
 					else if (nTouchPosX - m_nPreTouchPosX > gap && m_nPreTouchPosX < width / 4. ) 
 					{
-						/*Toast.makeText(getApplicationContext(), "nTouchPosX: "+nTouchPosX+" m_nPreTouchPosX: "+m_nPreTouchPosX+" gap: "+gap+" width: "+width,
-								Toast.LENGTH_LONG).show();
-								*/
 						updateThread(num - 1);
 					}
 				}
 				m_nPreTouchPosX = nTouchPosX;
 				m_nPreTouchPosY = nTouchPosY;
+			}
+			else{
+				Log.i("newm", "event.getAction(): "+event.getAction());
 			}
 			return false;
 		}
@@ -653,12 +660,18 @@ public class ReadThread extends Activity {
 		}
 	}
 	TextWatcher commentWatcherInput = new TextWatcher() {
+		private boolean overflowed = false;
 		@Override
 		public void onTextChanged(CharSequence s, int start, int before, int count) {
 			// TODO Auto-generated method stub
 			int[] ret=hangulCountLines(s.toString());
-			if ((ret[0] > 0 && ret[1] > 0) || ret[0] > 1)
+			if ((ret[0] > 0 && ret[1] > 0) || ret[0] > 1){
 				leaveCommentBtn.setText("Leave comment. "+ret[0]+"lines + "+ret[1]+"bytes");
+				if (!overflowed){
+					readThreadScroll.fullScroll(View.FOCUS_DOWN);
+					overflowed = true;
+				}
+			}
 			else
 				leaveCommentBtn.setText("Leave comment");
 		}
