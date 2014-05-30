@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 
 import com.postech.isb.boardList.Board;
+import com.postech.isb.viewUser.IsbUser;
 
 public class IsbSession {
 
@@ -34,11 +35,12 @@ public class IsbSession {
 	public final int THREAD_MARK = 3;
 	public final int THREAD_READERS = 4;
 	
-	
+
 	public final int NUM_ROWS = 80; //FIX HERE FOR THE NEW NUMBER OF ROWS
 	
 	private TinyTelnet telnet;
 	private int state;
+	public String userId;
 
 	public IsbSession() {
 		telnet = new TinyTelnet(80, NUM_ROWS);
@@ -103,7 +105,7 @@ public class IsbSession {
 	public boolean login(String id, String pwd, boolean evict) throws IOException, SocketTimeoutException {
 		boolean result = false;
 		String msg;
-
+		userId = id;
 		if (state == CONNECTED)
 		{		
 			telnet.send(id);
@@ -263,6 +265,31 @@ public class IsbSession {
 			debugMessage("Go back to main success", INFO);
 
 		return boardList;		
+	}
+	
+	public ArrayList<IsbUser> readUserList() throws IOException {
+		//// Network Activity /////////
+		telnet.send_wo_r("\024");
+		String data = telnet.waitfor("(?s).*\\[\\d+;5H$");
+		telnet.send_wo_r("\024");
+		//// End of Network Activity ////
+
+		debugMessage ("readUserList data : "+ data, debug);
+
+		ArrayList<IsbUser> UserItems = new ArrayList<IsbUser>();
+		
+		final String regex = " [MNRWLJTXU-][*x ].+? ";
+		Pattern pattern = Pattern.compile(regex);
+		Matcher match = pattern.matcher(data);
+		while(match.find())
+		{
+			debugMessage ("Match:"+match.group(), debug);
+			IsbUser user = new IsbUser(match.group());
+			UserItems.add(user);
+		}
+		
+		debugMessage ("readUserList EXIT", debug);
+		return UserItems;
 	}
 
 	public boolean goToBoard(String board) throws IOException {

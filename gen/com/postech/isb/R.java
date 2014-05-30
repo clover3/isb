@@ -98,11 +98,17 @@ public final class R {
         public static final int newt=0x7f020046;
         public static final int pink_pin=0x7f020047;
         public static final int round_box=0x7f020048;
+        public static final int user=0x7f020049;
+        public static final int user_blue=0x7f02004a;
+        public static final int user_m=0x7f02004b;
     }
     public static final class id {
         public static final int BoardListComment=0x7f080003;
         public static final int BoardListNew=0x7f080002;
         public static final int BoardListTitle=0x7f080004;
+        public static final int UserName=0x7f080035;
+        public static final int UserState=0x7f080036;
+        public static final int ViewUserTitle=0x7f080037;
         public static final int cancel=0x7f080033;
         public static final int commentBtn=0x7f080030;
         public static final int commentText=0x7f08002f;
@@ -150,6 +156,7 @@ public final class R {
         public static final int threadHead=0x7f08002a;
         public static final int title=0x7f080031;
         public static final int titleLine=0x7f08000e;
+        public static final int userIcon=0x7f080034;
         public static final int version_check=0x7f080009;
         public static final int writterLine=0x7f08000a;
     }
@@ -169,6 +176,8 @@ public final class R {
         public static final int read_board=0x7f03000c;
         public static final int read_thread=0x7f03000d;
         public static final int title_editor=0x7f03000e;
+        public static final int user_item=0x7f03000f;
+        public static final int view_user=0x7f030010;
     }
     public static final class string {
         public static final int app_name=0x7f070001;
@@ -236,6 +245,8 @@ public final class R {
         public static final int title_edit_title=0x7f07002d;
         public static final int title_note=0x7f07002c;
         public static final int title_notes_list=0x7f07002b;
+        public static final int user=0x7f070035;
+        public static final int viewUserTItle=0x7f070036;
         public static final int write=0x7f07000b;
     }
 }

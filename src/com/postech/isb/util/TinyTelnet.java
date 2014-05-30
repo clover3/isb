@@ -35,6 +35,8 @@ import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
+import android.util.Log;
+
 
 /**
  * To write a program using the wrapper
@@ -155,7 +157,6 @@ public class TinyTelnet {
 		while(true) {
 			block = new String(read(), charset);
 			ret += block;
-
 			if (ret.matches(match))
 				break;
 		}

@@ -32,11 +32,13 @@ import com.postech.isb.boardList.BoardList;
 import com.postech.isb.info.Info;
 import com.postech.isb.preference.PreferenceList;
 import com.postech.isb.util.IsbSession;
+import com.postech.isb.viewUser.ViewUser;
 
 public class Login extends Activity {
 
 	static final private int INFO = Menu.FIRST;
-	static final private int PREFERENCE = Menu.FIRST+1;
+	static final private int USER = Menu.FIRST+1;
+	static final private int PREFERENCE = Menu.FIRST+2;
 	
 	private IsbSession isb;
 	private EditText loginId;
@@ -58,6 +60,7 @@ public class Login extends Activity {
 	private Intent goSurf;
 	private Intent goSetting;
 	private Intent goInfo;
+	private Intent goUserList;
 	
 	private LoginThread loginThread;
 	
@@ -156,6 +159,7 @@ public class Login extends Activity {
 		goSurf = new Intent(this, BoardList.class);
 		goSetting = new Intent(this, PreferenceList.class);		
 		goInfo = new Intent(this, Info.class);		
+		goUserList = new Intent(this, ViewUser.class); 
 		restoreUIState();
 	}
 
@@ -165,8 +169,10 @@ public class Login extends Activity {
 
       menu.add(0, INFO, Menu.NONE,R.string.info)
       				.setIcon(android.R.drawable.ic_menu_info_details);
-      //menu.add(1, PREFERENCE, Menu.NONE,R.string.preference)
-      //				.setIcon(android.R.drawable.ic_menu_preferences);
+      menu.add(1, USER, Menu.NONE, R.string.user)
+					.setIcon(android.R.drawable.ic_menu_myplaces);
+//      menu.add(2, PREFERENCE, Menu.NONE,R.string.preference)
+//      				.setIcon(android.R.drawable.ic_menu_preferences);
       return true;
     }
     
@@ -186,8 +192,12 @@ public class Login extends Activity {
     	  startActivity(goInfo);
     	  return true;   
       }
+      case USER: {
+    	  startActivity(goUserList);
+    	  return true;
+      }
       case PREFERENCE: {
-    	  startActivity(goSetting);
+    	  //startActivity(goSetting);
     	  return true;   
       }
       }
