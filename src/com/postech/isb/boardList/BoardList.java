@@ -200,7 +200,7 @@ public class BoardList extends ListActivity {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
+					//setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
 					String name;
 					Board newItem;
 					board_items = new ArrayList<Board>();

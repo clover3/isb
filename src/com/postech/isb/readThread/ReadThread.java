@@ -411,10 +411,10 @@ public class ReadThread extends Activity {
 							writer.setTextSize(15);
 
 							when = new TextView(this);
-							/*
-							 * when.setText(m.replaceAll("$2"));
-							 * when.setPadding(0, 0, 5, 0);
-							 */
+							
+							when.setText(m.replaceAll("$2"));
+							when.setPadding(0, 0, 5, 0);
+							
 
 							comment = new TextView(this);
 

@@ -31,16 +31,15 @@
 		    android:src="@drawable/black_pin_12">
 		</ImageView>
 		
-    	
-	    
-		
 		<TextView
-			android:id="@+id/readBoardDate"
+		    android:id="@+id/readBoardDate"
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
 		    android:layout_alignParentRight="true"
-		    android:textSize="12sp"
-		    android:text="10/12/20">
+		    android:paddingRight="7dp"
+		    android:text="10/12/20"
+		    android:textSize="12sp" >
+
 		</TextView>						
 	</RelativeLayout>	
 
