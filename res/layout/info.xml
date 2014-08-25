@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:autoLink="web"
         android:gravity="center_horizontal"
-        android:text="New Version available at\n\nhttps://github.com/clover3/isb/wiki"
+        android:text="@string/info_content"
         android:textSize="15sp" />
 
 </LinearLayout>

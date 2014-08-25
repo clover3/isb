@@ -75,5 +75,8 @@
 	<string name="info">information</string>
 	<string name="user">users</string>
 	<string name="viewUserTItle">View Users</string>
-
+	<string name="info_content">New Version available at\n\n 
+	    https://github.com/clover3/isb/releases/latest \n\n 
+	    Source Code available at \n\n
+	     https://github.com/clover3/isb</string>
 </resources>

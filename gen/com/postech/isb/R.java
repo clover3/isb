@@ -202,6 +202,7 @@ public final class R {
         public static final int hello=0x7f070000;
         public static final int id=0x7f070002;
         public static final int info=0x7f070034;
+        public static final int info_content=0x7f070037;
         public static final int inverse=0x7f07000f;
         public static final int list_all=0x7f07001f;
         public static final int list_favorite_only=0x7f07001d;
