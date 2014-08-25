@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.postech.isb"
-      android:versionCode="24" android:versionName="1.071">
+      android:versionCode="25" android:versionName="1.072">
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <uses-sdk android:minSdkVersion="7"/>
     <application android:icon="@drawable/icon" android:label="@string/app_name" android:name="PostechIsb">
         
         <provider android:authorities="com.postech.provider.Isb" android:name=".compose.IsbProvider"/>
@@ -79,5 +80,4 @@
         <activity android:name=".viewUser.ViewUser" android:label="@string/viewUserTItle"></activity>
         						
 	</application>
-	<uses-sdk android:minSdkVersion="7"></uses-sdk>
 </manifest> 

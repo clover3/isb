@@ -21,6 +21,7 @@ import com.postech.isb.util.IsbSession;
 import com.postech.isb.util.IsbThread;
 import com.postech.isb.util.ThreadList;
 
+import android.R.string;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
@@ -361,13 +362,107 @@ public class ReadThread extends Activity {
 		}
 		return str;
 	}
+	
+	private class CommentList
+	{
+		public class Comment {
+			public String strWriter;
+			public String strWhen;
+			public String strComment;
 
+			Comment(String _strWriter, String _strComment, String _strWhen) {
+				strWriter = _strWriter;
+				strWhen = _strWhen;
+				strComment = _strComment;
+			}
+		};
+		boolean fPending;
+		public ArrayList<Comment> arrComment;
+		public CommentList()
+		{
+			arrComment = new ArrayList<Comment>();
+			fPending = false;
+		}
+		
+		void Add(String strWriter, String strComment, String strWhen)
+		{
+		//	Log.i("isb", "CommentList::Add() -" + strWriter + ":" + strComment);
+			if( fPending )
+			{
+				int idxLast = arrComment.size()-1;
+				if( strWriter.equals(arrComment.get(idxLast).strWriter) )
+				{
+		//			Log.i("isb", "CommentList::Add() Match. Concat comment");
+					arrComment.get(idxLast).strComment = arrComment.get(idxLast).strComment + strComment;
+				}
+				else
+				{
+		//			Log.i("isb", "CommentList::Add() No match add new line");
+					arrComment.add(new Comment(strWriter, strComment, strWhen) );
+				}
+			}
+			else
+				arrComment.add(new Comment(strWriter, strComment, strWhen) );
+
+		//	Log.i("isb", "CommentList::Add() strComment.length=" + strComment.length());
+			if( strComment.length() > 24 )
+				fPending = true;
+			else
+				fPending = false; 
+		}
+	};
+
+	private void _addCommentLine(CommentList.Comment PComment)
+	{
+		_addCommentLine(PComment.strWriter, PComment.strComment, PComment.strWhen);
+	}
+	private void _addCommentLine(String strWriter, String strComment, String strWhen)
+	{
+		TextView writer, comment, when;
+		writer = new TextView(this);
+		writer.setText(strWriter);
+		writer.setPadding(0, 0, 5, 0);
+		writer.setTextColor(0xFFCCCCFF);
+		writer.setTextSize(15);
+
+		when = new TextView(this);
+//		when.setText(strWhen);
+//		when.setPadding(0, 0, 5, 0);
+
+		comment = new TextView(this);
+
+		addRefLink(comment, strComment);
+		comment.setTextColor(0xFFFFFFFF);
+		comment.setTextSize(15);
+
+		TableRow row;
+		row = new TableRow(this);
+		row.setLayoutParams(new LayoutParams(
+				LayoutParams.FILL_PARENT,
+				LayoutParams.WRAP_CONTENT));
+
+		row.addView(writer);
+		row.addView(when);
+		row.addView(comment);
+
+		comments.addView(row);
+	}
+
+	private void _CommitCommentList(CommentList _CommentList)
+	{
+		int nSize = _CommentList.arrComment.size();
+		for(int i=0; i < nSize; i++)
+		{
+			_addCommentLine(_CommentList.arrComment.get(i));
+		}
+	}
+	
 	private boolean updateThread(int _num) {
 		try {
 			if (isb.isMain()) {
 				boolean readNext = (_num >= num ); 
 				IsbThread t = isb.readThread(board, _num);
-				
+				CommentList _CommentList = new CommentList();
 				if (t != null) {
 
 					boardName.setText(board + " (" + _num + ")");
@@ -390,9 +485,6 @@ public class ReadThread extends Activity {
 					Pattern p = Pattern
 							.compile("^\\s*(\\w+)\\((\\d+,\\d+:\\d+)\\):\"(.*)\"\n?$");
 
-					TableRow row;
-					TextView writer, comment, when;
-
 					comments.removeAllViews();
 
 					while (s.hasNext()) {
@@ -400,39 +492,16 @@ public class ReadThread extends Activity {
 						Matcher m = p.matcher(token);
 
 						if (m.matches()) {
-							row = new TableRow(this);
-							row.setLayoutParams(new LayoutParams(
-									LayoutParams.FILL_PARENT,
-									LayoutParams.WRAP_CONTENT));
-
-							writer = new TextView(this);
-							writer.setText(m.replaceAll("$1"));
-							writer.setPadding(0, 0, 5, 0);
-							writer.setTextColor(0xFFCCCCFF);
-							writer.setTextSize(15);
-
-							when = new TextView(this);
+							String strWriter = m.replaceAll("$1");
+							String strWhen = m.replaceAll("$2");
+							String strComment = m.replaceAll("$3");
+							_CommentList.Add(strWriter, strComment, strWhen);
 							
-							when.setText(m.replaceAll("$2"));
-							when.setPadding(0, 0, 5, 0);
-							
-
-							comment = new TextView(this);
-
-							// comment.setText(m.replaceAll("$3"));
-							addRefLink(comment, m.replaceAll("$3"));
-							comment.setTextColor(0xFFFFFFFF);
-							comment.setTextSize(15);
-
-							row.addView(writer);
-							row.addView(when);
-							row.addView(comment);
-
-							comments.addView(row);
 						} else
 							Log.i("debug", "ReadThread unmatch : " + token);
 					}
 
+					_CommitCommentList(_CommentList);
 					num = _num;
 					prev.setVisibility(num == 1 ? View.INVISIBLE : View.VISIBLE);
 					next.setVisibility(View.VISIBLE);
