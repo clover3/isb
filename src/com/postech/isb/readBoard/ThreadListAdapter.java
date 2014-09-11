@@ -19,6 +19,7 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadList>{
 	private int resource;
 	static final private int USER_NONE = 0;
 	static final private int USER_PIETYPE = 1;
+	static final private int USER_CLOVER3 = 2;
 	public ThreadListAdapter(Context _context, int _resource, ArrayList<ThreadList> _items) {
 		super(_context, _resource, _items);
 		resource = _resource;
@@ -92,7 +93,7 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadList>{
 		}
 	}
 
-	String TranslateHeader(String header)
+	String TranslateHeader_Pietype(String header)
 	{
 		String NewHeader = "";
 		if(header.equals(" "))
@@ -130,15 +131,23 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadList>{
 		int userID = USER_NONE;
 		if( item.writer.equals("pietype") )
 			userID = USER_PIETYPE;
+		else if( item.writer.equals("clover3") )
+			userID = USER_CLOVER3;
 		
 		if( userID == USER_PIETYPE )
 		{
 			if (item.title.contains(">")) {
 				int idx = item.title.indexOf(">");
-				item.header = TranslateHeader(item.title.substring(0, idx));
+				item.header = TranslateHeader_Pietype(item.title.substring(0, idx));
 				item.title = item.title.substring(idx + 1);
 			} else {
 
+			}
+		}
+		else if( userID == USER_CLOVER3 )
+		{
+			if (item.title.startsWith("½½ºñ¾Û v")) {
+				item.header = "[½½ºñ¾Û]";
 			}
 		}
 	}
