@@ -15,6 +15,7 @@ public class ThreadList implements Serializable, Comparable {
 	public boolean comment;
 	public String writer;
 	public String date;
+	public String header;
 	public int cnt;
 	public String title;
 	public boolean highlight;

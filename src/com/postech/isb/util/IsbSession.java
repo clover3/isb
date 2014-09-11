@@ -315,12 +315,33 @@ public class IsbSession {
 		}
 	}
 	
+	
+	/* < 정규표현식 해석 >
+	 * Raw String : "  175   pietype       9/ 8   11  > 슬비버그"
+	 * 
+	 * "^(?:\033\\[\\d+;1H) : 하이트라이트 여부( $1) 
+	 * ?[ >]  : 공백이거나 꺽쇠문자('>')  
+	 * (\033\\[7m) : ($2)
+	 * ?\\s*(\\d+) : 글 번호
+	 * (?:\033\\[27m) : 
+	 * ?(.)(.) : N과 m 으로 마킹된 여부
+	 * \\s* : 공백
+	 * (\\S+) : 아이디
+	 * \\s* : 공백 
+	 * ([ 1][0-9]/[ 1-3][0-9]) : 날짜
+	 * \\s* : 공백
+	 * (\\d+) : 조회수 
+	 * \\s* : 공백
+	 * (.*?) : 제목 
+	 * (?:\033\\[K) :
+	 * ?(?:\033\\[\\d+;2H)?$");
+	*/
 	private ArrayList<ThreadList> parseOnePage(String str){
 		ArrayList<ThreadList> result = new ArrayList<ThreadList>();
 		Scanner s = new Scanner(new String(str));
 		s.useDelimiter("[\n\r\0]");
 		
-		Pattern p = Pattern.compile("^(?:\033\\[\\d+;1H)?[ >](\033\\[7m)?\\s*(\\d+)(?:\033\\[27m)?(.)(.)\\s*(\\S+)\\s*([ 1][0-9]/[ 1-3][0-9])\\s*(\\d+)\\s*(.*?)(?:\033\\[K)?(?:\033\\[\\d+;2H)?$");
+		Pattern p = Pattern.compile("^(?:\033\\[\\d+;1H)?[ >](\033\\[7m)?\\s*(\\d+)(?:\033\\[27m)?(.)(.)\\s*(\\S+)\\s*([ 1][0-9]/[ 1-3][0-9])\\s*(\\d+)\\s(.*?)(?:\033\\[K)?(?:\033\\[\\d+;2H)?$");
 		
 		while (s.hasNext())
 		{
@@ -360,6 +381,8 @@ public class IsbSession {
 				line.date = new String(m.replaceAll("$6"));
 				
 				line.cnt = Integer.valueOf(m.replaceAll("$7"));
+
+				line.header = "";
 				line.title = new String(m.replaceAll("$8"));
 				
 				result.add(line);

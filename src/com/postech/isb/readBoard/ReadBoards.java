@@ -534,7 +534,7 @@ public class ReadBoards extends ListActivity {
 					note = note.replace("tmp_title_for_empty_title_haha_hehe_hoho_huhu_nyahahahahahahaha", "");
 				}
 				else
-					note = (title+t.contents).trim();
+					note = (title+t.contents).replaceAll("\\s*$", "");
 				giveMeNewThread.putExtra("note", note);
 				startActivityForResult(giveMeNewThread, EditNote);
 			} catch (IOException e) {

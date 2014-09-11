@@ -69,6 +69,15 @@
 	    </ImageView>
 	    	    	    	
 		<TextView
+			android:id="@+id/readBoardHeader"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:textColor="#d2691e"
+		    android:textSize="12sp"
+		    android:text="">
+		</TextView>
+		    	
+		<TextView
 			android:id="@+id/readBoardTitle"
 		    android:layout_width="fill_parent"
 		    android:layout_height="wrap_content"
