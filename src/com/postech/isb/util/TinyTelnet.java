@@ -34,7 +34,11 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.util.concurrent.ExecutionException;
 
+import com.postech.isb.util.TinyTelnet.Holder;
+
+import android.os.AsyncTask;
 import android.util.Log;
 
 
@@ -53,6 +57,17 @@ public class TinyTelnet {
 	static final int COLS = 40;
 	static final int [] WINDOW_SIZE = {ROWS, COLS};
 	static final String charset = "MS949";
+	
+	static final int CONNECT = 0;
+	static final int DISCONNECT = 1;
+	static final int FLUSH = 2;
+	static final int WAITFOR = 3;
+	static final int WAITFOR_ARRAY = 4;
+	static final int READ = 5;
+	static final int SEND = 6;
+	static final int SEND_WO_R = 7;
+	static final int NEGOTIATE = 8;
+
 	
 	protected final int port = 23;
 	protected final int timeout = 5000;			// Socket open try timeout
@@ -112,8 +127,25 @@ public class TinyTelnet {
 		};
 	}
 
-	/** Connect the socket and open the connection. */  
-	public void connect(String host, int port) throws IOException {
+	/** Connect the socket and open the connection. */
+	public void connect(String host, int port) throws IOException{
+		TelnetAsyncTask task = new TelnetAsyncTask(host, port);
+		IOException e;
+		try {
+			e = task.execute(CONNECT).get();
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return;
+		} catch (ExecutionException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return;
+		}
+		if (e != null)
+			throw e;
+	}
+	public void connect_async(String host, int port) throws IOException {
 		try {
 			SocketAddress socketAddress = new InetSocketAddress(host, port);
 			socket = new Socket();
@@ -131,17 +163,51 @@ public class TinyTelnet {
 			throw se;
 		} catch(Exception e) {
 			System.err.println("Wrapper: "+e);
-			disconnect();
+			disconnect_async();
 			throw ((IOException)e);
 		}
 	}  
 	/** Disconnect the socket and close the connection. */
-	public void disconnect() throws IOException {
+	public void disconnect() throws IOException{
+		TelnetAsyncTask task = new TelnetAsyncTask();
+		IOException e;
+		try {
+			e = task.execute(DISCONNECT).get();
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return;
+		} catch (ExecutionException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return;
+		}
+		if (e != null)
+			throw e;
+	}
+	public void disconnect_async() throws IOException {
 		if (socket != null)
 			socket.close();
 	}
 
-	public void flush() throws IOException {
+	public void flush() throws IOException{
+		TelnetAsyncTask task = new TelnetAsyncTask();
+		IOException e;
+		try {
+			e = task.execute(FLUSH).get();
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return;
+		} catch (ExecutionException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return;
+		}
+		if (e != null)
+			throw e;
+	}
+	public void flush_async() throws IOException {
 		if (out != null)
 			out.flush();
 	}
@@ -150,12 +216,32 @@ public class TinyTelnet {
 		isNeged = set;
 	}
 
-	public String waitfor(String match) throws IOException {
+	public String waitfor(String match) throws IOException{
+		Holder<String> ret = new Holder<String>();
+		TelnetAsyncTask task = new TelnetAsyncTask(match);
+		task.setString(ret);
+		IOException e;
+		try {
+			e = task.execute(WAITFOR).get();
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return null;
+		} catch (ExecutionException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return null;
+		}
+		if (e != null)
+			throw e;
+		return ret.value;
+	}
+	public String waitfor_async(String match) throws IOException {
 		String ret = new String();
 		String block;
 		
 		while(true) {
-			block = new String(read(), charset);
+			block = new String(read_async(), charset);
 			ret += block;
 			if (ret.matches(match))
 				break;
@@ -163,8 +249,28 @@ public class TinyTelnet {
 
 		return ret;
 	}
-	
-	public String waitfor(String [] matches) throws IOException {
+
+	public String waitfor(String[] matches) throws IOException{
+		Holder<String> ret = new Holder<String>();
+		TelnetAsyncTask task = new TelnetAsyncTask(matches);
+		task.setString(ret);
+		IOException e;
+		try {
+			e = task.execute(WAITFOR_ARRAY).get();
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return null;
+		} catch (ExecutionException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return null;
+		}
+		if (e != null)
+			throw e;
+		return ret.value;
+	}
+	public String waitfor_async(String [] matches) throws IOException {
 		StringBuffer oneMatch = new StringBuffer();
 		int i;
 		
@@ -179,10 +285,33 @@ public class TinyTelnet {
 		}
 		oneMatch.append(matches[i]);
 		
-		return waitfor(oneMatch.toString());
+		return waitfor_async(oneMatch.toString());
 	}
 	
+	public class Holder<T>
+	{
+	    public T value;
+	}
 	public byte [] read() throws IOException{
+		Holder<byte[]> ret = new Holder<byte[]>();
+		TelnetAsyncTask task = new TelnetAsyncTask(ret);
+		IOException e;
+		try {
+			e = task.execute(READ).get();
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return null;
+		} catch (ExecutionException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return null;
+		}
+		if (e != null)
+			throw e;
+		return ret.value;
+	}
+	public byte [] read_async() throws IOException{
 		byte [] result;
 		int len = 0;
 
@@ -209,19 +338,72 @@ public class TinyTelnet {
 	 * @param cmd the command
 	 * @return output of the command or null if no prompt is set
 	 */
-	public void send(String cmd) throws IOException {
+	public void send(String cmd) throws IOException{
+		TelnetAsyncTask task = new TelnetAsyncTask(cmd);
+		IOException e;
+		try {
+			e = task.execute(SEND).get();
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return;
+		} catch (ExecutionException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return;
+		}
+		if (e != null)
+			throw e;
+	}
+	public void send_async(String cmd) throws IOException {
 		byte arr[];
 		arr = (cmd + "\r").getBytes(handler.getCharsetName());
 		handler.transpose(arr);
 	}
 
 	public void send_wo_r(String cmd) throws IOException {
+		TelnetAsyncTask task = new TelnetAsyncTask(cmd);
+		IOException e;
+		try {
+			e = task.execute(SEND_WO_R).get();
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return;
+		} catch (ExecutionException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return;
+		}
+		if (e != null)
+			throw e;
+	}
+	public void send_wo_r_async(String cmd) throws IOException  {
 		byte arr[];
 		arr = cmd.getBytes(handler.getCharsetName());
 		handler.transpose(arr);
 	}
 
-	public byte[] negotiate() throws IOException {
+	public byte[] negotiate() throws IOException{
+		Holder<byte[]> ret = new Holder<byte[]>();
+		TelnetAsyncTask task = new TelnetAsyncTask(ret);
+		IOException e;
+		try {
+			e = task.execute(NEGOTIATE).get();
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return null;
+		} catch (ExecutionException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return null;
+		}
+		if (e != null)
+			throw e;
+		return ret.value;
+	}
+	public byte[] negotiate_async() throws IOException {
 		/* process all already read bytes */
 		int n;
 		byte[] b = new byte[1];
@@ -242,5 +424,123 @@ public class TinyTelnet {
 		isNeged = true;
 		return b;
 	}
+	
+	public class TelnetAsyncTask extends AsyncTask<Integer, Void, IOException> {
+		byte[] b;
+		String s;
+		String[] sa;
+		Holder<String> ret_s;
+		Holder<byte[]> ret_byte;
+		String host;
+		int port;
+
+        public void setString(Holder<String> ret) {
+        	ret_s = ret;
+		}
+
+		public TelnetAsyncTask(String host2, int port2) {
+			host = host2;
+			port = port2;
+		}
+
+		public TelnetAsyncTask() {
+			// Maybe Nothing?
+		}
+
+		public TelnetAsyncTask(String match) {
+			s = match;
+		}
+
+		public TelnetAsyncTask(String[] matches) {
+			sa = matches;
+		}
+
+		public TelnetAsyncTask(Holder<byte[]> ret) {
+			ret_byte = ret;
+		}
+
+		@Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+         
+        
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+        }
+
+		@Override
+		protected IOException doInBackground(Integer... cmnd) {
+			switch(cmnd[0]){
+			case CONNECT:
+				try {
+					connect_async(host, port);
+				} catch (IOException e) {
+					return e;
+				}
+				break;
+			case DISCONNECT:
+				try {
+					disconnect_async();
+				} catch (IOException e) {
+					return e;
+				}
+				break;
+			case FLUSH:
+				try {
+					flush_async();
+				} catch (IOException e) {
+					return e;
+				}
+				break;
+			case WAITFOR:
+				try {
+					ret_s.value = waitfor_async(s);
+				} catch (IOException e) {
+					return e;
+				}
+				break;
+			case WAITFOR_ARRAY:
+				try {
+					ret_s.value = waitfor_async(sa);
+				} catch (IOException e) {
+					return e;
+				}
+				break;
+			case SEND:
+				try {
+					send_async(s);
+				} catch (IOException e) {
+					return e;
+				}
+				break;
+			case SEND_WO_R:
+				try {
+					send_wo_r_async(s);
+				} catch (IOException e) {
+					return e;
+				}
+				break;
+			case NEGOTIATE:
+				try {
+					ret_byte.value = negotiate_async();
+				} catch (IOException e) {
+					return e;
+				}
+				break;
+				
+			case READ:
+				try {
+					ret_byte.value = read_async();
+				} catch (IOException e) {
+					return e;
+				}
+				break;
+			}
+			return null;
+		}
+         
+    }
 
 }

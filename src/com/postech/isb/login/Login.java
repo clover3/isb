@@ -247,7 +247,7 @@ public class Login extends Activity {
 				} catch (Exception e) {
 					isb.disconnect();
 					handler.sendEmptyMessage(1);
-					Log.i(logName, "Connection Failed.");						
+					Log.i(logName, "Connection Failed.");
 				}
 			}
 
