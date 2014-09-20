@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.postech.isb"
-      android:versionCode="28" android:versionName="1.074">
+      android:versionCode="29" android:versionName="1.075">
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
     <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="14"/>
     <application android:icon="@drawable/icon" android:label="@string/app_name" android:name="PostechIsb">
@@ -16,7 +16,7 @@
             </intent-filter>
         </activity>
          
-        <activity android:label="@string/boardListTitle" android:name=".boardList.BoardList">
+        <activity android:name=".boardList.BoardList" android:theme="@android:style/Theme.NoTitleBar">
         	<intent-filter>
         		<action android:name="android.intent.action.PICK"></action>
         		<category android:name="android.intent.category.DEFAULT"></category>
@@ -25,11 +25,11 @@
         	</intent-filter>
 		</activity>
         
-		<activity android:label="@string/readBoardTitle" android:name=".readBoard.ReadBoards">
+		<activity android:label="@string/readBoardTitle" android:name=".readBoard.ReadBoards" android:theme="@android:style/Theme.NoTitleBar">
 		</activity>
 		
 		<activity android:label="@string/readThreadTitle" android:name=".readThread.ReadThread"
-		android:windowSoftInputMode="stateAlwaysHidden">
+		android:windowSoftInputMode="stateAlwaysHidden" android:theme="@android:style/Theme.NoTitleBar">
 		
 		</activity>
 
@@ -77,7 +77,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".preference.PreferenceList"></activity>
-        <activity android:name=".viewUser.ViewUser" android:label="@string/viewUserTItle"></activity>
+        <activity android:name=".viewUser.ViewUser" android:label="@string/viewUserTItle" android:theme="@android:style/Theme.NoTitleBar"></activity>
         						
 	</application>
 </manifest> 
