@@ -29,6 +29,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Canvas;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
@@ -45,6 +46,7 @@ import android.view.animation.AnimationUtils;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EdgeEffect;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -75,7 +77,7 @@ public class ReadThread extends Activity {
 
 	private TextView commentMessage;
 	private Button leaveCommentBtn;
-	private ScrollView readThreadScroll;
+	private MyScrollView readThreadScroll;
 
 	private LinearLayout linearLayout;
 	private LinearLayout linearLayoutInner;
@@ -136,7 +138,7 @@ public class ReadThread extends Activity {
 		prev = (Button) findViewById(R.id.prevThread);
 		next = (Button) findViewById(R.id.nextThread);
 
-		readThreadScroll = (ScrollView) findViewById(R.id.readThreadScroll);
+		readThreadScroll = (MyScrollView) findViewById(R.id.readThreadScroll);
 
 		boardName.setText(board);
 
@@ -599,6 +601,7 @@ public class ReadThread extends Activity {
 	private int m_nPreTouchPosY = 0;
 	private int m_nPreTouchPosX = 0;
 	private boolean on_drag = false;
+	private boolean over_line = false;
 	View.OnTouchListener MyTouchListener = new View.OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
@@ -610,37 +613,46 @@ public class ReadThread extends Activity {
 				m_nPreTouchPosY = (int) event.getY();
 				Log.i("newm", "m_nPreTouchPosX: "+m_nPreTouchPosX+" m_nPreTouchPosY: "+m_nPreTouchPosY);
 			}
+			else if( event.getAction() == MotionEvent.ACTION_MOVE && on_drag)
+			{
+				int nTouchPosX = (int) event.getX();
+				int nTouchPosY = (int) event.getY();
+				int result = GetTouchResult(nTouchPosX, nTouchPosY);
+				if( result == + 1 )
+				{
+					readThreadScroll.SetEffect(+1);
+					readThreadScroll.postInvalidate();
+					over_line = true;
+				}	
+				else if ( result == -1 )
+				{
+					readThreadScroll.SetEffect(-1);
+					readThreadScroll.postInvalidate();
+					over_line = true;
+				}
+				
+				if( result == 0 && over_line)
+				{
+					over_line = false;
+					readThreadScroll.SetEffect(0);
+					readThreadScroll.postInvalidate();
+					
+				}
+			}
 			else if (event.getAction() == MotionEvent.ACTION_UP && on_drag) {
 				int nTouchPosX = (int) event.getX();
 				int nTouchPosY = (int) event.getY();
 				on_drag = false;
 				
-				Log.i("newm", "nTouchPosX: "+nTouchPosX+" nTouchPosY: "+nTouchPosY);
-				
-				Display display = getWindowManager().getDefaultDisplay();
-				int width = display.getWidth();
+				readThreadScroll.SetEffect(0);
+				over_line = false;
+				int result = GetTouchResult(nTouchPosX, nTouchPosY);
 
-				Log.i("clover", "x : " + m_nPreTouchPosX + " -> " + nTouchPosX);
-				Log.i("clover", "Width = " + width );
+				if( result == + 1 )
+					updateThread(num + 1);		
+				else if ( result == -1 )
+					updateThread(num - 1);		
 				
-				if( Math.abs(nTouchPosX - m_nPreTouchPosX) < 4 
-				 && Math.abs(nTouchPosY - m_nPreTouchPosY) < 4  )
-				{
-					// Do Nothing 
-				}
-				else if(commentMessage.getText().length() == 0)
-				{
-					int gap = width / 5;
-					
-					if ( nTouchPosX - m_nPreTouchPosX < -gap && m_nPreTouchPosX > width * (3./4) ) 
-					{
-						updateThread(num + 1);				
-					} 
-					else if (nTouchPosX - m_nPreTouchPosX > gap && m_nPreTouchPosX < width / 4. ) 
-					{
-						updateThread(num - 1);
-					}
-				}
 				m_nPreTouchPosX = nTouchPosX;
 				m_nPreTouchPosY = nTouchPosY;
 			}
@@ -651,30 +663,39 @@ public class ReadThread extends Activity {
 		}
 	};
 	
-	class MyScrollView extends ScrollView{
-		public MyScrollView(Context context) {
-			super(context);
+	
+	int GetTouchResult(int nTouchPosX, int nTouchPosY)
+	{
+		int result = 0;
+		Log.i("newm", "nTouchPosX: "+nTouchPosX+" nTouchPosY: "+nTouchPosY);
+		
+		Display display = getWindowManager().getDefaultDisplay();
+		int width = display.getWidth();
+
+		Log.i("clover", "x : " + m_nPreTouchPosX + " -> " + nTouchPosX);
+		Log.i("clover", "Width = " + width );
+		
+		if( Math.abs(nTouchPosX - m_nPreTouchPosX) < 4 
+		 && Math.abs(nTouchPosY - m_nPreTouchPosY) < 4  )
+		{
+			// Do Nothing 
 		}
-		//스크롤뷰 이벤트 처리부분
-		public boolean onInterceptTouchEvent(MotionEvent ev){
-			int action = ev.getAction();
-			switch (action)
+		else if(commentMessage.getText().length() == 0)
+		{
+			int gap = width / 5;
+			
+			if ( nTouchPosX - m_nPreTouchPosX < -gap && m_nPreTouchPosX > width * (3./4) ) 
 			{
-				case MotionEvent.ACTION_DOWN:
-					// Disallow ScrollView to intercept touch events.
-//					this.getParent().requestDisallowInterceptTouchEvent(true);
-					break;
-
-				case MotionEvent.ACTION_UP:
-					// Allow ScrollView to intercept touch events.
-//					this.getParent().requestDisallowInterceptTouchEvent(false);
-					break;
+				result = +1;				
+			} 
+			else if (nTouchPosX - m_nPreTouchPosX > gap && m_nPreTouchPosX < width / 4. ) 
+			{
+				result = -1;
 			}
-			super.onTouchEvent(ev);
-			return true;
 		}
+		return result;
 	}
-
+	
 	@Override
 	public void onActivityResult(int reqCode, int resCode, Intent data) {
 		super.onActivityResult(reqCode, resCode, data);

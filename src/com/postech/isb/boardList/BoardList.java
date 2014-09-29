@@ -2,6 +2,8 @@ package com.postech.isb.boardList;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import com.postech.isb.PostechIsb;
 import com.postech.isb.R;
@@ -44,6 +46,7 @@ public class BoardList extends ListActivity {
 	static final private int FAVORITE = Menu.FIRST + 1;
 	static final private int FAVORITE_ONLY = Menu.FIRST + 2;
 	static final private int SEARCH_NEW = Menu.FIRST + 3;
+	static final private int MY_BOARD = Menu.FIRST + 4;
 
 	private IsbSession isb;
 	private ArrayList<Board> boardItems;
@@ -53,8 +56,14 @@ public class BoardList extends ListActivity {
 	private TextWatcher textWatcher;
 	private ProgressDialog pd;
 	private boolean isEmpty = true;
+	private boolean fExistMyboard = false;
+	private String myBoardGroup;
+	private String myBoardName; 
 
 	private static final String FAVORITE_ONLY_KEY = "FAVORITE_ONLY_KEY";
+	private static final String SAVE_MY_BOARD = "SAVE_MY_BOARD";
+	private static final String SAVED_MYBOARD_GROUP = "SAVED_MYBOARD_GROUP";
+	private static final String SAVED_MYBOARD_NAME = "SAVED_MYBOARD_NAME";
 
 	private boolean favoriteOnly = false;
 	private ArrayList<Board> board_items;
@@ -78,22 +87,46 @@ public class BoardList extends ListActivity {
 				pd.setMessage("Insert to Database...");
 				break;
 			case 3: {
-				int i;
-				boardAdapter.clear();
-				for (i = 0; i < board_items.size(); i++) {
-					Board tmp = board_items.get(i);
-					Log.i("newmbewb", "result: " + Boolean.toString(tmp.newt));
-					boardAdapter.add(tmp);
-				}
-				boardAdapter.notifyDataSetChanged();
-				isEmpty = boardAdapter.isEmpty();
-				boardAdapter.getFilter().filter(search.getText().toString());
+				UpdateBoardAdapter(board_items);
 			}
 				pd.dismiss();
 				break;
 			}
 		}
 	};
+	
+	void UpdateBoardAdapter(ArrayList<Board> list)
+	{
+		boardAdapter.clear();
+		
+		if( fExistMyboard )
+		{
+			for( Board board : list )
+			{
+				if( board.name.equalsIgnoreCase(myBoardName) )
+					boardAdapter.add(board);
+			}
+			for( Board board : list )
+			{
+				if( !board.name.equalsIgnoreCase(myBoardName) )
+					boardAdapter.add(board);
+			}
+		}
+		else
+		{
+			for( Board board : list )
+			{
+				if( board.myBoard)
+					boardAdapter.add(board);
+			}
+		}
+		
+		boardAdapter.notifyDataSetChanged();
+		isEmpty = boardAdapter.isEmpty();
+		boardAdapter.getFilter().filter(search.getText().toString());
+		
+	}
+	
 
 	/*
 	 * static class theLock extends Object { } static public theLock lockObject
@@ -137,6 +170,7 @@ public class BoardList extends ListActivity {
 		restoreUIState();
 
 		// DB
+		loadPreference();
 		boardDBAdapter = new IsbDBAdapter(this);
 		boardDBAdapter.open();
 		populateBoardList();
@@ -242,19 +276,47 @@ public class BoardList extends ListActivity {
 		String name;
 		boolean favorite;
 		Board newItem;
+		ArrayList<Board> list = new ArrayList<Board>();
 		if (boardListCursor.moveToFirst())
+		{
 			do {
 				name = boardListCursor.getString(IsbDBAdapter.BOARD_COLUMN);
 				favorite = boardListCursor.getInt(IsbDBAdapter.FAVORITE_COLUMN) == 1;
-				if (!favoriteOnly || favorite) {
-					newItem = new Board(name, favorite);
-					boardAdapter.add(newItem);
+				boolean fAddItem = false;
+				
+				if( favoriteOnly ){
+					if( favorite ){
+						fAddItem  = true;
+					}
+				}
+				else
+					fAddItem = true;
+				
+				if ( fAddItem ) {
+					if( isMyBoard(name))
+					{
+						newItem = new Board(name, true, true);
+					}
+					else
+						newItem = new Board(name, favorite);
+					list.add(newItem);
 				}
 			} while (boardListCursor.moveToNext());
-
-		boardAdapter.notifyDataSetChanged();
-		isEmpty = boardAdapter.isEmpty();
-		boardAdapter.getFilter().filter(search.getText().toString());
+		}
+		
+		UpdateBoardAdapter(list);
+	}
+	
+	boolean isMyBoard(String name)
+	{
+		boolean f = false;
+		if( fExistMyboard )
+		{
+			f = myBoardName.equalsIgnoreCase(name);
+			
+		}
+		
+		return f;
 	}
 
 	@Override
@@ -365,6 +427,7 @@ public class BoardList extends ListActivity {
 
 		menu.setHeaderTitle("Selected Board");
 		menu.add(0, FAVORITE, Menu.NONE, R.string.favorite);
+		menu.add(0, MY_BOARD, Menu.NONE, R.string.myboard);
 
 	}
 
@@ -382,8 +445,40 @@ public class BoardList extends ListActivity {
 			boardAdapter.toggleFavorite(index);
 			return true;
 		}
+		case (MY_BOARD): {
+			AdapterView.AdapterContextMenuInfo menuInfo;
+			menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+			int index = menuInfo.position;
+			Board b = boardAdapter.getItem(index);
+			if( fExistMyboard && b.myBoard )
+			{
+				SetAsMyboard(b.name, false);
+			}
+			else
+			{
+				if( !b.favorite )
+				{
+					boardDBAdapter.setFavoriteByName(b.name, !b.favorite);
+					boardAdapter.toggleFavorite(index);
+				}
+				SetAsMyboard(b.name, true);
+			}
+			loadPreference();
+		}
 		}
 		return false;
+	}
+	
+	// f == true -> Set 
+	// f == false -> Reset
+	void SetAsMyboard(String name, boolean f)
+	{
+		SharedPreferences uiState = getPreferences(MODE_PRIVATE);
+		SharedPreferences.Editor editor = uiState.edit();
+
+		editor.putBoolean(SAVE_MY_BOARD, f);
+		editor.putString(SAVED_MYBOARD_NAME, name);
+		editor.commit();
 	}
 
 	public String getBoardNameByInitial(String initial) {
@@ -409,5 +504,19 @@ public class BoardList extends ListActivity {
 		}
 
 		return boardname;
+	}
+	
+
+	private void loadPreference() {
+		SharedPreferences settings = getPreferences(MODE_PRIVATE);
+				
+		fExistMyboard = settings.getBoolean(SAVE_MY_BOARD, false);
+		if( fExistMyboard )
+		{
+			myBoardName = settings.getString(SAVED_MYBOARD_NAME, "");
+		}
+		else 
+			myBoardName = "";
+		
 	}
 }

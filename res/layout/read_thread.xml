@@ -49,7 +49,7 @@
   		android:background="#222">
   	</TextView>
  
-  	<ScrollView
+  	<com.postech.isb.readThread.MyScrollView
   		android:id="@+id/readThreadScroll"
   		android:layout_width="fill_parent" 
     	android:layout_height="fill_parent">
@@ -94,6 +94,6 @@
 			</Button>
 			
 	  	</LinearLayout>
-	</ScrollView>
+	</com.postech.isb.readThread.MyScrollView>
   
 </LinearLayout>

@@ -105,6 +105,11 @@ public class BoardAdapter extends ArrayAdapter<Board> implements Filterable {
 			((CheckBox)boardView.findViewById(R.id.favorite)).setChecked(isFavorite);
 			((TextView)boardView.findViewById(R.id.BoardListTitle)).setText(boardName);
 			((CheckBox)boardView.findViewById(R.id.favorite)).setClickable(false);
+			if( item.myBoard )
+			{
+				((CheckBox)boardView.findViewById(R.id.favorite)).setButtonDrawable(R.drawable.btn_star_on_pressed_holo_dark);
+			}
+			
 		}
 
 		return boardView;

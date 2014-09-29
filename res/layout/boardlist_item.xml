@@ -38,5 +38,5 @@
 		    android:textSize="15sp"
 		    android:textColor="#fff"
 		    android:text="Title">
-		</TextView>
+	</TextView>
 </LinearLayout>	

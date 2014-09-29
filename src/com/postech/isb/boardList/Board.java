@@ -4,6 +4,7 @@ public class Board implements Comparable {
 	public int key;
 	public String name;
 	public boolean favorite;
+	public boolean myBoard;
 	public boolean newt;
 	public boolean comment;
 	
@@ -15,6 +16,19 @@ public class Board implements Comparable {
 		this.key = key;
 		this.name = name;
 		this.favorite = favorite;
+		this.myBoard = false;
+		this.newt = false;
+		this.comment = false;
+	}
+
+	public Board (String _name, boolean _favorite, boolean _myboard) {
+		this(-1, _name, _favorite, _myboard);
+	}
+	public Board (int key, String _name, boolean _favorite, boolean _myboard) {
+		this.key = key;
+		this.name = _name;
+		this.favorite = _favorite;
+		this.myBoard = _myboard;
 		this.newt = false;
 		this.comment = false;
 	}
@@ -33,8 +47,14 @@ public class Board implements Comparable {
 
 	@Override
 	public int compareTo(Object arg0) {
+		String name1 = name;
+		String name2 = ((Board)arg0).name;
+		if( myBoard)
+			return -1;
+		if( ((Board)arg0).myBoard )
+			return 1;
 		// TODO Auto-generated method stub
-		return name.compareToIgnoreCase(((Board)arg0).name);
+		return name1.compareToIgnoreCase(name2);
 	}
 	
 	@Override
