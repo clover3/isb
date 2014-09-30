@@ -116,8 +116,7 @@ public class BoardList extends ListActivity {
 		{
 			for( Board board : list )
 			{
-				if( board.myBoard)
-					boardAdapter.add(board);
+				boardAdapter.add(board);
 			}
 		}
 		
@@ -247,7 +246,7 @@ public class BoardList extends ListActivity {
 									name = boardListCursor
 											.getString(IsbDBAdapter.BOARD_COLUMN);
 									result = isb.searchNewPost(name);
-									newItem = new Board(name, true);
+									newItem = CreateBoard(name, true);
 									newItem.setNewPost(result);
 									board_items.add(newItem);
 
@@ -269,6 +268,18 @@ public class BoardList extends ListActivity {
 		}
 	}
 
+	Board CreateBoard(String name, boolean favorite)
+	{
+		Board newItem;
+		if( isMyBoard(name))
+		{
+			newItem = new Board(name, true, true);
+		}
+		else
+			newItem = new Board(name, favorite, false);
+		return newItem;
+	}
+	
 	private void updateArray() {
 		boardListCursor.requery();
 		boardAdapter.clear();
@@ -293,12 +304,7 @@ public class BoardList extends ListActivity {
 					fAddItem = true;
 				
 				if ( fAddItem ) {
-					if( isMyBoard(name))
-					{
-						newItem = new Board(name, true, true);
-					}
-					else
-						newItem = new Board(name, favorite);
+					newItem = CreateBoard(name, favorite);
 					list.add(newItem);
 				}
 			} while (boardListCursor.moveToNext());

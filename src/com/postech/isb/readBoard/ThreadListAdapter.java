@@ -20,9 +20,19 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadList>{
 	static final private int USER_NONE = 0;
 	static final private int USER_PIETYPE = 1;
 	static final private int USER_CLOVER3 = 2;
+	static final private int USER_HEADERUSER = 3;
+	ArrayList<String> headerUsers;
 	public ThreadListAdapter(Context _context, int _resource, ArrayList<ThreadList> _items) {
 		super(_context, _resource, _items);
 		resource = _resource;
+		headerUsers = new ArrayList<String>();
+		headerUsers.add("³Ä¿Ë");
+		headerUsers.add("akdal");
+		headerUsers.add("lightningz");
+		headerUsers.add("´½•m");
+		headerUsers.add("clover3");
+		headerUsers.add("dari6");
+		
 	}
 	
 	class ViewWrapper {
@@ -133,6 +143,8 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadList>{
 			userID = USER_PIETYPE;
 		else if( item.writer.equals("clover3") )
 			userID = USER_CLOVER3;
+		else if( headerUsers.contains(item.writer) )
+			userID = USER_HEADERUSER;
 		
 		if( userID == USER_PIETYPE )
 		{
@@ -148,6 +160,15 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadList>{
 		{
 			if (item.title.startsWith("½½ºñ¾Û v")) {
 				item.header = "[½½ºñ¾Û]";
+			}
+		}
+		else if( userID == USER_HEADERUSER )
+		{
+			if( item.title.startsWith("[") && item.title.contains("]") )
+			{
+				int idx = item.title.indexOf(']')+1;
+				item.header = item.title.substring(0, idx);
+				item.title = item.title.substring(idx);
 			}
 		}
 	}
