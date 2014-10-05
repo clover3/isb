@@ -319,11 +319,11 @@ public class IsbSession {
 	/* < 정규표현식 해석 >
 	 * Raw String : "  175   pietype       9/ 8   11  > 슬비버그"
 	 * 
-	 * "^(?:\033\\[\\d+;1H) : 하이트라이트 여부( $1) 
+	 * "^(?:\033\\[\\d+;1H) : 커서 이동 ANSI escape code 
 	 * ?[ >]  : 공백이거나 꺽쇠문자('>')  
-	 * (\033\\[7m) : ($2)
+	 * (\033\\[7m) : Highlight 여부
 	 * ?\\s*(\\d+) : 글 번호
-	 * (?:\033\\[27m) : 
+	 * (?:\033\\[27m) : Highlight 끝
 	 * ?(.)(.) : N과 m 으로 마킹된 여부
 	 * \\s* : 공백
 	 * (\\S+) : 아이디
@@ -721,7 +721,7 @@ public class IsbSession {
 	}
 	
 	//static final Pattern lastNumP = Pattern.compile("^(?:\033\\[\\d+;1H)?[ >](?:\033\\[7m)?\\s*(\\d+)(?:\033\\[27m)?.*$");
-	static final Pattern lastNumP = Pattern.compile("^[ >] *(\\d+)[^\n]*$");
+	static final Pattern lastNumP = Pattern.compile("^[ >](?:\033\\[7m)? *(\\d+)[^\n]*$");
 	
 	private int getLastThreadNum(String msg) {
 		int lastIdx = msg.lastIndexOf("\r\00");
