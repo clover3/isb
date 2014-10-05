@@ -526,7 +526,7 @@ public class ReadBoards extends ListActivity {
         	IsbThread t;
 			try {
 				t = isb.readThread(board, editing_t);
-				String title = listAdapter.getItem(index).title;
+				String title = listAdapter.getItem(index).GetRawTitle();
 				String note;
 				if (title.matches("[\\s]*$")){
 					title = "tmp_title_for_empty_title_haha_hehe_hoho_huhu_nyahahahahahahaha";

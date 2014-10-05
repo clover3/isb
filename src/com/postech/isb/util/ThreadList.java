@@ -18,6 +18,7 @@ public class ThreadList implements Serializable, Comparable {
 	public String header;
 	public int cnt;
 	public String title;
+	private String rawTitle;
 	public boolean highlight;
 	
 	public ThreadList () {
@@ -28,6 +29,22 @@ public class ThreadList implements Serializable, Comparable {
 		title = "Error";
 		highlight = false;
 		notdel = false;
+		rawTitle = "";
+	}
+	
+	public String GetRawTitle()
+	{
+		if( rawTitle.length() == 0 )
+			return title;
+		else
+			return rawTitle;
+	}
+	
+	public void SetTitle(String str)
+	{
+		if( rawTitle.length() == 0 )
+			rawTitle = title;
+		title = str;
 	}
 
 	@Override

@@ -206,7 +206,7 @@ public class ReadThread extends Activity {
 		linearLayout.setOnTouchListener(MyTouchListener);
 		readThreadScroll.setOnTouchListener(MyTouchListener);
 		linearLayoutInner = (LinearLayout) findViewById(R.id.linearLayoutInsideScroll);
-		linearLayoutInner.setOnTouchListener(MyTouchListener);	
+		linearLayoutInner.setOnTouchListener(MyTouchListener);
 		threadBody.setOnTouchListener(MyTouchListener);
 		comments.setOnTouchListener(MyTouchListener);
 		commentMessage.addTextChangedListener(commentWatcherInput);
@@ -364,7 +364,7 @@ public class ReadThread extends Activity {
 		}
 		return str;
 	}
-	
+
 	private class CommentList
 	{
 		public class Comment {
@@ -399,18 +399,19 @@ public class ReadThread extends Activity {
 				}
 				else
 				{
-		//			Log.i("isb", "CommentList::Add() No match add new line");
-					arrComment.add(new Comment(strWriter, strComment, strWhen) );
+					// Log.i("isb", "CommentList::Add() No match add new line");
+					arrComment.add(new Comment(strWriter, strComment, strWhen));
 				}
 			}
 			else
 				arrComment.add(new Comment(strWriter, strComment, strWhen) );
 
-		//	Log.i("isb", "CommentList::Add() strComment.length=" + strComment.length());
-			if( strComment.length() > 24 )
+			int[] ret = hangulCountLines(strComment);
+			//Log.i("isb", "line=" + ret[0] + " / byte=" + ret[1] );
+			if( ret[0] > 0 || ret[1] >= 48 )
 				fPending = true;
 			else
-				fPending = false; 
+				fPending = false;
 		}
 	};
 
@@ -428,8 +429,8 @@ public class ReadThread extends Activity {
 		writer.setTextSize(15);
 
 		when = new TextView(this);
-//		when.setText(strWhen);
-//		when.setPadding(0, 0, 5, 0);
+		// when.setText(strWhen);
+		// when.setPadding(0, 0, 5, 0);
 
 		comment = new TextView(this);
 
@@ -458,11 +459,11 @@ public class ReadThread extends Activity {
 			_addCommentLine(_CommentList.arrComment.get(i));
 		}
 	}
-	
+
 	private boolean updateThread(int _num) {
 		try {
 			if (isb.isMain()) {
-				boolean readNext = (_num >= num ); 
+				boolean readNext = (_num >= num);
 				IsbThread t = isb.readThread(board, _num);
 				CommentList _CommentList = new CommentList();
 				if (t != null) {
@@ -498,7 +499,7 @@ public class ReadThread extends Activity {
 							String strWhen = m.replaceAll("$2");
 							String strComment = m.replaceAll("$3");
 							_CommentList.Add(strWriter, strComment, strWhen);
-							
+
 						} else
 							Log.i("debug", "ReadThread unmatch : " + token);
 					}
@@ -508,7 +509,7 @@ public class ReadThread extends Activity {
 					prev.setVisibility(num == 1 ? View.INVISIBLE : View.VISIBLE);
 					next.setVisibility(View.VISIBLE);
 					readThreadScroll.smoothScrollTo(0, 0);
-					
+
 					return true;
 				} else {
 					Toast.makeText(getApplicationContext(), "No more thread!",

@@ -32,7 +32,20 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadList>{
 		headerUsers.add("´½•m");
 		headerUsers.add("clover3");
 		headerUsers.add("dari6");
-		
+		headerUsers.add("zogondragon");
+		headerUsers.add("hersammc");
+		headerUsers.add("jellyfish");
+		headerUsers.add("nyamnyam33");
+		headerUsers.add("uneasiness");
+		headerUsers.add("dreamseed");
+		headerUsers.add("yanggil");
+		headerUsers.add("Chun");
+		headerUsers.add("jinmel");
+		headerUsers.add("´Ï¿À´Ã");
+		headerUsers.add("shinichi");
+		headerUsers.add("icothos");
+		headerUsers.add("il0428");
+		headerUsers.add("codinger");
 	}
 	
 	class ViewWrapper {
@@ -102,7 +115,7 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadList>{
 			return title_line;
 		}
 	}
-
+	
 	String TranslateHeader_Pietype(String header)
 	{
 		String NewHeader = "";
@@ -135,6 +148,27 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadList>{
 		}
 		return NewHeader;
 	}
+	
+	boolean ExtractHeader_Clover(ThreadList item)
+	{
+		boolean f = true;
+		if( item.title.startsWith("MS ") || 
+				item.title.startsWith("À©µµ¿ì ") )
+		{
+			item.header = "[MS]";
+		}
+		else if (item.title.contains("½½ºñ¾Û")) {
+			item.header = "[½½ºñ¾Û]";
+		}
+		else if (item.title.startsWith("[C++]")) {
+			item.header = "[C++]";
+			item.SetTitle(item.title.substring(6));
+		}
+		else 
+			f = false;
+		
+		return f;
+	}
 
 	void TranslateItem(ThreadList item) {
 
@@ -151,16 +185,14 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadList>{
 			if (item.title.contains(">")) {
 				int idx = item.title.indexOf(">");
 				item.header = TranslateHeader_Pietype(item.title.substring(0, idx));
-				item.title = item.title.substring(idx + 1);
+				item.SetTitle(item.title.substring(idx + 1));
 			} else {
 
 			}
 		}
 		else if( userID == USER_CLOVER3 )
 		{
-			if (item.title.startsWith("½½ºñ¾Û v")) {
-				item.header = "[½½ºñ¾Û]";
-			}
+			ExtractHeader_Clover(item);
 		}
 		else if( userID == USER_HEADERUSER )
 		{
@@ -168,7 +200,7 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadList>{
 			{
 				int idx = item.title.indexOf(']')+1;
 				item.header = item.title.substring(0, idx);
-				item.title = item.title.substring(idx);
+				item.SetTitle(item.title.substring(idx));
 			}
 		}
 	}
