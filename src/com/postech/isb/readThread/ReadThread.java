@@ -402,7 +402,7 @@ public class ReadThread extends Activity {
 					// Log.i("isb", "CommentList::Add() No match add new line");
 					arrComment.add(new Comment(strWriter, strComment, strWhen));
 				}
-			}
+			} 
 			else
 				arrComment.add(new Comment(strWriter, strComment, strWhen) );
 
@@ -437,6 +437,8 @@ public class ReadThread extends Activity {
 		addRefLink(comment, strComment);
 		comment.setTextColor(0xFFFFFFFF);
 		comment.setTextSize(15);
+
+		Linkify.addLinks(comment, Linkify.WEB_URLS);
 
 		TableRow row;
 		row = new TableRow(this);
