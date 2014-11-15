@@ -15,7 +15,7 @@
 
 	<string name="write">Write</string>
 	<string name="delete">Delete</string>
-	<string name="cancle">Cancle</string>
+	<string name="cancle">Cancel</string>
 	<string name="delete_confirm">정말로 지우시겠습니까?</string>
 	<string name="inverse">Inverse</string>
 	<string name="mark">Mark</string>
