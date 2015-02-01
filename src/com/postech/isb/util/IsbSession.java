@@ -1093,6 +1093,13 @@ public class IsbSession {
 		return result;
 	}
 	
+	public void sendHeartBeat() throws IOException {
+		if (state == MAIN){
+			telnet.send_wo_r("p");
+			telnet.waitfor("\007");
+		}
+	}
+	
 	
 	public native int[] hangulCutter(String jstr);
 	public native int[] hangulAscii(String jstr);

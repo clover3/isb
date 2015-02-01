@@ -40,6 +40,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class BoardList extends ListActivity {
 
 	static final private int REFRESH = Menu.FIRST;
@@ -173,7 +176,25 @@ public class BoardList extends ListActivity {
 		boardDBAdapter = new IsbDBAdapter(this);
 		boardDBAdapter.open();
 		populateBoardList();
+		
+		// Run heartbeat
+		HeartBeater heartBeater = new HeartBeater();
+		Timer heartBeatTimer = new Timer();
+		// isb server timeout limit: 15 minutes
+		heartBeatTimer.schedule(heartBeater, 14 * 60 * 1000, 14 * 60 * 1000);
 	}
+	
+	class HeartBeater extends TimerTask {
+		  public void run() {
+			  try{
+				  isb.sendHeartBeat();
+			  }
+			  catch (IOException e){
+			 Toast.makeText(getApplicationContext(), "Connection lost!",
+						  Toast.LENGTH_SHORT).show();
+			 }
+		  }
+		}
 
 	private void restoreUIState() {
 		SharedPreferences settings = getPreferences(MODE_PRIVATE);
