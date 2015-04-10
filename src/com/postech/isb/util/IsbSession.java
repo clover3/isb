@@ -49,7 +49,7 @@ public class IsbSession {
 	
 	private void debugMessage(String msg, int degree) {
 		if (degree <= debug)
-			Log.i("IsbSeesion", msg);
+			Log.i("IsbSession", msg);
 	}
 
 	public void connect() throws IOException, SocketTimeoutException {
@@ -407,7 +407,7 @@ public class IsbSession {
 	 * @return 3: new thread, new comment
 	 */
 	public int searchNewPost(String board) throws IOException{
-		int i, num, result = 0, cursize;
+		int i, result = 0, cursize;
 		if (!goToBoard(board)) {
 			debugMessage("getThreadList: go to board fail.", WARN);
 			return 0;
@@ -417,11 +417,28 @@ public class IsbSession {
 
 		ArrayList<ThreadList> current;
 		current = parseOnePage(msg);
+		// Getting the last page start here
+		telnet.send_wo_r("$"); // in case of having been visited.
+		
+		String [] response = new String[3];
+		response[0] = "(?s).*>$"; // Already last page.
+		response[1] = "(?s).*;2H$"; // Page change && cursor was not on top.
+		response[2] = "\007"; // No thread
+		
+		msg = telnet.waitfor(response);
+		
+		if (msg.matches(response[0]) == false) // Page change occur.
+		{
+			debugMessage("Current Pape is not the last page.", INFO);
+			current = parseOnePage(msg);
+			debugMessage("Parsing the last page finish.", INFO);
+		}
+		// End of getting the last page
+		
 		if (gotoMenu(MAIN))
 			debugMessage("Go back to main successfully", INFO);
 		cursize = current.size();
-		num = cursize < 30 ? cursize : 30;
-		for (i = 0; i < num; i++){
+		for (i = 0; i < cursize; i++){
 			if (current.get(cursize - i - 1).newt)
 				result |= 1;
 			if (current.get(cursize - i - 1).comment)

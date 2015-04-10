@@ -1,5 +1,7 @@
 package com.postech.isb.boardList;
 
+import android.util.Log;
+
 public class Board implements Comparable {
 	public int key;
 	public String name;
@@ -39,8 +41,9 @@ public class Board implements Comparable {
 	}
 	
 	public void setNewPost(int result) {
-		if ((result & 0x1) != 0)
+		if ((result & 0x1) != 0){
 			this.newt = true;
+		}
 		if ((result & 0x2) != 0)
 			this.comment = true;
 	}

@@ -190,8 +190,6 @@ public class BoardList extends ListActivity {
 				  isb.sendHeartBeat();
 			  }
 			  catch (IOException e){
-			 Toast.makeText(getApplicationContext(), "Connection lost!",
-						  Toast.LENGTH_SHORT).show();
 			 }
 		  }
 		}
@@ -249,7 +247,7 @@ public class BoardList extends ListActivity {
 	private void SearchNew() {
 		if (isb.isMain()) {
 			boardListCursor.requery();
-			pd = ProgressDialog.show(BoardList.this, "Refresh Board list...",
+			pd = ProgressDialog.show(BoardList.this, "Searching...",
 					"Getting data from Isb...", true, false);
 			new Thread(new Runnable() {
 				@Override
@@ -490,6 +488,7 @@ public class BoardList extends ListActivity {
 				}
 				SetAsMyboard(b.name, true);
 			}
+			boardAdapter.toggleMyboard(index);
 			loadPreference();
 		}
 		}
