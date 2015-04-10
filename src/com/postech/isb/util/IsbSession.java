@@ -706,34 +706,76 @@ public class IsbSession {
 		t.title = title;
 
 		String commentHeader = "式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式 醴詮お √ 式";
-		String commentTail = "式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式 醴詮お ﹦ 式";
+		String commentTail   = "式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式 醴詮お ﹦ 式";
 
-		
-		StringBuffer contents = new StringBuffer();
-		// new line bug (github #4)
-		String contentFirstLine = s.next();
-		contents.append(contentFirstLine);
-		
-		while (s.hasNext())
-		{
-			String token = s.next();
-			if (token.contains(commentHeader))
-				break;
-			contents.append("\n" + token);
-		}		
-		t.contents = contents.toString();
+		boolean end_of_thread = true;
+		Pattern p_comment = Pattern
+				.compile("^\\s*(\\w+)\\((\\d+,\\d+:\\d+)\\):\"(.*)\"\n?$");
+		Pattern p_not_white_space = Pattern.compile("^\\S+");
+		t.contents = "";
+		t.comments= "";
+		do{
+			StringBuffer contents = new StringBuffer();
+			// new line bug (github #4)
+			String contentFirstLine = s.next();
+			contents.append(contentFirstLine);
+			while (s.hasNext())
+			{
+				String token = s.next();
+				if (token.contains(commentHeader))
+					break;
+				contents.append("\n" + token);
+			}
 
-		StringBuffer comments = new StringBuffer();
-		while (s.hasNext())
-		{
-			String token = s.next();
-			if (token.contains(commentTail))
-				break;
-			comments.append(token);
-			comments.append("\n");
-		}
-		t.comments = comments.toString(); 
+			t.contents += contents.toString();
+		
+			StringBuffer comments = new StringBuffer();
+			boolean end_of_comments = true;
+			while (s.hasNext())
+			{
+				String token = s.next();
+				if (token.contains(commentTail)){
+					t.comments = comments.toString();
+					break;
+				}
+				comments.append(token);
+				comments.append("\n");
+				Matcher match = p_comment.matcher(token.toString());
+				if (!match.matches()){
+					Log.i("newm", "Unfinished comment!");
+					Log.i("newm", token.toString());
+					t.contents += commentHeader+"\n";
+					t.contents += comments.toString();
+					t.comments = "";
+					end_of_thread = false;
+					end_of_comments = false;
+					break;
+				}
+			}
+			if (!end_of_comments)
+				continue;
 			
+			
+			end_of_thread = true;
+			StringBuffer remaining_lines = new StringBuffer();
+			
+			while (s.hasNext()){
+				String token = s.next();
+				remaining_lines.append(token);
+				if (s.hasNext(p_not_white_space)){
+					Log.i("newm", "Lines after comment have been detected!");
+					if (token.length() > 0){
+						end_of_thread = false;
+						t.contents += commentHeader + "\n";
+						t.contents += t.comments;
+						t.contents += commentTail + "\n";
+						t.contents += remaining_lines.toString();
+						break;
+					}
+				}
+			}
+		} while(!end_of_thread);
+
 		return t;
 	}
 	
