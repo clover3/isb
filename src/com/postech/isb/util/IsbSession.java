@@ -711,7 +711,7 @@ public class IsbSession {
 		boolean end_of_thread = true;
 		Pattern p_comment = Pattern
 				.compile("^\\s*(\\w+)\\((\\d+,\\d+:\\d+)\\):\"(.*)\"\n?$");
-		Pattern p_not_white_space = Pattern.compile("^\\S+");
+		Pattern p_not_white_space = Pattern.compile(".+");
 		t.contents = "";
 		t.comments= "";
 		do{
