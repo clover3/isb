@@ -764,14 +764,13 @@ public class IsbSession {
 				remaining_lines.append(token);
 				if (s.hasNext(p_not_white_space)){
 					Log.i("newm", "Lines after comment have been detected!");
-					if (token.length() > 0){
-						end_of_thread = false;
-						t.contents += commentHeader + "\n";
-						t.contents += t.comments;
-						t.contents += commentTail + "\n";
-						t.contents += remaining_lines.toString();
-						break;
-					}
+					end_of_thread = false;
+					t.contents += commentHeader + "\n";
+					t.contents += t.comments;
+					t.contents += commentTail + "\n";
+					t.contents += remaining_lines.toString();
+					t.comments = "";
+					break;
 				}
 			}
 		} while(!end_of_thread);
