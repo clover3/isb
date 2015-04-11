@@ -714,11 +714,12 @@ public class IsbSession {
 		Pattern p_not_white_space = Pattern.compile(".+");
 		t.contents = "";
 		t.comments= "";
+		StringBuffer contents = new StringBuffer();
+		// new line bug (github #4)
+		String contentFirstLine = s.next();
+		contents.append(contentFirstLine);
 		do{
-			StringBuffer contents = new StringBuffer();
-			// new line bug (github #4)
-			String contentFirstLine = s.next();
-			contents.append(contentFirstLine);
+			contents = new StringBuffer();
 			while (s.hasNext())
 			{
 				String token = s.next();
