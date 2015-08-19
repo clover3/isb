@@ -147,8 +147,6 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadList>{
 				NewHeader = "[Others]";
 			else if(header.equals("K"))
 				NewHeader = "[Musik]";
-			else if(header.equals("Y"))
-				NewHeader = "[Yeonae]";
 		}
 		return NewHeader;
 	}
