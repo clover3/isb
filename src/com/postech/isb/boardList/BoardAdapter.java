@@ -78,6 +78,24 @@ public class BoardAdapter extends ArrayAdapter<Board> implements Filterable {
 		super.notifyDataSetChanged();
 	}
 	
+	public void toggleMyboard(int index) {
+		Board t = getItem(index);
+		boolean myboard = !t.myBoard;
+		
+		Log.i("debug", "mDataShown : " + mDataShown.size());
+		for (int i = 0; i < mDataShown.size(); i++){
+			Board t_other = getItem(i);
+			t_other.myBoard = false;
+			mDataShown.set(i, t_other);
+			mAllData.set(mAllData.indexOf(t_other), t_other);
+		}
+		
+		t.myBoard = myboard;
+		mDataShown.set(index, t);
+		mAllData.set(mAllData.indexOf(t), t);
+		super.notifyDataSetChanged();
+	}
+	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View boardView = convertView;

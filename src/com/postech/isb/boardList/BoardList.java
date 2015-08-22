@@ -41,6 +41,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class BoardList extends ListActivity {
 
 	static final private int REFRESH = Menu.FIRST;
@@ -179,7 +182,23 @@ public class BoardList extends ListActivity {
 		boardDBAdapter = new IsbDBAdapter(this);
 		boardDBAdapter.open();
 		populateBoardList();
+		
+		// Run heartbeat
+		HeartBeater heartBeater = new HeartBeater();
+		Timer heartBeatTimer = new Timer();
+		// isb server timeout limit: 15 minutes
+		heartBeatTimer.schedule(heartBeater, 14 * 60 * 1000, 14 * 60 * 1000);
 	}
+	
+	class HeartBeater extends TimerTask {
+		  public void run() {
+			  try{
+				  isb.sendHeartBeat();
+			  }
+			  catch (IOException e){
+			 }
+		  }
+		}
 
 	private void restoreUIState() {
 		SharedPreferences settings = getPreferences(MODE_PRIVATE);
@@ -234,7 +253,7 @@ public class BoardList extends ListActivity {
 	private void SearchNew() {
 		if (isb.isMain()) {
 			boardListCursor.requery();
-			pd = ProgressDialog.show(BoardList.this, "Refresh Board list...",
+			pd = ProgressDialog.show(BoardList.this, "Searching...",
 					"Getting data from Isb...", true, false);
 			new Thread(new Runnable() {
 				@Override
@@ -475,6 +494,7 @@ public class BoardList extends ListActivity {
 				}
 				SetAsMyboard(b.name, true);
 			}
+			boardAdapter.toggleMyboard(index);
 			loadPreference();
 		}
 		}

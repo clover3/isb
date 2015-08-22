@@ -49,7 +49,7 @@ public class IsbSession {
 	
 	private void debugMessage(String msg, int degree) {
 		if (degree <= debug)
-			Log.i("IsbSeesion", msg);
+			Log.i("IsbSession", msg);
 	}
 
 	public void connect() throws IOException, SocketTimeoutException {
@@ -407,7 +407,7 @@ public class IsbSession {
 	 * @return 3: new thread, new comment
 	 */
 	public int searchNewPost(String board) throws IOException{
-		int i, num, result = 0, cursize;
+		int i, result = 0, cursize;
 		if (!goToBoard(board)) {
 			debugMessage("getThreadList: go to board fail.", WARN);
 			return 0;
@@ -417,11 +417,28 @@ public class IsbSession {
 
 		ArrayList<ThreadList> current;
 		current = parseOnePage(msg);
+		// Getting the last page start here
+		telnet.send_wo_r("$"); // in case of having been visited.
+		
+		String [] response = new String[3];
+		response[0] = "(?s).*>$"; // Already last page.
+		response[1] = "(?s).*;2H$"; // Page change && cursor was not on top.
+		response[2] = "\007"; // No thread
+		
+		msg = telnet.waitfor(response);
+		
+		if (msg.matches(response[0]) == false) // Page change occur.
+		{
+			debugMessage("Current Pape is not the last page.", INFO);
+			current = parseOnePage(msg);
+			debugMessage("Parsing the last page finish.", INFO);
+		}
+		// End of getting the last page
+		
 		if (gotoMenu(MAIN))
 			debugMessage("Go back to main successfully", INFO);
 		cursize = current.size();
-		num = cursize < 30 ? cursize : 30;
-		for (i = 0; i < num; i++){
+		for (i = 0; i < cursize; i++){
 			if (current.get(cursize - i - 1).newt)
 				result |= 1;
 			if (current.get(cursize - i - 1).comment)
@@ -689,34 +706,76 @@ public class IsbSession {
 		t.title = title;
 
 		String commentHeader = "式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式 醴詮お √ 式";
-		String commentTail = "式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式 醴詮お ﹦ 式";
+		String commentTail   = "式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式 醴詮お ﹦ 式";
 
-		
+		boolean end_of_thread = true;
+		Pattern p_comment = Pattern
+				.compile("^\\s*(\\w+)\\((\\d+,\\d+:\\d+)\\):\"(.*)\"\n?$");
+		Pattern p_not_white_space = Pattern.compile(".+");
+		t.contents = "";
+		t.comments= "";
 		StringBuffer contents = new StringBuffer();
 		// new line bug (github #4)
 		String contentFirstLine = s.next();
 		contents.append(contentFirstLine);
-		
-		while (s.hasNext())
-		{
-			String token = s.next();
-			if (token.contains(commentHeader))
-				break;
-			contents.append("\n" + token);
-		}		
-		t.contents = contents.toString();
+		do{
+			contents = new StringBuffer();
+			while (s.hasNext())
+			{
+				String token = s.next();
+				if (token.contains(commentHeader))
+					break;
+				contents.append("\n" + token);
+			}
 
-		StringBuffer comments = new StringBuffer();
-		while (s.hasNext())
-		{
-			String token = s.next();
-			if (token.contains(commentTail))
-				break;
-			comments.append(token);
-			comments.append("\n");
-		}
-		t.comments = comments.toString(); 
+			t.contents += contents.toString();
+		
+			StringBuffer comments = new StringBuffer();
+			boolean end_of_comments = true;
+			while (s.hasNext())
+			{
+				String token = s.next();
+				if (token.contains(commentTail)){
+					t.comments = comments.toString();
+					break;
+				}
+				comments.append(token);
+				comments.append("\n");
+				Matcher match = p_comment.matcher(token.toString());
+				if (!match.matches()){
+					Log.i("newm", "Unfinished comment!");
+					Log.i("newm", token.toString());
+					t.contents += commentHeader+"\n";
+					t.contents += comments.toString();
+					t.comments = "";
+					end_of_thread = false;
+					end_of_comments = false;
+					break;
+				}
+			}
+			if (!end_of_comments)
+				continue;
 			
+			
+			end_of_thread = true;
+			StringBuffer remaining_lines = new StringBuffer();
+			
+			while (s.hasNext()){
+				String token = s.next();
+				remaining_lines.append(token);
+				if (s.hasNext(p_not_white_space)){
+					Log.i("newm", "Lines after comment have been detected!");
+					end_of_thread = false;
+					t.contents += commentHeader + "\n";
+					t.contents += t.comments;
+					t.contents += commentTail + "\n";
+					t.contents += remaining_lines.toString();
+					t.comments = "";
+					break;
+				}
+			}
+		} while(!end_of_thread);
+
 		return t;
 	}
 	
@@ -1091,6 +1150,13 @@ public class IsbSession {
 			debugMessage("Go back to main successfully", WARN);
 
 		return result;
+	}
+	
+	public void sendHeartBeat() throws IOException {
+		if (state == MAIN){
+			telnet.send_wo_r("p");
+			telnet.waitfor("\007");
+		}
 	}
 	
 	

@@ -469,7 +469,7 @@ public class ReadThread extends Activity {
 				IsbThread t = isb.readThread(board, _num);
 				CommentList _CommentList = new CommentList();
 				if (t != null) {
-
+					readThreadScroll.fullScroll(View.FOCUS_UP);
 					boardName.setText(board + " (" + _num + ")");
 					threadHead.setText(t.writer + "\n" + t.date + "\n"
 							+ t.title);
