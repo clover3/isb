@@ -21,6 +21,7 @@ import com.postech.isb.R.id;
 import com.postech.isb.R.layout;
 import com.postech.isb.R.string;
 import com.postech.isb.compose.NotePad.Notes;
+import com.postech.isb.util.TouchMenuManager;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -42,6 +43,7 @@ import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
 /**
@@ -91,6 +93,8 @@ public class NoteEditor extends Activity {
     /** Request code */
     public static final int PICK_BOARD = 1;
 
+    
+	private TouchMenuManager menuMan; 
     /**
      * A custom EditText that draws lines between each line of text that is displayed.
      */
@@ -185,6 +189,11 @@ public class NoteEditor extends Activity {
         // The text view for our note, identified by its ID in the XML file.
         mText = (EditText) findViewById(R.id.note);
 
+        // Touch Menu Call Handler
+
+    	menuMan = new TouchMenuManager(this);
+    	mText.setOnTouchListener(menuMan.MyTouchListener);
+        
         // Get the note!
         mCursor = managedQuery(mUri, PROJECTION, null, null, null);
         

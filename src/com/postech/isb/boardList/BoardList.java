@@ -13,6 +13,7 @@ import com.postech.isb.R.layout;
 import com.postech.isb.R.string;
 import com.postech.isb.readBoard.ReadBoards;
 import com.postech.isb.util.IsbSession;
+import com.postech.isb.util.TouchMenuManager;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -59,6 +60,7 @@ public class BoardList extends ListActivity {
 	private boolean fExistMyboard = false;
 	private String myBoardGroup;
 	private String myBoardName; 
+	private TouchMenuManager menuMan; 
 
 	private static final String FAVORITE_ONLY_KEY = "FAVORITE_ONLY_KEY";
 	private static final String SAVE_MY_BOARD = "SAVE_MY_BOARD";
@@ -144,9 +146,13 @@ public class BoardList extends ListActivity {
 		boardAdapter = new BoardAdapter(this, R.layout.boardlist_item,
 				boardItems);
 
-		setListAdapter(boardAdapter);
+		setListAdapter(boardAdapter); 
 		registerForContextMenu(getListView());
 
+    	menuMan = new TouchMenuManager(this);
+    	ListView lv = (ListView)findViewById(android.R.id.list);
+        lv.setOnTouchListener(menuMan.MyTouchListener);
+		
 		search = (EditText) findViewById(R.id.searchBoard);
 		textWatcher = new TextWatcher() {
 			@Override
