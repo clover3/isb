@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="boardlist_paper">#AAFFFF99</color>
+	<color name="boardlist_lines">#000000</color>
+	<color name="boardlist_margin">#90FF0000</color>
+	<color name="boardlist_text">#FFFFFF00</color>
+	<color name="boardlist_lines_highlight">#FF555555</color>
+</resources>
