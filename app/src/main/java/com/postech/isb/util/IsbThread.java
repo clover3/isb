@@ -17,4 +17,5 @@ public class IsbThread implements Serializable{
 	public String title;
 	public String contents;
 	public String comments;
+	public String cc;
 }

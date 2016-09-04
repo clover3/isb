@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 
 import com.postech.isb.boardList.Board;
+import com.postech.isb.compose.NoteEditor;
 import com.postech.isb.viewUser.IsbUser;
 
 public class IsbSession {
@@ -20,6 +21,10 @@ public class IsbSession {
 	private final static int MAIN = 2;
 	private final static int SELECT_BOARD = 3;
 	private final static int BOARD = 4;
+	private final static int DIARY = 5;
+	private final static int MAIL = 6;
+	private final static int WRITE_MAIL = 7;
+	private final static int MYBBS_MAIN = 8;
 	private int debug = 0;
 	
 	private final static int ERROR = 1;
@@ -40,7 +45,8 @@ public class IsbSession {
 	
 	private TinyTelnet telnet;
 	private int state;
-	public String userId;
+	public static String userId;
+	public static boolean new_mail = false;
 
 	public IsbSession() {
 		telnet = new TinyTelnet(80, NUM_ROWS);
@@ -50,6 +56,16 @@ public class IsbSession {
 	private void debugMessage(String msg, int degree) {
 		if (degree <= debug)
 			Log.i("IsbSession", msg);
+	}
+
+	private void checkNewMail(String msg) {
+		// Note! Just entering the board list does not refresh 'new_mail'.
+		if (msg.contains("[새편지왔어요~]")) {
+			Log.i("newmbewb", "new mail!");
+			new_mail = true;
+		}
+		else
+			new_mail = false;
 	}
 
 	public void connect() throws IOException, SocketTimeoutException {
@@ -121,6 +137,7 @@ public class IsbSession {
 				debugMessage("Login Success.", debug);
 				telnet.send_wo_r(" ");
 				msg = telnet.waitfor("(?s).*\033\\[27m$");
+				checkNewMail(msg);
 				debugMessage(msg, INFO);
 
 				result = true;
@@ -140,6 +157,7 @@ public class IsbSession {
 
 					telnet.send_wo_r(" ");
 					msg = telnet.waitfor("(?s).*\033\\[27m$");
+					checkNewMail(msg);
 					debugMessage(msg, INFO);
 
 					debugMessage("Login Success with evict.", INFO);
@@ -162,10 +180,15 @@ public class IsbSession {
 		String result = new String("");
 
 		switch (dst) {
-		case SELECT_BOARD: result = new String("(?s).*게시판 선택 : (?:\033\\[K)?$"); break;
-		case MAIN: result = new String("(?s).*(?:\033\\[2;73H|\\[27m)$"); break;
-		case NOT_CONNECTED: result = new String("(?s).*-\r\n$"); break;
-		case BOARD: result = new String("(?s).*\\[\\d+;2H$|.*게시판이 비어있습니다.\n\r\0$"); break;
+			case SELECT_BOARD: result = new String("(?s).*게시판 선택 : (?:\033\\[K)?$"); break;
+			case MAIN: result = new String("(?s).*(?:\033\\[2;73H|\\[27m)$"); break;
+			case NOT_CONNECTED: result = new String("(?s).*-\r\n$"); break;
+			case BOARD:
+			case DIARY:
+			case MAIL:
+				result = new String("(?s).*\\[\\d+;2H$|.*게시판이 비어있습니다.\n\r\0$"); break;
+			case WRITE_MAIL: result = new String("(?s).*받을 사람: $"); break;
+			// Do we need \033[\\d+;2H$ for the end of board/diary/mail?
 		default : debugMessage("Unexpected case for expect!", ERROR); break;
 		}
 
@@ -176,9 +199,12 @@ public class IsbSession {
 		String result = new String ("");
 
 		switch (dst) {
-		case SELECT_BOARD: result = new String("s"); break;
-		case NOT_CONNECTED: result = new String("g"); break;
-		default : debugMessage("Unexpected case!", ERROR); break;
+			case SELECT_BOARD: result = new String("s"); break;
+			case NOT_CONNECTED: result = new String("g"); break;
+			case DIARY: result = new String("m\rd"); break;
+			case MAIL: result = new String("m\rr"); break;
+			case WRITE_MAIL: result = new String("m\rs"); break;
+			default : debugMessage("Unexpected case!", ERROR); break;
 		}
 		
 		return result;
@@ -188,9 +214,12 @@ public class IsbSession {
 		String result = new String ("");
 
 		switch (src) {
-		case SELECT_BOARD: result = new String("\r"); break;
-		case BOARD: result = new String("q"); break;
-		default : debugMessage("Unexpected case in quitCommand!", ERROR); break;
+			case SELECT_BOARD: result = new String("\r"); break;
+			case BOARD: result = new String("q"); break;
+			case DIARY: result = new String("qe\r"); break;
+			case MAIL: result = new String("qe\r"); break;
+			case MYBBS_MAIN: result = new String("e\r"); break;
+			default : debugMessage("Unexpected case in quitCommand!", ERROR); break;
 		}
 		
 		return result;		
@@ -217,7 +246,7 @@ public class IsbSession {
 			{
 				debugMessage("Go back to main first", INFO);
 				telnet.send_wo_r(quitCommand(state));
-				telnet.waitfor(expect(MAIN));
+				checkNewMail(telnet.waitfor(expect(MAIN)));
 				state = MAIN;
 				debugMessage("Now in main.", INFO);
 				result = gotoMenu (where);
@@ -293,25 +322,47 @@ public class IsbSession {
 	}
 
 	public boolean goToBoard(String board) throws IOException {
-		gotoMenu(SELECT_BOARD);
-		
-		telnet.send_wo_r(board);
-		
-		String result = telnet.waitfor(board+"|\007+.*");
-		
-		if (result.startsWith("\007")) {
-			debugMessage ("Invalid board.", INFO);
-			for (int i = 0; i < board.length(); i++)
-				telnet.send_wo_r("\b");
-			telnet.send_wo_r("\r");			
-			telnet.waitfor(expect(MAIN));
-			state = MAIN;
-			return false;
-		} else {
-			debugMessage ("Go to board success.", INFO);
-			telnet.send_wo_r("\r");
-			state = BOARD;
+		if (board.equals("diary")) {
+			if (state != MAIN) {
+				telnet.send_wo_r(quitCommand(state));
+				checkNewMail(telnet.waitfor(expect(MAIN)));
+				state = MAIN;
+			}
+
+			telnet.send(gotoCommand(DIARY));
+			state = DIARY;
 			return true;
+		} else if (board.equals("mail")) {
+			if (state != MAIN) {
+				telnet.send_wo_r(quitCommand(state));
+				checkNewMail(telnet.waitfor(expect(MAIN)));
+				state = MAIN;
+			}
+
+			telnet.send(gotoCommand(MAIL));
+			state = MAIL;
+			return true;
+		} else {
+			gotoMenu(SELECT_BOARD);
+
+			telnet.send_wo_r(board);
+
+			String result = telnet.waitfor(board + "|\007+.*");
+
+			if (result.startsWith("\007")) {
+				debugMessage("Invalid board.", INFO);
+				for (int i = 0; i < board.length(); i++)
+					telnet.send_wo_r("\b");
+				telnet.send_wo_r("\r");
+				telnet.waitfor(expect(MAIN));
+				state = MAIN;
+				return false;
+			} else {
+				debugMessage("Go to board success.", INFO);
+				telnet.send_wo_r("\r");
+				state = BOARD;
+				return true;
+			}
 		}
 	}
 	
@@ -339,9 +390,50 @@ public class IsbSession {
 	private ArrayList<ThreadList> parseOnePage(String str){
 		ArrayList<ThreadList> result = new ArrayList<ThreadList>();
 		Scanner s = new Scanner(new String(str));
+		int g_hl, g_num, g_notdel, g_nc, g_writer, g_date, g_cnt, g_title;
+		Pattern p;
 		s.useDelimiter("[\n\r\0]");
-		
-		Pattern p = Pattern.compile("^(?:\033\\[\\d+;1H)?[ >](\033\\[7m)?\\s*(\\d+)(?:\033\\[27m)?(.)(.)\\s*(\\S+)\\s*([ 1][0-9]/[ 1-3][0-9])\\s*(\\d+)\\s(.*?)(?:\033\\[K)?(?:\033\\[\\d+;2H)?$");
+
+		if (state == BOARD) {
+			p = Pattern.compile("^(?:\033\\[\\d+;1H)?[ >](\033\\[7m)?\\s*(\\d+)(?:\033\\[27m)?(.)(.)\\s*(\\S+)\\s*([ 1][0-9]/[ 1-3][0-9])\\s*(\\d+)\\s(.*?)(?:\033\\[K)?(?:\033\\[\\d+;2H)?$");
+			g_hl = 1;
+			g_num = 2;
+			g_notdel = 3;
+			g_nc = 4;
+			g_writer = 5;
+			g_date = 6;
+			g_cnt = 7;
+			g_title = 8;
+		}
+		else if (state == DIARY) {
+			Log.i("newmbewb", "Diary!");
+			p = Pattern.compile("^(?:\033\\[\\d+;1H)?[ >](\033\\[7m)?\\s*(\\d+)(?:\033\\[27m)?\\s*(.)\\s*(\\S+)\\s*([ 1][0-9]/[ 1-3][0-9])\\s(.*?)(?:\033\\[K)?(?:\033\\[\\d+;2H)?$");
+			g_hl = 1;
+			g_num = 2;
+			g_notdel = 3;
+			g_nc = 0;
+			g_writer = 4;
+			g_date = 5;
+			g_cnt = 0;
+			g_title = 6;
+		}
+		else if (state == MAIL) {
+			Log.i("newmbewb", "Read mail!");
+			p = Pattern.compile("^(?:\033\\[\\d+;1H)?[ >](\033\\[7m)?\\s*(\\d+)(?:\033\\[27m)?(.)(.)\\s*(\\S+\\s*\\(.*\\))\\s*([ 1][0-9]/[ 1-3][0-9])\\s(.*?)(?:\033\\[K)?(?:\033\\[\\d+;2H)?$");
+			g_hl = 1;
+			g_num = 2;
+			g_notdel = 3;
+			g_nc = 4;
+			g_writer = 5;
+			g_date = 6;
+			g_cnt = 0;
+			g_title = 7;
+		}
+		else {
+			Log.i("newmbewb", "Unrecognized situation!");
+			/* Error! */
+			return result;
+		}
 		
 		while (s.hasNext())
 		{
@@ -369,21 +461,30 @@ public class IsbSession {
 				debugMessage("Add thread " + line.num, INFO);
 				*/
 				ThreadList line = new ThreadList();
-				line.num = Integer.valueOf(m.replaceAll("$2"));
-				line.highlight = m.replaceAll("$1").contains("[7m");
-				line.notdel = m.replaceAll("$3").equals("m");
+				line.num = Integer.valueOf(m.replaceAll("$"+g_num));
+				line.highlight = m.replaceAll("$"+g_hl).contains("[7m");
+				line.notdel = m.replaceAll("$"+g_notdel).equals("m");
+
+				if (g_nc == 0) {
+					line.newt = false;
+					line.comment = false;
+				}
+				else {
+					String tmp = m.replaceAll("$" + g_nc);
+					line.newt = tmp.equals("N");
+					line.comment = tmp.equals("C");
+				}
 				
-				String tmp = m.replaceAll("$4");
-				line.newt = tmp.equals("N");
-				line.comment = tmp.equals("C");
-				
-				line.writer = new String(m.replaceAll("$5"));
-				line.date = new String(m.replaceAll("$6"));
-				
-				line.cnt = Integer.valueOf(m.replaceAll("$7"));
+				line.writer = new String(m.replaceAll("$"+g_writer));
+				line.date = new String(m.replaceAll("$"+g_date));
+
+				if (g_cnt == 0)
+					line.cnt = 0;
+				else
+					line.cnt = Integer.valueOf(m.replaceAll("$"+g_cnt));
 
 				line.header = "";
-				line.title = new String(m.replaceAll("$8"));
+				line.title = new String(m.replaceAll("$"+g_title));
 				
 				result.add(line);
 				debugMessage("Add thread " + line.num, INFO);
@@ -541,6 +642,7 @@ public class IsbSession {
 		
 	public ArrayList<ThreadList> getLastPageThreadList(String board) throws IOException {
 		ArrayList<ThreadList> result = new ArrayList<ThreadList>();
+		String msg;
 		
 		if (!goToBoard(board)) {
 			debugMessage("getLastPageThread: go to board fail.", INFO);
@@ -548,35 +650,96 @@ public class IsbSession {
 		}
 		debugMessage("getLastPageThread: go to board success.", INFO);
 		
-			// Current page. 
-			// It could not be last page since this board could have been visited.
-			String msg = telnet.waitfor(expect(BOARD));
-			msg = msg.split("\033\\[4;1H")[1];
-			
+		// Current page.
+		// It could not be last page since this board could have been visited.
+		msg = telnet.waitfor(expect(state));
+		msg = msg.split("\033\\[4;1H")[1];
+
+		result = parseOnePage(msg);
+		debugMessage("Parsing the current pape finish.", INFO);
+
+		telnet.send_wo_r("$"); // in case of having been visited.
+
+		String [] response = new String[3];
+		response[0] = "(?s).*>$"; // Already last page.
+		response[1] = "(?s).*;2H$"; // Page change && cursor was not on top.
+		response[2] = "\007"; // No thread
+
+		msg = telnet.waitfor(response);
+
+		if (msg.matches(response[0]) == false) // Page change occur.
+		{
+			debugMessage("Current Pape is not the last page.", INFO);
 			result = parseOnePage(msg);
-			debugMessage("Parsing the current pape finish.", INFO);
-			
-			telnet.send_wo_r("$"); // in case of having been visited.
-			
-			String [] response = new String[3];
-			response[0] = "(?s).*>$"; // Already last page.
-			response[1] = "(?s).*;2H$"; // Page change && cursor was not on top.
-			response[2] = "\007"; // No thread
-			
-			msg = telnet.waitfor(response);
-			
-			if (msg.matches(response[0]) == false) // Page change occur.
-			{
-				debugMessage("Current Pape is not the last page.", INFO);
-				result = parseOnePage(msg);
-				debugMessage("Parsing the last page finish.", INFO);
-			}
+			debugMessage("Parsing the last page finish.", INFO);
+		}
 					
 		debugMessage("Get list success", INFO);
 		if (gotoMenu(MAIN))
 			debugMessage("Go back to main success", INFO);
 		
 		return result;
+	}
+
+	public boolean writeMail(String recver, String title, String content) throws IOException {
+		String [] user_list = recver.split("\\s");
+		String expected_response = "(?s).*받을 사람: ";
+		String result;
+		boolean ret;
+
+		if (recver.equals(NoteEditor.EMPTY_RECEIVER )) {
+			debugMessage ("Invalid username.", ERROR);
+			return false;
+		}
+
+		if (title == null || title.length() > 73) {
+			debugMessage ("Invalid title.", ERROR);
+			return false;
+		}
+
+		if (content == null) {
+			debugMessage ("Invalid content.", ERROR);
+			return false;
+		}
+		content = content.replaceFirst(".*?\n", "");
+
+		// Check the receiver count
+		if (user_list.length > 10)
+			return false;
+
+		telnet.send(gotoCommand(WRITE_MAIL));
+		telnet.waitfor(expect(WRITE_MAIL));
+		/* Enter users */
+		for (int i = 0; i < user_list.length; i++) {
+			telnet.send(user_list[i]);
+			expected_response += "(\\S+) ";
+			if (i < 9) {
+				telnet.waitfor(expected_response+"$");
+			}
+		}
+
+		if (user_list.length < 10) {
+			telnet.send("");
+		}
+		telnet.waitfor("(?s).*제  목: $");
+
+		telnet.send(title);
+		telnet.waitfor("(?s).*\\[1;1H$");
+
+		telnet.send(content);
+		telnet.send_wo_r("\027");
+		telnet.waitfor("(?s).* \\[S\\] $");
+
+		telnet.send_wo_r("S");
+		result = telnet.waitfor("(?s).*\\033\\[2;71H$");
+		if (!result.contains("사용자명이 틀립니다.") && result.contains("편지를 보냈습니다."))
+			ret = true;
+		else
+			ret = false;
+
+		state = MYBBS_MAIN;
+		gotoMenu(MAIN);
+		return ret;
 	}
 
 	public boolean writeToBoard(String board, String title, String content) throws IOException {
@@ -592,17 +755,17 @@ public class IsbSession {
 		content = content.replaceFirst(".*?\n", "");
 					
 		if (!goToBoard(board)) {
-			debugMessage("witeToBoard: go to board fail.", INFO);
+			debugMessage("writeToBoard: go to board fail.", INFO);
 			return false;
 		}
 		
-			telnet.send_wo_r("w");
+			telnet.send_wo_r("W"); // We use capital 'W' for writing in an empty board
 			String msg = telnet.waitfor("(?s).*제목 : $");
 			
 			telnet.send(title);			
 			msg = telnet.waitfor("(?s).*\\[1;1H$");
 			
-			telnet.send(content);			
+			telnet.send(content);
 			telnet.send_wo_r("\027");
 			msg = telnet.waitfor("(?s).* \\[S\\] $");
 			
@@ -713,11 +876,26 @@ public class IsbSession {
 				.compile("^\\s*(\\w+)\\((\\d+,\\d+:\\d+)\\):\"(.*)\"\n?$");
 		Pattern p_not_white_space = Pattern.compile(".+");
 		t.contents = "";
-		t.comments= "";
+		t.comments = "";
+		t.cc = "";
 		StringBuffer contents = new StringBuffer();
 		// new line bug (github #4)
 		String contentFirstLine = s.next();
 		contents.append(contentFirstLine);
+		if (state == MAIL) {
+			String cc = contents.toString();
+			if (!cc.equals("")) {
+				t.cc = "\n"+cc;
+				s.next();
+				// Skip a line
+				// FIXME if 'cc' is over two lines?
+			}
+			else {
+				// For give a space.
+				// Only 'mail' does not give a space between the title and the content.
+				// FIXME if you find the reason.
+			}
+		}
 		do{
 			contents = new StringBuffer();
 			while (s.hasNext())

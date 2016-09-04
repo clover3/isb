@@ -27,6 +27,7 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Canvas;
@@ -36,15 +37,18 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.app.AlertDialog;
 
 /**
  * A generic activity for editing a note in a database.  This can be used
@@ -53,6 +57,7 @@ import android.widget.Toast;
  */
 public class NoteEditor extends Activity {
     private static final String TAG = "Notes";
+    public static final String EMPTY_RECEIVER = "To:NoSuchUserBoy!!!!!!";
 
     /**
      * Standard projection for the interesting columns of a normal note.
@@ -89,6 +94,7 @@ public class NoteEditor extends Activity {
     private static final String NOBOARD = "Select a target board"; 
     private String mTargetBoard;
     private Button mButton;
+    private String board;
     
     /** Request code */
     public static final int PICK_BOARD = 1;
@@ -149,6 +155,11 @@ public class NoteEditor extends Activity {
                         
             ContentValues newNote = new ContentValues();
             String targetBoard = intent.getStringExtra("board");
+            board = targetBoard;
+            if (targetBoard.equals("mail")) {
+                // When board == mail, targetBoard means the list of receiver separated by spaces.
+                targetBoard = EMPTY_RECEIVER;
+            }
             if (targetBoard != null)
             	newNote.put(NotePad.Notes.TARGET_BOARD, targetBoard);
             else {
@@ -201,8 +212,38 @@ public class NoteEditor extends Activity {
         mButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent intentForBoard = new Intent(Intent.ACTION_PICK, Uri.parse("content://boards/"));
-            	startActivityForResult(intentForBoard, PICK_BOARD);
+                if (board.equals("mail")) {
+                    final EditText recver = new EditText(NoteEditor.this);
+                    if (!mTargetBoard.equals(EMPTY_RECEIVER))
+                        recver.setText(mTargetBoard);
+
+                    new AlertDialog.Builder(NoteEditor.this)
+                            .setTitle("To:")
+                            .setMessage("Separate ID by space (Max 10).")
+                            .setView(recver)
+                            .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    String ids = recver.getText().toString();
+                                    mTargetBoard = ids;
+                                    mButton.setText(mTargetBoard);
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                }
+                            })
+                            .show();
+
+                }
+                else if (board.equals("diary")) {
+                    Toast.makeText(getApplicationContext(),
+                            "Diary!",
+                            Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Intent intentForBoard = new Intent(Intent.ACTION_PICK, Uri.parse("content://boards/"));
+                    startActivityForResult(intentForBoard, PICK_BOARD);
+                }
 			}
 		});
         
@@ -231,9 +272,23 @@ public class NoteEditor extends Activity {
                 setTitle(getText(R.string.title_create));
             }
 
+            // When board == mail, mTargetBoard means the list of receiver separated by spaces.
             if (mTargetBoard == null)
             	mTargetBoard = mCursor.getString(COLUMN_INDEX_TARGET_BOARD);
-            mButton.setText(mTargetBoard);
+            if (mTargetBoard.equals(EMPTY_RECEIVER))
+                mButton.setText("To:");
+            else
+                mButton.setText(mTargetBoard);
+            if (mTargetBoard.contains("/")) {
+                // board like name
+                board = mTargetBoard;
+            }
+            else if (mTargetBoard.equals("diary")) {
+                board = "diary";
+            }
+            else {
+                board = "mail";
+            }
             
             // This is a little tricky: we may be resumed after previously being
             // paused/stopped.  We want to put the new text in the text view,
@@ -305,6 +360,7 @@ public class NoteEditor extends Activity {
                 values.put(Notes.NOTE, text);
                 
                 // Write our target board back into the provider.
+                // When board == mail, TARGET_BOARD means the list of receiver separated by spaces.
                 values.put(Notes.TARGET_BOARD, mTargetBoard);
 
                 // Commit all of our changes to persistent storage. When the update completes

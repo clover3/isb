@@ -471,11 +471,12 @@ public class ReadThread extends Activity {
 				if (t != null) {
 					readThreadScroll.fullScroll(View.FOCUS_UP);
 					boardName.setText(board + " (" + _num + ")");
-					threadHead.setText(t.writer + "\n" + t.date + "\n"
-							+ t.title);
+					// t.cc has \n itself.
+					threadHead.setText(t.writer + "\n" + t.date + "\n" + t.title + t.cc);
 					Log.i("debug", "write : " + t.writer);
 
-					// // link ref maker
+					// link ref maker
+					// XXX: I cannot remember why I TrimLine the contents....
 					String strContent = preprocessLink(TrimLine(t.contents));
 					addRefLink(threadBody, strContent);
 

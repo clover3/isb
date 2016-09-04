@@ -50,6 +50,7 @@ public class ReadBoards extends ListActivity {
 	static final private int MARK = Menu.FIRST + 3;
 	static final private int EDIT = Menu.FIRST + 4;
 	static final private int READER = Menu.FIRST + 5;
+	static final private int SEND_MAIL = Menu.FIRST + 6;
 
 	private ArrayList<ThreadList> isbThreadItems;
 	private ThreadListAdapter listAdapter;
@@ -140,7 +141,6 @@ public class ReadBoards extends ListActivity {
 			@Override
 			public void onClick(View v) {
 				try {
-
 					if (isb.isMain()) {
 						ArrayList<ThreadList> lastPage = isb.getThreadList(
 								board, Math.max(curFstIdx - threadPerPage, 1),
@@ -275,8 +275,12 @@ public class ReadBoards extends ListActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 
-		menu.add(0, WRITE, Menu.NONE, R.string.write).setShortcut('3', 'a')
-				.setIcon(android.R.drawable.ic_menu_add);
+		if (board.equals("mail"))
+			menu.add(0, SEND_MAIL, Menu.NONE, R.string.send_mail).setShortcut('3', 'a')
+					.setIcon(R.drawable.ic_menu_compose);
+		else
+			menu.add(0, WRITE, Menu.NONE, R.string.write).setShortcut('3', 'a')
+					.setIcon(android.R.drawable.ic_menu_add);
 		return true;
 	}
 
@@ -292,13 +296,20 @@ public class ReadBoards extends ListActivity {
 		super.onOptionsItemSelected(item);
 
 		switch (item.getItemId()) {
-		case WRITE: {
-			Intent giveMeNewThread = new Intent(Intent.ACTION_INSERT,
-					Notes.CONTENT_URI);
-			giveMeNewThread.putExtra("board", board);
-			startActivityForResult(giveMeNewThread, NewNote);
-			return true;
-		}
+			case WRITE: {
+				Intent giveMeNewThread = new Intent(Intent.ACTION_INSERT,
+						Notes.CONTENT_URI);
+				giveMeNewThread.putExtra("board", board);
+				startActivityForResult(giveMeNewThread, NewNote);
+				return true;
+			}
+			case SEND_MAIL: {
+				Intent giveMeNewThread = new Intent(Intent.ACTION_INSERT,
+						Notes.CONTENT_URI);
+				giveMeNewThread.putExtra("board", board);
+				startActivityForResult(giveMeNewThread, NewNote);
+				return true;
+			}
 		}
 
 		return false;
@@ -325,18 +336,35 @@ public class ReadBoards extends ListActivity {
 
 					if (isb.isMain()) {
 						try {
-							if (isb.writeToBoard(targetBoard, title, content)) {
-								Toast.makeText(getApplicationContext(),
-										"Write success", Toast.LENGTH_SHORT)
-										.show();
-								ContentResolver cr = getContentResolver();
-								if (cr.delete(resultUri, null, null) > 0) {
-									Log.i("debug", "Delete success");
+							if (board.equals("mail")) {
+								if (isb.writeMail(targetBoard, title, content)) {
+									Toast.makeText(getApplicationContext(),
+											"Write success", Toast.LENGTH_SHORT)
+											.show();
+									ContentResolver cr = getContentResolver();
+									if (cr.delete(resultUri, null, null) > 0) {
+										Log.i("debug", "Delete success");
+									}
+								} else {
+									Toast.makeText(getApplicationContext(),
+											"Fail! Invalid user?",
+											Toast.LENGTH_SHORT).show();
 								}
-							} else {
-								Toast.makeText(getApplicationContext(),
-										"Fail! Invalid board?",
-										Toast.LENGTH_SHORT).show();
+							}
+							else {
+								if (isb.writeToBoard(targetBoard, title, content)) {
+									Toast.makeText(getApplicationContext(),
+											"Write success", Toast.LENGTH_SHORT)
+											.show();
+									ContentResolver cr = getContentResolver();
+									if (cr.delete(resultUri, null, null) > 0) {
+										Log.i("debug", "Delete success");
+									}
+								} else {
+									Toast.makeText(getApplicationContext(),
+											"Fail! Invalid board?",
+											Toast.LENGTH_SHORT).show();
+								}
 							}
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
@@ -409,12 +437,25 @@ public class ReadBoards extends ListActivity {
 		super.onCreateContextMenu(menu, v, menuInfo);
 
 		menu.setHeaderTitle("Selected Thread");
-		menu.add(0, INVERSE, Menu.NONE, R.string.inverse);
-		menu.add(0, MARK, Menu.NONE, R.string.mark);
-		menu.add(0, EDIT, Menu.NONE, R.string.edit);
-		menu.add(0, DELETE, Menu.NONE, R.string.delete);
-		menu.add(0, READER, Menu.NONE, R.string.reader);
-
+		if (board.equals("diary")) {
+			menu.add(0, INVERSE, Menu.NONE, R.string.inverse);
+			menu.add(0, MARK, Menu.NONE, R.string.mark);
+			menu.add(0, EDIT, Menu.NONE, R.string.edit);
+			menu.add(0, DELETE, Menu.NONE, R.string.delete);
+		}
+		else if(board.equals("mail")) {
+			menu.add(0, INVERSE, Menu.NONE, R.string.inverse);
+			menu.add(0, MARK, Menu.NONE, R.string.mark);
+			menu.add(0, DELETE, Menu.NONE, R.string.delete);
+		}
+		else {
+			// board
+			menu.add(0, INVERSE, Menu.NONE, R.string.inverse);
+			menu.add(0, MARK, Menu.NONE, R.string.mark);
+			menu.add(0, EDIT, Menu.NONE, R.string.edit);
+			menu.add(0, DELETE, Menu.NONE, R.string.delete);
+			menu.add(0, READER, Menu.NONE, R.string.reader);
+		}
 	}
 
 	@Override

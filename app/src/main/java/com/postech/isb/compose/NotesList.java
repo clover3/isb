@@ -180,23 +180,42 @@ public class NotesList extends ListActivity {
             	String title = cursor.getString(COLUMN_INDEX_TITLE);
             	String content = cursor.getString(COLUMN_INDEX_NOTE);
             	String targetBoard = cursor.getString(COLUMN_INDEX_TARGET_BOARD);
-            	
-            	if (isb.isMain()) {
-	            	try {
-						if (isb.writeToBoard(targetBoard, title, content)) {
-							Toast.makeText(getApplicationContext(), "Write success", Toast.LENGTH_SHORT).show();
-							Uri noteUri = ContentUris.withAppendedId(getIntent().getData(), info.id);
-			                getContentResolver().delete(noteUri, null, null);
-						} else {
-							Toast.makeText(getApplicationContext(), "Fail! Invalid board?", Toast.LENGTH_SHORT).show();
-						}
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						Toast.makeText(getApplicationContext(), "Connection lost", Toast.LENGTH_SHORT).show();
-						isb.disconnect();
-					}
-            	}
+
+                if (targetBoard.contains("/") || targetBoard.equals("diary")) {
+                    // board like name
+                    if (isb.isMain()) {
+                        try {
+                            if (isb.writeToBoard(targetBoard, title, content)) {
+                                Toast.makeText(getApplicationContext(), "Write success", Toast.LENGTH_SHORT).show();
+                                Uri noteUri = ContentUris.withAppendedId(getIntent().getData(), info.id);
+                                getContentResolver().delete(noteUri, null, null);
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Fail! Invalid board?", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (IOException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                            Toast.makeText(getApplicationContext(), "Connection lost", Toast.LENGTH_SHORT).show();
+                            isb.disconnect();
+                        }
+                    }
+                }
+                else {
+                    try {
+                        if (isb.writeMail(targetBoard, title, content)) {
+                            Toast.makeText(getApplicationContext(), "Write success", Toast.LENGTH_SHORT).show();
+                            Uri noteUri = ContentUris.withAppendedId(getIntent().getData(), info.id);
+                            getContentResolver().delete(noteUri, null, null);
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Fail! Invalid user?", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                        Toast.makeText(getApplicationContext(), "Connection lost", Toast.LENGTH_SHORT).show();
+                        isb.disconnect();
+                    }
+                }
             	return true;
             }
         }

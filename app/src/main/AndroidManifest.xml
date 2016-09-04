@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.postech.isb"
-      android:versionCode="38" android:versionName="1.1.11">
+      android:versionCode="39" android:versionName="1.1.13">
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
     <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="14"/>
     <application android:icon="@drawable/icon" android:label="@string/app_name" android:name="PostechIsb">
@@ -39,6 +39,9 @@
 
 		
 		<activity android:name=".login.Login">
+        </activity>
+
+        <activity android:name=".myBBS.MyBBS">
         </activity>
         
         <activity android:label="@string/title_notes_list" android:name=".compose.NotesList">

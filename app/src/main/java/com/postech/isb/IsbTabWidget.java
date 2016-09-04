@@ -5,6 +5,7 @@ import com.postech.isb.boardList.BoardList;
 import com.postech.isb.compose.NotesList;
 import com.postech.isb.login.Login;
 
+import com.postech.isb.myBBS.MyBBS;
 import com.postech.isb.readThread.ReadThread;
 
 import android.app.TabActivity;
@@ -57,6 +58,12 @@ public class IsbTabWidget extends TabActivity {
 	                      res.getDrawable(R.drawable.ic_tab_login))
 	                  .setContent(intent);
 	    tabHost.addTab(spec);
+
+		intent = new Intent().setClass(this, MyBBS.class);
+		spec = tabHost.newTabSpec("mybbs").setIndicator("MyBBS",
+				res.getDrawable(R.drawable.ic_tab_mybbs))
+				.setContent(intent);
+		tabHost.addTab(spec);
 	    
 	    tabHost.setCurrentTab(1);
 	}

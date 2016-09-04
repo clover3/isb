@@ -21,6 +21,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -59,6 +60,8 @@ public class Login extends Activity {
 	private RelativeLayout idPwInput;
 	private RelativeLayout logedIn;
 	private TextView logedId;
+	private TextView helloment;
+	private ImageView mailIcon;
 	private CheckBox saveIdPw;
 
 	static private String logName = "Login";
@@ -89,6 +92,7 @@ public class Login extends Activity {
 				idPwInput.setVisibility(View.INVISIBLE);
 				logedIn.setVisibility(View.VISIBLE);
 				logedId.setText(signedInId);
+				setNewMail();
 			}; break;
 			}
 		}
@@ -109,6 +113,7 @@ public class Login extends Activity {
 			if (saveIdPw.isChecked())
 				login();
 		}
+		setNewMail();
 	}
 	
 	@Override
@@ -146,8 +151,8 @@ public class Login extends Activity {
 		idPwInput = (RelativeLayout) findViewById(R.id.idPwInput);
 		logedIn = (RelativeLayout) findViewById(R.id.logedIn);
 		logedId = (TextView) findViewById(R.id.currentId);
-
-	
+		helloment = (TextView) findViewById(id.helloment);
+		mailIcon = (ImageView) findViewById(id.mailIcon);
 		
 		loginButton.setOnClickListener(new OnClickListener() {
 			@Override
@@ -346,6 +351,17 @@ public class Login extends Activity {
 
 		} catch( Exception e) {
 			throw new RuntimeException(e);
+		}
+	}
+
+	private void setNewMail() {
+		if (IsbSession.new_mail) {
+			helloment.setText("New mail!");
+			mailIcon.setVisibility(View.VISIBLE);
+		}
+		else {
+			helloment.setText("Hello,");
+			mailIcon.setVisibility(View.GONE);
 		}
 	}
 }

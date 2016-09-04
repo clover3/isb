@@ -8,12 +8,15 @@
     <string name="start">Go!</string>
     <string name="stop">Log out</string>
     <string name="goSurf">Go Surfing</string>
+	<string name="Diary">Diary</string>
+	<string name="Mail">Mail</string>
     
     <string name="compose">New Thread</string>
     <string name="composeTitleHint">Title</string>
     <string name="composeContentHint">Content</string>
 
 	<string name="write">Write</string>
+	<string name="send_mail">Write</string>
 	<string name="delete">Delete</string>
 	<string name="cancle">Cancel</string>
 	<string name="delete_confirm">정말로 지우시겠습니까?</string>

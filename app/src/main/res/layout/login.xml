@@ -22,19 +22,27 @@
 	    android:layout_marginTop="30px"
 	    android:layout_below="@id/logoView"
 	    android:visibility="invisible">
-	    <TextView
-	    	android:id="@+id/helloment"
-	    	android:layout_width="fill_parent"
-	  		android:layout_height="wrap_content"
-	  		android:text="Hello,"
-	  		android:gravity="center"
-	  		android:textSize="15sp"
-	  		android:textColor="#000"/>
+		<TextView
+			android:id="@+id/helloment"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="Hello,"
+			android:gravity="center"
+			android:textSize="15sp"
+			android:textColor="#000"/>
+		<ImageView
+			android:id="@+id/mailIcon"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_below = "@id/helloment"
+			android:gravity="center"
+			android:src="@drawable/email_green_32"
+			android:visibility="gone"/>
 	    <TextView
 	    	android:id="@+id/currentId"
 	    	android:layout_width="fill_parent"
 	  		android:layout_height="wrap_content"
-	  		android:layout_below = "@id/helloment"
+	  		android:layout_below = "@id/mailIcon"
 	  		android:text="ID"
 	  		android:textSize="30sp"
 	  		android:textStyle="bold"
