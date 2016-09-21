@@ -390,7 +390,7 @@ public class IsbSession {
 	private ArrayList<ThreadList> parseOnePage(String str){
 		ArrayList<ThreadList> result = new ArrayList<ThreadList>();
 		Scanner s = new Scanner(new String(str));
-		int g_hl, g_num, g_notdel, g_nc, g_writer, g_date, g_cnt, g_title;
+		int g_hl, g_num, g_notdel, g_nc, g_writer, g_date, g_cnt, g_title, g_mailstuff;
 		Pattern p;
 		s.useDelimiter("[\n\r\0]");
 
@@ -404,9 +404,9 @@ public class IsbSession {
 			g_date = 6;
 			g_cnt = 7;
 			g_title = 8;
+			g_mailstuff = 0;
 		}
 		else if (state == DIARY) {
-			Log.i("newmbewb", "Diary!");
 			p = Pattern.compile("^(?:\033\\[\\d+;1H)?[ >](\033\\[7m)?\\s*(\\d+)(?:\033\\[27m)?\\s*(.)\\s*(\\S+)\\s*([ 1][0-9]/[ 1-3][0-9])\\s(.*?)(?:\033\\[K)?(?:\033\\[\\d+;2H)?$");
 			g_hl = 1;
 			g_num = 2;
@@ -416,18 +416,20 @@ public class IsbSession {
 			g_date = 5;
 			g_cnt = 0;
 			g_title = 6;
+			g_mailstuff = 0;
 		}
 		else if (state == MAIL) {
-			Log.i("newmbewb", "Read mail!");
-			p = Pattern.compile("^(?:\033\\[\\d+;1H)?[ >](\033\\[7m)?\\s*(\\d+)(?:\033\\[27m)?(.)(.)\\s*(\\S+\\s*\\(.*\\))\\s*([ 1][0-9]/[ 1-3][0-9])\\s(.*?)(?:\033\\[K)?(?:\033\\[\\d+;2H)?$");
+			p = Pattern.compile("^(?:\033\\[\\d+;1H)?[ >](\033\\[7m)?\\s*(\\d+)(?:\033\\[27m)?(.)(.)\\s*(.*?)(?:\033\\[K)?(?:\033\\[\\d+;2H)?$");
 			g_hl = 1;
 			g_num = 2;
 			g_notdel = 3;
 			g_nc = 4;
-			g_writer = 5;
-			g_date = 6;
+			g_mailstuff = 5;
+			g_writer = 0;
+			g_date = 0;
 			g_cnt = 0;
-			g_title = 7;
+			g_title = 0;
+			/* Mail is parsed based on the position of characters. */
 		}
 		else {
 			Log.i("newmbewb", "Unrecognized situation!");
@@ -441,51 +443,44 @@ public class IsbSession {
 			Matcher m = p.matcher(token);
 			
 			if (m.matches())
-			{/*
+			{
 				ThreadList line = new ThreadList();
-				line.num = Integer.valueOf(m.replaceAll("$1"));
-				
-				line.notdel = m.replaceAll("$2").equals("m");
-				
-				String tmp = m.replaceAll("$3");
-				line.newt = tmp.equals("N");
-				line.comment = tmp.equals("C");
-				
-				line.writer = new String(m.replaceAll("$4"));
-				line.date = new String(m.replaceAll("$5"));
-				
-				line.cnt = Integer.valueOf(m.replaceAll("$6"));
-				line.title = new String(m.replaceAll("$7"));
-				
-				result.add(line);
-				debugMessage("Add thread " + line.num, INFO);
-				*/
-				ThreadList line = new ThreadList();
-				line.num = Integer.valueOf(m.replaceAll("$"+g_num));
-				line.highlight = m.replaceAll("$"+g_hl).contains("[7m");
-				line.notdel = m.replaceAll("$"+g_notdel).equals("m");
+				line.num = Integer.valueOf(m.replaceAll("$" + g_num));
+				line.highlight = m.replaceAll("$" + g_hl).contains("[7m");
+				line.notdel = m.replaceAll("$" + g_notdel).equals("m");
 
 				if (g_nc == 0) {
 					line.newt = false;
 					line.comment = false;
-				}
-				else {
+				} else {
 					String tmp = m.replaceAll("$" + g_nc);
 					line.newt = tmp.equals("N");
 					line.comment = tmp.equals("C");
 				}
-				
-				line.writer = new String(m.replaceAll("$"+g_writer));
-				line.date = new String(m.replaceAll("$"+g_date));
 
-				if (g_cnt == 0)
+				if (state == MAIL) {
+					String remain = m.replaceAll("$" + g_mailstuff);
+					int date_position = hangulCutMailSender(remain);
+					line.writer = remain.substring(0,date_position);
+					String date = remain.substring(date_position + 1, date_position + 6);
+					line.date = date.replaceAll("^\\s+", "").replaceAll("\\s+$", "");
 					line.cnt = 0;
-				else
-					line.cnt = Integer.valueOf(m.replaceAll("$"+g_cnt));
+					line.header = "";
+					line.title = remain.substring(date_position + 7);
+					Log.i("newmbewb", "data:"+date);
+				}
+				else {
+					line.writer = new String(m.replaceAll("$" + g_writer));
+					line.date = new String(m.replaceAll("$" + g_date));
 
-				line.header = "";
-				line.title = new String(m.replaceAll("$"+g_title));
-				
+					if (g_cnt == 0)
+						line.cnt = 0;
+					else
+						line.cnt = Integer.valueOf(m.replaceAll("$" + g_cnt));
+
+					line.header = "";
+					line.title = new String(m.replaceAll("$" + g_title));
+				}
 				result.add(line);
 				debugMessage("Add thread " + line.num, INFO);
 			}
@@ -1341,6 +1336,8 @@ public class IsbSession {
 	public native int[] hangulCutter(String jstr);
 	public native int[] hangulAscii(String jstr);
 	public native int[] hangulDebug(String jstr);
+	public native int[] hangulDebug2(String jstr);
+	public native int hangulCutMailSender(String jstr);
 	public static native int hangulLength(String jstr);
 	static {
 		System.loadLibrary("hangul_cutter");

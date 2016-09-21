@@ -141,3 +141,63 @@ JNIEXPORT jintArray JNICALL Java_com_postech_isb_util_IsbSession_hangulAscii(JNI
 	(*env)->SetIntArrayRegion(env, result, 0, j, cut_len);
 	return result;
 }
+
+JNIEXPORT jintArray JNICALL Java_com_postech_isb_util_IsbSession_hangulDebug2(JNIEnv *env, jobject thiz, jstring jstr){
+	const char *orig = (*env)->GetStringUTFChars(env, jstr, NULL);
+	int len = strlen(orig);
+	int cut_len[100] = {0,};
+	int i, j, char_byte = 0, char_num = 0;
+	jintArray result;
+	char debug[100];
+//	LOGI("hangulDebug");
+	for (i = 0, j = 0; i < len && j < 100;){
+		sprintf(debug, "%d, %d, %d", orig[i], ((int)orig[i]) & 0x80, (((int)orig[i]) & (int)0x80) == (int)0x00);
+//		LOGI(debug);
+		if((((int)orig[i]) & (int)0x80) == (int)0x00){
+			i += 1, char_byte += 1, cut_len[j++] = 0;
+		}
+		else if((((int)orig[i]) & (int)0xE0) == (int)0xC0){
+			i += 1, char_byte += 2, cut_len[j++] = 1;
+		}
+		else if((((int)orig[i]) & (int)0xF0) == (int)0xE0){
+			i += 1, char_byte += 2, cut_len[j++] = 2;
+		}
+		else{
+			i += 1, char_byte += 2, cut_len[j++] = 3;
+		}
+	}
+	result = (*env)->NewIntArray(env, j);
+	if (result == NULL)
+		return NULL;
+	(*env)->SetIntArrayRegion(env, result, 0, j, cut_len);
+	return result;
+}
+
+/* Return the length of sender name */
+JNIEXPORT jint JNICALL Java_com_postech_isb_util_IsbSession_hangulCutMailSender(JNIEnv *env, jobject thiz, jstring jstr){
+	const char *orig = (*env)->GetStringUTFChars(env, jstr, NULL);
+	int len = strlen(orig);
+	int i, char_byte = 0, char_num = 0;
+//	LOGI("hangulDebug");
+	for (i = 0; i < len; ){
+//		LOGI(debug);
+		if((((int)orig[i]) & (int)0x80) == (int)0x00){
+			i += 1, char_byte += 1;
+		}
+		else if((((int)orig[i]) & (int)0xE0) == (int)0xC0){
+			i += 2, char_byte += 2;
+		}
+		else if((((int)orig[i]) & (int)0xF0) == (int)0xE0){
+			i += 3, char_byte += 2;
+		}
+		else{
+			i += 4, char_byte += 2;
+		}
+		char_num++;
+		if (char_byte >= 20)
+			/* 20 == the length of sender name in bytes */
+			break;
+	}
+
+	return char_num;
+}
