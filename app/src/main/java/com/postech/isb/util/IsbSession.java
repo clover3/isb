@@ -43,13 +43,13 @@ public class IsbSession {
 
 	public final int NUM_ROWS = 80; //FIX HERE FOR THE NEW NUMBER OF ROWS
 	
-	private TinyTelnet telnet;
+	private TelnetInterface telnet;
 	private int state;
 	public static String userId;
 	public static boolean new_mail = false;
 
 	public IsbSession() {
-		telnet = new TinyTelnet(80, NUM_ROWS);
+		telnet = new TelnetInterface(80, NUM_ROWS);
 		state = NOT_CONNECTED;
 	}
 	
@@ -68,18 +68,14 @@ public class IsbSession {
 			new_mail = false;
 	}
 
-	public void connect() throws IOException, SocketTimeoutException {
+	public void connect() throws Exception, IOException, SocketTimeoutException {
 		String msg;
 
 		if (state == NOT_CONNECTED)
 		{
-			telnet.connect("isb.or.kr", 23);
-			telnet.negotiate();
+			telnet.connect("isb.or.kr", 22);
 
-			msg = telnet.waitfor("(?s).*login: $");
-			debugMessage(msg, INFO);
 
-			telnet.send("bbs");
 			msg = telnet.waitfor("(?s).*\\[5;12H$");
 			debugMessage(msg, INFO);
 
