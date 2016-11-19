@@ -182,7 +182,7 @@ public class IsbSession {
 			case BOARD:
 			case DIARY:
 			case MAIL:
-				result = new String("(?s).*\\[\\d+;2H$|.*게시판이 비어있습니다.\n\r\0$"); break;
+				result = new String("(?s).*\\[\\d+;2H$|.*게시판이 비어있습니다.\n\r$"); break;
 			case WRITE_MAIL: result = new String("(?s).*받을 사람: $"); break;
 			// Do we need \033[\\d+;2H$ for the end of board/diary/mail?
 		default : debugMessage("Unexpected case for expect!", ERROR); break;
@@ -819,7 +819,7 @@ public class IsbSession {
 				break;
 		}
 			
-		telnet.send(content);			
+		telnet.send(content);
 		telnet.send_wo_r("\027");
 		msg = telnet.waitfor("(?s).* \\[S\\] $");
 		telnet.send_wo_r("S");
@@ -952,7 +952,7 @@ public class IsbSession {
 	static final Pattern lastNumP = Pattern.compile("^[ >](?:\033\\[7m)? *(\\d+)[^\n]*$");
 	
 	private int getLastThreadNum(String msg) {
-		int lastIdx = msg.lastIndexOf("\r\00");
+		int lastIdx = msg.lastIndexOf("\n\r");
 		msg = msg.substring(lastIdx+2);
 		Log.i("newmbewb", "getLastThreadNum start");
 		Log.i("newmbewb", msg);
