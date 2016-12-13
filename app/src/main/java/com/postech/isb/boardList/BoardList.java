@@ -18,6 +18,7 @@ import com.postech.isb.util.TouchMenuManager;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
+import android.app.Service;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -25,6 +26,7 @@ import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
@@ -182,14 +184,57 @@ public class BoardList extends ListActivity {
 		boardDBAdapter = new IsbDBAdapter(this);
 		boardDBAdapter.open();
 		populateBoardList();
-		
+
+		/*
 		// Run heartbeat
 		HeartBeater heartBeater = new HeartBeater();
 		Timer heartBeatTimer = new Timer();
 		// isb server timeout limit: 15 minutes
 		heartBeatTimer.schedule(heartBeater, 14 * 60 * 1000, 14 * 60 * 1000);
+		*/
+		startService(new Intent(getApplicationContext(), LocalService.class));
 	}
-	
+
+	public class LocalService extends Service
+	{
+		private Timer timer = new Timer();
+
+		public IBinder onBind(Intent arg0)
+		{
+			return null;
+		}
+
+		public void onCreate()
+		{
+			super.onCreate();
+			startService();
+		}
+
+		private void startService()
+		{
+			timer.scheduleAtFixedRate(new mainTask(), 0, 20 * 1000);
+		}
+
+		private class mainTask extends TimerTask
+		{
+			public void run()
+			{
+				try {
+					isb.sendHeartBeat();
+				}
+				catch (IOException e) {
+					// Do nothing
+				}
+			}
+		}
+
+		public void onDestroy()
+		{
+			super.onDestroy();
+		}
+	}
+
+	/*
 	class HeartBeater extends TimerTask {
 		  public void run() {
 			  try{
@@ -199,6 +244,7 @@ public class BoardList extends ListActivity {
 			 }
 		  }
 		}
+		*/
 
 	private void restoreUIState() {
 		SharedPreferences settings = getPreferences(MODE_PRIVATE);
