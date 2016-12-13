@@ -153,8 +153,6 @@ public class TelnetInterface {
                 System.arraycopy(tmp, 0, new_block, block.length, n_read);
                 block = new_block;
 
-                Log.i("isb", "block.length: " + block.length);
-
                 s_block = new String(block, 0, cur_length, charset);
                 if (s_block.matches(match)) {
                     break;

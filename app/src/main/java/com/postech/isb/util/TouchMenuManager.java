@@ -28,7 +28,6 @@ public class TouchMenuManager
 				on_drag = true;
 				m_nPreTouchPosX = (int) event.getX();
 				m_nPreTouchPosY = (int) event.getY();
-				Log.i("newm", "m_nPreTouchPosX: "+m_nPreTouchPosX+" m_nPreTouchPosY: "+m_nPreTouchPosY);
 			}
 			else if( event.getAction() == MotionEvent.ACTION_MOVE && on_drag)
 			{
@@ -63,13 +62,9 @@ public class TouchMenuManager
 	int GetTouchResult(int nTouchPosX, int nTouchPosY)
 	{
 		int result = 0;
-		Log.i("newm", "nTouchPosX: "+nTouchPosX+" nTouchPosY: "+nTouchPosY);
 		
 		Display display = activity.getWindowManager().getDefaultDisplay();
 		int height = display.getHeight();
-
-		Log.i("clover", "y : " + m_nPreTouchPosY + " -> " + nTouchPosY);
-		Log.i("clover", "Height= " + height);
 		
 		if( Math.abs(nTouchPosX - m_nPreTouchPosX) < 4 
 		 && Math.abs(nTouchPosY - m_nPreTouchPosY) < 4  )
@@ -85,8 +80,6 @@ public class TouchMenuManager
 			int dy = m_nPreTouchPosY - nTouchPosY ;
 			int dx = m_nPreTouchPosX - nTouchPosX ;
 			int initPosFromBtm = height - m_nPreTouchPosY;
-			Log.i("clover", "dy = " + dy + " min= " + minGap + " max="+ maxGap);
-			Log.i("clover", "fromBtm = " + initPosFromBtm + " maxDisk= " +maxDist);
 			if( maxGap > dy && dy > minGap && initPosFromBtm < maxDist)
 			{
 				if( Math.abs(dy) > Math.abs(dx) * 0.5)

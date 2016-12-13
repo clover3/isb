@@ -835,7 +835,15 @@ public class IsbSession {
 	
 	private final byte [] threadHeader = {(byte)0xa6, (byte)0xa1, (byte)0x1b, (byte)0x5b, (byte)0x4b, (byte)0xa};
 	private final byte [] threadTail = {(byte)0x1b, (byte)0x5b, (byte)0x32, (byte)0x37, (byte)0x6d};
-	
+
+	private String byteArrayToHex(byte[] a) {
+		// Just for debugging
+		StringBuilder sb = new StringBuilder();
+		for(final byte b: a)
+			sb.append(String.format("%02x ", b&0xff));
+		return sb.toString();
+	}
+
 	private IsbThread parsingThread(String str) {
 		IsbThread t = new IsbThread();
 		
@@ -911,9 +919,9 @@ public class IsbSession {
 				comments.append(token);
 				comments.append("\n");
 				Matcher match = p_comment.matcher(token.toString());
-				if (!match.matches()){
+				if (token.length() > 0 && !match.matches()){
 					Log.i("newm", "Unfinished comment!");
-					Log.i("newm", token.toString());
+					Log.i("newm", "hex: " + byteArrayToHex(token.getBytes()) + " length: " + token.length());
 					t.contents += commentHeader+"\n";
 					t.contents += comments.toString();
 					t.comments = "";
