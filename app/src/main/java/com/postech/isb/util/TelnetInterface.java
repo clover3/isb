@@ -138,22 +138,29 @@ public class TelnetInterface {
         }
 
         public String raw_waitfor(String match) throws IOException {
-            String ret = new String();
-            String block;
+            byte[] tmp=new byte[ROWS * COLS + 1000];
+            byte[] block = new byte[0];
+            String s_block = "";
 
-            byte[] tmp=new byte[1024];
             Log.i("isb", "waitfor(" + match + ")");
             boolean fKeepRead = true;
             while(fKeepRead) {
-                int n_read = in.read(tmp, 0, 1024);
-                block = new String(tmp, 0, n_read, charset);
-                Log.i("isb", block);
-                ret += block;
-                if (ret.matches(match)) {
+                int n_read = in.read(tmp, 0, ROWS * COLS + 1000);
+                int cur_length = block.length + n_read;
+                byte[] new_block = new byte[cur_length];
+
+                System.arraycopy(block, 0, new_block, 0, block.length);
+                System.arraycopy(tmp, 0, new_block, block.length, n_read);
+                block = new_block;
+
+                Log.i("isb", "block.length: " + block.length);
+
+                s_block = new String(block, 0, cur_length, charset);
+                if (s_block.matches(match)) {
                     break;
                 }
             }
-            return ret;
+            return s_block;
         }
 
         public SshAsyncTask(String cmd) {
