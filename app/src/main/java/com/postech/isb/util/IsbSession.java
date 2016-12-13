@@ -1226,7 +1226,7 @@ public class IsbSession {
 			}
 			else
 				msg = msg.substring(idxBeg+1, idxEnd - 2);
-			strReader = msg.replace("\n\r\000", "");
+			strReader = msg.replace("\n\r", "");
 		}
 		debugMessage ("View readers finish.", INFO);
 
