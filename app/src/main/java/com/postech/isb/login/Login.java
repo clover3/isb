@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Messenger;
 import android.provider.Settings;
 import android.util.Base64;
 import android.util.Log;
@@ -36,6 +37,7 @@ import com.postech.isb.boardList.BoardList;
 import com.postech.isb.info.Info;
 import com.postech.isb.preference.PreferenceList;
 import com.postech.isb.util.IsbSession;
+import com.postech.isb.util.TimeService;
 import com.postech.isb.util.TouchMenuManager;
 import com.postech.isb.viewUser.ViewUser;
 
@@ -79,6 +81,8 @@ public class Login extends Activity {
 
 	protected static final String UTF8 = "utf-8";
 	private static final char[] SEKRIT = "damnthdusl1219".toCharArray() ;
+	private Handler heartbeatMessageHandler = new HearbeatMessageHandler();
+
 	// Handler for thread. Show error messages.
 	private Handler handler = new Handler() {
 		@Override
@@ -182,6 +186,23 @@ public class Login extends Activity {
 		goInfo = new Intent(this, Info.class);		
 		goUserList = new Intent(this, ViewUser.class); 
 		restoreUIState();
+
+		Intent timeIntent = new Intent(this, TimeService.class);
+		timeIntent.putExtra("MESSENGER", new Messenger(heartbeatMessageHandler));
+		startService(timeIntent);
+	}
+
+	public class HearbeatMessageHandler extends Handler {
+		@Override
+		public void handleMessage(Message message) {
+			try {
+				Log.i(logName, "sending heartbeat...");
+				isb.sendHeartBeat();
+			}
+			catch (IOException e){
+				// Do nothing.
+			}
+		}
 	}
 
     @Override

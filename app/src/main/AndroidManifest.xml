@@ -81,6 +81,7 @@
         </activity>
         <activity android:name=".preference.PreferenceList"></activity>
         <activity android:name=".viewUser.ViewUser" android:label="@string/viewUserTItle" android:theme="@android:style/Theme.NoTitleBar"></activity>
-        						
+
+        <service android:name=".util.TimeService"></service>
 	</application>
 </manifest> 

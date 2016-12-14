@@ -54,11 +54,13 @@ public class IsbSession {
 		telnet = new TelnetInterface(80, NUM_ROWS);
 		state = NOT_CONNECTED;
 
+		/*
 		// Run heartbeat
 		HeartBeater heartBeater = new HeartBeater();
 		Timer heartBeatTimer = new Timer();
 		// isb server timeout limit: 15 minutes
 		heartBeatTimer.schedule(heartBeater, 1 * 60 * 1000, 1 * 60 * 1000);
+		*/
 	}
 
 	class HeartBeater extends TimerTask {
