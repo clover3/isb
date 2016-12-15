@@ -53,27 +53,6 @@ public class IsbSession {
 	public IsbSession() {
 		telnet = new TelnetInterface(80, NUM_ROWS);
 		state = NOT_CONNECTED;
-
-		/*
-		// Run heartbeat
-		HeartBeater heartBeater = new HeartBeater();
-		Timer heartBeatTimer = new Timer();
-		// isb server timeout limit: 15 minutes
-		heartBeatTimer.schedule(heartBeater, 1 * 60 * 1000, 1 * 60 * 1000);
-		*/
-	}
-
-	class HeartBeater extends TimerTask {
-		private boolean sending_heartbeat = true;
-		public void run() {
-			try{
-				if (sending_heartbeat)
-					sendHeartBeat();
-			}
-			catch (IOException e){
-				sending_heartbeat = false;
-			}
-		}
 	}
 	
 	private void debugMessage(String msg, int degree) {

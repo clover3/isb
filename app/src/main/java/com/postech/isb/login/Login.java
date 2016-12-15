@@ -187,9 +187,11 @@ public class Login extends Activity {
 		goUserList = new Intent(this, ViewUser.class); 
 		restoreUIState();
 
+		/*
 		Intent timeIntent = new Intent(this, TimeService.class);
 		timeIntent.putExtra("MESSENGER", new Messenger(heartbeatMessageHandler));
 		startService(timeIntent);
+		*/
 	}
 
 	public class HearbeatMessageHandler extends Handler {

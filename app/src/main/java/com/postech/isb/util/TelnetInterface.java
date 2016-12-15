@@ -145,6 +145,7 @@ public class TelnetInterface {
             Log.i("isb", "waitfor(" + match + ")");
             boolean fKeepRead = true;
             while(fKeepRead) {
+                // TODO: optimize me: directly read data into 'tmp'
                 int n_read = in.read(tmp, 0, ROWS * COLS + 1000);
                 int cur_length = block.length + n_read;
                 byte[] new_block = new byte[cur_length];

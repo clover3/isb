@@ -19,7 +19,8 @@ import java.util.TimerTask;
  */
 public class TimeService extends Service {
     // constant
-    public static final long HEARTBEAT_INTERVAL = 1 * 1000; // 10 seconds
+    // isb server timeout limit: 15 minutes
+    public static final long HEARTBEAT_INTERVAL = 10 * 60 * 1000; // 10 minutes
 
     // run on another Thread to avoid crash
     private Handler mHandler = new Handler();
