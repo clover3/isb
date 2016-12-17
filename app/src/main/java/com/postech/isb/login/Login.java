@@ -4,13 +4,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
+import android.os.SystemClock;
 import android.provider.Settings;
 import android.util.Base64;
 import android.util.Log;
@@ -36,8 +40,8 @@ import com.postech.isb.boardList.Board;
 import com.postech.isb.boardList.BoardList;
 import com.postech.isb.info.Info;
 import com.postech.isb.preference.PreferenceList;
+import com.postech.isb.util.HeartbeaterReceiver;
 import com.postech.isb.util.IsbSession;
-import com.postech.isb.util.TimeService;
 import com.postech.isb.util.TouchMenuManager;
 import com.postech.isb.viewUser.ViewUser;
 
@@ -192,18 +196,28 @@ public class Login extends Activity {
 		timeIntent.putExtra("MESSENGER", new Messenger(heartbeatMessageHandler));
 		startService(timeIntent);
 		*/
+		int alarmId = 0;
+		Intent alarm = new Intent(this, HeartbeaterReceiver.class);
+		alarm.putExtra("MESSENGER", new Messenger(heartbeatMessageHandler));
+		alarm.putExtra("alarmId", alarmId); /* So we can catch the id on BroadcastReceiver */
+		//boolean alarmRunning = (PendingIntent.getBroadcast(this, 0, alarm, PendingIntent.FLAG_NO_CREATE) != null);
+		//if(alarmRunning == false) {
+			PendingIntent pendingIntent = PendingIntent.getBroadcast(this, alarmId, alarm, PendingIntent.FLAG_CANCEL_CURRENT);
+			AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+			alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), 1	 * 60 * 1000, pendingIntent);
+		/*
+		}
+		else {
+			Log.i(logName, "Already heartbeater is running!");
+		}
+		*/
 	}
 
 	public class HearbeatMessageHandler extends Handler {
 		@Override
 		public void handleMessage(Message message) {
-			try {
-				Log.i(logName, "sending heartbeat...");
-				isb.sendHeartBeat();
-			}
-			catch (IOException e){
-				// Do nothing.
-			}
+			Log.i(logName, "sending heartbeat...");
+			isb.sendHeartBeat();
 		}
 	}
 

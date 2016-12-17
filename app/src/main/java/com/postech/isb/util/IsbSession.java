@@ -96,6 +96,7 @@ public class IsbSession {
 	}
 
 	public void disconnect() {
+		Log.i("isb", "disconnecting...");
 		try {
 		switch (state)
 		{
@@ -1331,10 +1332,15 @@ public class IsbSession {
 		return result;
 	}
 	
-	public void sendHeartBeat() throws IOException {
-		if (state == MAIN){
-			telnet.send_wo_r("p");
-			telnet.waitfor("\007");
+	public void sendHeartBeat(){
+		try {
+			if (state == MAIN) {
+				telnet.send_wo_r("p");
+				telnet.waitfor("\007");
+			}
+		}
+		catch (IOException e) {
+			disconnect();
 		}
 	}
 	

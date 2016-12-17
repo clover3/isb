@@ -87,10 +87,7 @@ public class TelnetInterface {
         IOException e;
         try {
             e = task.execute(WAITFOR).get();
-        } catch (InterruptedException e1) {
-            e1.printStackTrace();
-            return null;
-        } catch (ExecutionException e1) {
+        } catch (Exception e1) {
             e1.printStackTrace();
             return null;
         }
@@ -147,6 +144,8 @@ public class TelnetInterface {
             while(fKeepRead) {
                 // TODO: optimize me: directly read data into 'tmp'
                 int n_read = in.read(tmp, 0, ROWS * COLS + 1000);
+                if (n_read < 0)
+                    throw new IOException();
                 int cur_length = block.length + n_read;
                 byte[] new_block = new byte[cur_length];
 
