@@ -204,7 +204,9 @@ public class Login extends Activity {
 		//if(alarmRunning == false) {
 			PendingIntent pendingIntent = PendingIntent.getBroadcast(this, alarmId, alarm, PendingIntent.FLAG_CANCEL_CURRENT);
 			AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-			alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), 1	 * 60 * 1000, pendingIntent);
+
+			// isb server timeout limit: 15 minutes
+			alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), 10 * 60 * 1000, pendingIntent);
 		/*
 		}
 		else {

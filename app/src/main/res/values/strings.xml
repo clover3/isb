@@ -10,6 +10,7 @@
     <string name="goSurf">Go Surfing</string>
 	<string name="Diary">Diary</string>
 	<string name="Mail">Mail</string>
+	<string name="Preference">Preference</string>
     
     <string name="compose">New Thread</string>
     <string name="composeTitleHint">Title</string>
@@ -72,9 +73,6 @@
 	<string name="error_title">Error</string>
 	<string name="error_message">Error loading note</string>
 <!--  for Compose -->
-
-
-	<string name="preference">Preference</string>
 	<string name="check_version">최신버전 확인</string>
 	<string name="info">information</string>
 	<string name="user">users</string>
