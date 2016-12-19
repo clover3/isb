@@ -11,6 +11,8 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.postech.isb.R;
+
 /**
  * Created by newmbewb on 2016-12-17.
  */
@@ -23,17 +25,19 @@ public class HeartbeaterReceiver extends BroadcastReceiver {
         heartbeatMessageHandler = (Messenger) extras.get("MESSENGER");
         try {
             heartbeatMessageHandler.send(new Message());
+
+            // Re-register the heartbeat
+            int alarmId = intent.getExtras().getInt("alarmId");
+            AlarmManager alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+            Intent alarm = new Intent(context, HeartbeaterReceiver.class);
+            alarm.putExtra("MESSENGER", heartbeatMessageHandler);
+            alarm.putExtra("alarmId", alarmId); /* So we can catch the id on BroadcastReceiver */
+            //TODO configure your intent
+            PendingIntent alarmIntent = PendingIntent.getBroadcast(context, alarmId, alarm, PendingIntent.FLAG_UPDATE_CURRENT);
+            alarmMgr.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + context.getResources().getInteger(R.integer.heartbeat_period), alarmIntent);
         }
         catch (RemoteException e){
             Log.i("Heartbeater", "Failed to send a message!");
-            // Cancel the alarm
-            AlarmManager service = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            int alarmId = intent.getExtras().getInt("alarmId");
-            PendingIntent alarmIntent;
-            alarmIntent = PendingIntent.getBroadcast(context, alarmId,
-                    new Intent(context, HeartbeaterReceiver.class),
-                    PendingIntent.FLAG_CANCEL_CURRENT);
-            service.cancel(alarmIntent);
         }
     }
 }

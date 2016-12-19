@@ -20,12 +20,15 @@ import java.io.IOException;
 
 import com.postech.isb.PostechIsb;
 import com.postech.isb.R;
+import com.postech.isb.readThread.ReadThread;
 import com.postech.isb.util.IsbSession;
 import com.postech.isb.compose.NotePad.Notes;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.ContentUris;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -154,7 +157,7 @@ public class NotesList extends ListActivity {
         
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info;
+        final AdapterView.AdapterContextMenuInfo info;
         try {
              info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         } catch (ClassCastException e) {
@@ -164,9 +167,25 @@ public class NotesList extends ListActivity {
 
         switch (item.getItemId()) {
             case MENU_ITEM_DELETE: {
-                // Delete the note that the context menu is for
-                Uri noteUri = ContentUris.withAppendedId(getIntent().getData(), info.id);
-                getContentResolver().delete(noteUri, null, null);
+                AlertDialog.Builder alert_confirm = new AlertDialog.Builder(NotesList.this);
+                alert_confirm.setMessage(R.string.delete_confirm).setCancelable(false).setPositiveButton(R.string.delete,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // 'YES'
+                                // Delete the note that the context menu is for
+                                Uri noteUri = ContentUris.withAppendedId(getIntent().getData(), info.id);
+                                getContentResolver().delete(noteUri, null, null);
+                            }
+                        }).setNegativeButton(R.string.cancle,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // 'No'
+                            }
+                        });
+                AlertDialog alert = alert_confirm.create();
+                alert.show();
                 return true;
             }
             case MENU_ITEM_EDIT: {

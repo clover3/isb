@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Base64;
 import android.util.Log;
@@ -28,6 +29,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -188,31 +190,27 @@ public class Login extends Activity {
 		goSurf = new Intent(this, BoardList.class);
 		goSetting = new Intent(this, PreferenceList.class);		
 		goInfo = new Intent(this, Info.class);		
-		goUserList = new Intent(this, ViewUser.class); 
-		restoreUIState();
+		goUserList = new Intent(this, ViewUser.class);
 
-		/*
-		Intent timeIntent = new Intent(this, TimeService.class);
-		timeIntent.putExtra("MESSENGER", new Messenger(heartbeatMessageHandler));
-		startService(timeIntent);
-		*/
-		int alarmId = 0;
-		Intent alarm = new Intent(this, HeartbeaterReceiver.class);
-		alarm.putExtra("MESSENGER", new Messenger(heartbeatMessageHandler));
-		alarm.putExtra("alarmId", alarmId); /* So we can catch the id on BroadcastReceiver */
-		//boolean alarmRunning = (PendingIntent.getBroadcast(this, 0, alarm, PendingIntent.FLAG_NO_CREATE) != null);
-		//if(alarmRunning == false) {
+		SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+
+		// Start to run heartbeater
+		Boolean runHeartbeat = SP.getBoolean("heartbeat", false);
+		Log.i(logName, "heartbeat: " + runHeartbeat);
+		if (runHeartbeat) {
+			int alarmId = 0;
+			Intent alarm = new Intent(this, HeartbeaterReceiver.class);
+			alarm.putExtra("MESSENGER", new Messenger(heartbeatMessageHandler));
+			alarm.putExtra("alarmId", alarmId); /* So we can catch the id on BroadcastReceiver */
+
 			PendingIntent pendingIntent = PendingIntent.getBroadcast(this, alarmId, alarm, PendingIntent.FLAG_CANCEL_CURRENT);
 			AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
 			// isb server timeout limit: 15 minutes
-			alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), 10 * 60 * 1000, pendingIntent);
-		/*
+			Log.i(logName, "heartbeat_period: " + getResources().getInteger(R.integer.heartbeat_period));
+			alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + getResources().getInteger(R.integer.heartbeat_period), pendingIntent);
 		}
-		else {
-			Log.i(logName, "Already heartbeater is running!");
-		}
-		*/
+		restoreUIState();
 	}
 
 	public class HearbeatMessageHandler extends Handler {
@@ -231,8 +229,6 @@ public class Login extends Activity {
       				.setIcon(android.R.drawable.ic_menu_info_details);
       menu.add(1, USER, Menu.NONE, R.string.user)
 					.setIcon(android.R.drawable.ic_menu_myplaces);
-//      menu.add(2, PREFERENCE, Menu.NONE,R.string.preference)
-//      				.setIcon(android.R.drawable.ic_menu_preferences);
       return true;
     }
     
@@ -351,7 +347,7 @@ public class Login extends Activity {
 		
 		pd = ProgressDialog.show(Login.this, "Isb", "Logging in...", true, true);
 		
-		(loginThread = new LoginThread(signedInId, pw)).start(); // ������ ����  
+		(loginThread = new LoginThread(signedInId, pw)).start();
 	}
 	
 	private void logout() {

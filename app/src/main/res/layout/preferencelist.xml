@@ -1,8 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-	<ListPreference />
-	
+    android:layout_height="match_parent">
+
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="heartbeat"
+        android:summary="Prevent connection timeout"
+        android:title="Timeout prevention (Heartbeat)" />
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="swipe_menu"
+        android:summary="Show menu by swiping up from the bottom of the screen"
+        android:title="Swipe menu" />
 </PreferenceScreen>

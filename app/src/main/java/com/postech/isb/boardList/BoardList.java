@@ -28,6 +28,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -154,9 +155,12 @@ public class BoardList extends ListActivity {
 		setListAdapter(boardAdapter); 
 		registerForContextMenu(getListView());
 
-    	menuMan = new TouchMenuManager(this);
-    	ListView lv = (ListView)findViewById(android.R.id.list);
-        lv.setOnTouchListener(menuMan.MyTouchListener);
+		SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+		if (SP.getBoolean("swipe_menu", false)) {
+			menuMan = new TouchMenuManager(this);
+			ListView lv = (ListView) findViewById(android.R.id.list);
+			lv.setOnTouchListener(menuMan.MyTouchListener);
+		}
 		
 		search = (EditText) findViewById(R.id.searchBoard);
 		textWatcher = new TextWatcher() {

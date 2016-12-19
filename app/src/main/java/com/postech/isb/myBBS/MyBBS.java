@@ -12,9 +12,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.postech.isb.R;
 import com.postech.isb.R.id;
+import com.postech.isb.preference.PreferenceList;
 import com.postech.isb.readBoard.ReadBoards;
 import com.postech.isb.util.IsbSession;
-import com.postech.isb.util.PreferenceIsb;
 
 public class MyBBS extends Activity {
 	private Button diaryButton;
@@ -23,7 +23,6 @@ public class MyBBS extends Activity {
 	private TextView logedId;
 	private TextView helloment;
 	private ImageView mailIcon;
-	private ImageView preferenceIcon;
 
 	private Intent diary;
 	private Intent mail;
@@ -43,7 +42,6 @@ public class MyBBS extends Activity {
 		logedId = (TextView) findViewById(id.currentId);
 		helloment = (TextView) findViewById(id.helloment);
 		mailIcon = (ImageView) findViewById(id.mailIcon);
-		preferenceIcon = (ImageView) findViewById(id.preference);
 
 		diaryButton.setOnClickListener(new OnClickListener() {
 
@@ -74,7 +72,7 @@ public class MyBBS extends Activity {
 
 		diary = new Intent(this, ReadBoards.class);
 		mail = new Intent(this, ReadBoards.class);
-		preference = new Intent(this, PreferenceIsb.class);
+		preference = new Intent(this, PreferenceList.class);
 
 		restoreUIState();
 	}

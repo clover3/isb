@@ -29,12 +29,14 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -202,8 +204,11 @@ public class NoteEditor extends Activity {
 
         // Touch Menu Call Handler
 
-    	menuMan = new TouchMenuManager(this);
-    	mText.setOnTouchListener(menuMan.MyTouchListener);
+        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        if (SP.getBoolean("swipe_menu", false)) {
+            menuMan = new TouchMenuManager(this);
+            mText.setOnTouchListener(menuMan.MyTouchListener);
+        }
         
         // Get the note!
         mCursor = managedQuery(mUri, PROJECTION, null, null, null);
