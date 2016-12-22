@@ -643,6 +643,7 @@ public class ReadBoards extends ListActivity {
 				} else
 					note = (title + t.contents).replaceAll("\\s*$", "");
 				giveMeNewThread.putExtra("note", note);
+				giveMeNewThread.putExtra("edit", true);
 				startActivityForResult(giveMeNewThread, EditNote);
 			} catch (IOException e) {
 				e.printStackTrace();

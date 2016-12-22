@@ -97,6 +97,7 @@ public class NoteEditor extends Activity {
     private String mTargetBoard;
     private Button mButton;
     private String board;
+    private boolean editFromBoard = false;
     
     /** Request code */
     public static final int PICK_BOARD = 1;
@@ -157,6 +158,7 @@ public class NoteEditor extends Activity {
                         
             ContentValues newNote = new ContentValues();
             String targetBoard = intent.getStringExtra("board");
+            editFromBoard = intent.getBooleanExtra("edit", false);
             board = targetBoard;
             if (targetBoard.equals("mail")) {
                 // When board == mail, targetBoard means the list of receiver separated by spaces.
@@ -386,13 +388,20 @@ public class NoteEditor extends Activity {
                     .setShortcut('0', 'r')
                     .setIcon(android.R.drawable.ic_menu_revert);
             if (!mNoteOnly) {
+                SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
                 menu.add(0, DELETE_ID, 0, R.string.menu_delete)
                         .setShortcut('1', 'd')
-                        .setIcon(android.R.drawable.ic_menu_delete);
+                        .setIcon(android.R.drawable.ic_menu_delete)
+                        .setEnabled(!SP.getBoolean("disable_delete", false));
             }
 
         // Build the menus that are shown when inserting.
-        } else {
+        } else if (editFromBoard) {
+            menu.add(0, REVERT_ID, 0, R.string.menu_revert)
+                    .setShortcut('0', 'r')
+                    .setIcon(android.R.drawable.ic_menu_revert);
+        }
+        else {
             menu.add(0, DISCARD_ID, 0, R.string.menu_discard)
                     .setShortcut('0', 'd')
                     .setIcon(android.R.drawable.ic_menu_delete);
