@@ -204,11 +204,8 @@ public class NoteEditor extends Activity {
 
         // Touch Menu Call Handler
 
-        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        if (SP.getBoolean("swipe_menu", false)) {
-            menuMan = new TouchMenuManager(this);
-            mText.setOnTouchListener(menuMan.MyTouchListener);
-        }
+        menuMan = new TouchMenuManager(this);
+        mText.setOnTouchListener(menuMan.MyTouchListener);
         
         // Get the note!
         mCursor = managedQuery(mUri, PROJECTION, null, null, null);

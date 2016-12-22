@@ -125,11 +125,8 @@ public class ReadBoards extends ListActivity {
 		gotoAnotherBoard = new Intent(this, BoardList.class);
 		gotoAnotherBoard.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-		SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-		if (SP.getBoolean("swipe_menu", false)) {
-			menuMan = new TouchMenuManager(this);
-			lv.setOnTouchListener(menuMan.MyTouchListener);
-		}
+		menuMan = new TouchMenuManager(this);
+		lv.setOnTouchListener(menuMan.MyTouchListener);
 
 		boardName.setOnClickListener(new OnClickListener() {
 
@@ -440,25 +437,29 @@ public class ReadBoards extends ListActivity {
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenu.ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
+		SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
 		menu.setHeaderTitle("Selected Thread");
 		if (board.equals("diary")) {
 			menu.add(0, INVERSE, Menu.NONE, R.string.inverse);
 			menu.add(0, MARK, Menu.NONE, R.string.mark);
 			menu.add(0, EDIT, Menu.NONE, R.string.edit);
-			menu.add(0, DELETE, Menu.NONE, R.string.delete);
+			menu.add(0, DELETE, Menu.NONE, R.string.delete)
+					.setEnabled(!SP.getBoolean("disable_delete", false));
 		}
 		else if(board.equals("mail")) {
 			menu.add(0, INVERSE, Menu.NONE, R.string.inverse);
 			menu.add(0, MARK, Menu.NONE, R.string.mark);
-			menu.add(0, DELETE, Menu.NONE, R.string.delete);
+			menu.add(0, DELETE, Menu.NONE, R.string.delete)
+					.setEnabled(!SP.getBoolean("disable_delete", false));
 		}
 		else {
 			// board
 			menu.add(0, INVERSE, Menu.NONE, R.string.inverse);
 			menu.add(0, MARK, Menu.NONE, R.string.mark);
 			menu.add(0, EDIT, Menu.NONE, R.string.edit);
-			menu.add(0, DELETE, Menu.NONE, R.string.delete);
+			menu.add(0, DELETE, Menu.NONE, R.string.delete)
+					.setEnabled(!SP.getBoolean("disable_delete", false));
 			menu.add(0, READER, Menu.NONE, R.string.reader);
 		}
 	}

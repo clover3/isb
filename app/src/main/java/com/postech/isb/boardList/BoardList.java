@@ -155,12 +155,10 @@ public class BoardList extends ListActivity {
 		setListAdapter(boardAdapter); 
 		registerForContextMenu(getListView());
 
-		SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-		if (SP.getBoolean("swipe_menu", false)) {
-			menuMan = new TouchMenuManager(this);
-			ListView lv = (ListView) findViewById(android.R.id.list);
-			lv.setOnTouchListener(menuMan.MyTouchListener);
-		}
+
+		menuMan = new TouchMenuManager(this);
+		ListView lv = (ListView) findViewById(android.R.id.list);
+		lv.setOnTouchListener(menuMan.MyTouchListener);
 		
 		search = (EditText) findViewById(R.id.searchBoard);
 		textWatcher = new TextWatcher() {

@@ -1,19 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <PreferenceCategory android:title="Connection">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="heartbeat"
+            android:summary="Prevent connection timeout (Send heartbeat)"
+            android:title="Timeout prevention" />
+    </PreferenceCategory>
 
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="heartbeat"
-        android:summary="Prevent connection timeout"
-        android:title="Timeout prevention (Heartbeat)" />
+    <PreferenceCategory android:title="Gesture">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="swipe_menu"
+            android:summary="Show menu by swiping up from the bottom of the screen"
+            android:title="Swipe menu" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="swipe_thread"
+            android:summary="Read the next or previous thread by swiping the side of the screen"
+            android:title="Swipe next thread" />
+    </PreferenceCategory>
 
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="swipe_menu"
-        android:summary="Show menu by swiping up from the bottom of the screen"
-        android:title="Swipe menu" />
+    <PreferenceCategory android:title="Customization">
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="disable_delete"
+            android:summary="Disable the delete key"
+            android:title="Disable delete" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="display_comment_time"
+            android:summary="Display the time when comments are written"
+            android:title="Display comment time" />
+    </PreferenceCategory>
 </PreferenceScreen>

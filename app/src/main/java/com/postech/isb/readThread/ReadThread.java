@@ -28,11 +28,13 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
@@ -202,13 +204,16 @@ public class ReadThread extends Activity {
 			}
 		});
 
+		SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 		linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
-		linearLayout.setOnTouchListener(MyTouchListener);
-		readThreadScroll.setOnTouchListener(MyTouchListener);
 		linearLayoutInner = (LinearLayout) findViewById(R.id.linearLayoutInsideScroll);
-		linearLayoutInner.setOnTouchListener(MyTouchListener);
-		threadBody.setOnTouchListener(MyTouchListener);
-		comments.setOnTouchListener(MyTouchListener);
+		if (SP.getBoolean("swipe_thread", true)) {
+			linearLayout.setOnTouchListener(MyTouchListener);
+			readThreadScroll.setOnTouchListener(MyTouchListener);
+			linearLayoutInner.setOnTouchListener(MyTouchListener);
+			threadBody.setOnTouchListener(MyTouchListener);
+			comments.setOnTouchListener(MyTouchListener);
+		}
 		commentMessage.addTextChangedListener(commentWatcherInput);
 
 		registerForContextMenu(boardName);
@@ -279,8 +284,9 @@ public class ReadThread extends Activity {
 
 		// Pattern pattern =
 		// Pattern.compile("\\s[a-zA-z]/[a-zA-z]\\s\\d{1,}\\s");
+		// FIXME: cannot parse hangul link...
 		Pattern linkPattern = Pattern
-				.compile("(\\s|^)[a-zA-z0-9°¡-ÆR]/[a-zA-z0-9°¡-ÆR]\\s\\d{1,}(\\s|$)");
+				.compile("(\\s|^)[a-zA-z0-9]/[a-zA-z0-9]\\s\\d{1,}(\\s|$)");
 		Matcher match = linkPattern.matcher(strThreadBody);
 		final Context context = this;
 		while (match.find()) { // Find each match in turn; String can't do this.
@@ -428,10 +434,6 @@ public class ReadThread extends Activity {
 		writer.setTextColor(0xFFCCCCFF);
 		writer.setTextSize(15);
 
-		when = new TextView(this);
-		// when.setText(strWhen);
-		// when.setPadding(0, 0, 5, 0);
-
 		comment = new TextView(this);
 
 		addRefLink(comment, strComment);
@@ -447,7 +449,13 @@ public class ReadThread extends Activity {
 				LayoutParams.WRAP_CONTENT));
 
 		row.addView(writer);
-		row.addView(when);
+		SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+		if (SP.getBoolean("display_comment_time", false)) {
+			when = new TextView(this);
+			when.setText(strWhen);
+			when.setPadding(0, 0, 5, 0);
+			row.addView(when);
+		}
 		row.addView(comment);
 
 		comments.addView(row);
@@ -535,11 +543,13 @@ public class ReadThread extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
+		SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
 		menu.add(0, WRITE, Menu.NONE, R.string.write).setShortcut('3', 'w')
 				.setIcon(android.R.drawable.ic_menu_add);
 		menu.add(0, DELETE, Menu.NONE, R.string.delete).setShortcut('4', 'd')
-				.setIcon(android.R.drawable.ic_menu_delete);
+				.setIcon(android.R.drawable.ic_menu_delete)
+				.setEnabled(!SP.getBoolean("disable_delete", false));
 
 		return true;
 	}

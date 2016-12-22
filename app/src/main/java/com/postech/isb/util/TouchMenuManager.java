@@ -46,8 +46,11 @@ public class TouchMenuManager
 
 				if( result == 1 )
 				{
-					activity.openOptionsMenu();		
-					Log.i("newm", "Menu Called");
+					SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(activity.getBaseContext());
+					if (SP.getBoolean("swipe_menu", true)) {
+						activity.openOptionsMenu();
+						Log.i("newm", "Menu Called");
+					}
 				}
 					
 				m_nPreTouchPosX = nTouchPosX;

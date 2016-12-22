@@ -58,7 +58,7 @@ public class Login extends Activity {
 	static final private int INFO = Menu.FIRST;
 	static final private int USER = Menu.FIRST+1;
 	static final private int PREFERENCE = Menu.FIRST+2;
-	
+
 	private IsbSession isb;
 	private EditText loginId;
 	private EditText loginPw;
@@ -73,16 +73,16 @@ public class Login extends Activity {
 	private CheckBox saveIdPw;
 
 	static private String logName = "Login";
-	
+
 	private String signedInId;
-	
+
 	private ProgressDialog pd;
-	
+
 	private Intent goSurf;
 	private Intent goSetting;
 	private Intent goInfo;
 	private Intent goUserList;
-	
+
 	private LoginThread loginThread;
 
 	protected static final String UTF8 = "utf-8";
@@ -94,7 +94,7 @@ public class Login extends Activity {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
-			case 0: pd.dismiss(); break; 
+			case 0: pd.dismiss(); break;
 			case 1: Toast.makeText(Login.this, "Connection Failed.", Toast.LENGTH_SHORT).show(); break;
 			case 2: Toast.makeText(Login.this, "Connection Lost.", Toast.LENGTH_SHORT).show(); break;
 			case 3: Toast.makeText(Login.this, "Login Failed!", Toast.LENGTH_SHORT).show(); break;
@@ -112,20 +112,20 @@ public class Login extends Activity {
 	private static final String SAVE_ID_PW_KEY = "SAVE_ID_PW_KEY";
 	private static final String SAVED_ID = "SAVED_ID";
 	private static final String SAVED_PW = "SAVED_PW";
-	
+
 	@Override
 	protected void onResume () {
 		super.onResume();
 		if (!isb.isConnected()) {
 			idPwInput.setVisibility(View.VISIBLE);
 			logedIn.setVisibility(View.INVISIBLE);
-						
+
 			if (saveIdPw.isChecked())
 				login();
 		}
 		setNewMail();
 	}
-	
+
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -157,45 +157,45 @@ public class Login extends Activity {
 		loginButton = (Button) findViewById(R.id.loginBtn);
 		logoutButton = (Button) findViewById(R.id.logoutBtn);
 		goSurfButton = (Button) findViewById(R.id.goSurf);
-		
+
 		idPwInput = (RelativeLayout) findViewById(R.id.idPwInput);
 		logedIn = (RelativeLayout) findViewById(R.id.logedIn);
 		logedId = (TextView) findViewById(R.id.currentId);
 		helloment = (TextView) findViewById(id.helloment);
 		mailIcon = (ImageView) findViewById(id.mailIcon);
-		
+
 		loginButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				login();
 			}
 		});
-		
+
 		logoutButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				logout();				
+				logout();
 			}
 		});
-		
+
 		goSurfButton.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				startActivity(goSurf);
 			}
 		});
-		
+
 		goSurf = new Intent(this, BoardList.class);
-		goSetting = new Intent(this, PreferenceList.class);		
-		goInfo = new Intent(this, Info.class);		
+		goSetting = new Intent(this, PreferenceList.class);
+		goInfo = new Intent(this, Info.class);
 		goUserList = new Intent(this, ViewUser.class);
 
 		SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
 		// Start to run heartbeater
-		Boolean runHeartbeat = SP.getBoolean("heartbeat", false);
+		Boolean runHeartbeat = SP.getBoolean("heartbeat", true);
 		Log.i(logName, "heartbeat: " + runHeartbeat);
 		if (runHeartbeat) {
 			int alarmId = 0;
@@ -208,6 +208,7 @@ public class Login extends Activity {
 
 			// isb server timeout limit: 15 minutes
 			Log.i(logName, "heartbeat_period: " + getResources().getInteger(R.integer.heartbeat_period));
+			// XXX: use setExact for API 19 or later.
 			alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + getResources().getInteger(R.integer.heartbeat_period), pendingIntent);
 		}
 		restoreUIState();
@@ -231,22 +232,22 @@ public class Login extends Activity {
 					.setIcon(android.R.drawable.ic_menu_myplaces);
       return true;
     }
-    
+
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
       super.onPrepareOptionsMenu(menu);
-      
+
       return true;
-    }    
-    
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
       super.onOptionsItemSelected(item);
-      
+
       switch (item.getItemId()) {
       case INFO: {
     	  startActivity(goInfo);
-    	  return true;   
+    	  return true;
       }
       case USER: {
     	  startActivity(goUserList);
@@ -254,14 +255,14 @@ public class Login extends Activity {
       }
       case PREFERENCE: {
     	  //startActivity(goSetting);
-    	  return true;   
+    	  return true;
       }
       }
-      
+
       return false;
     }
-    
-    public boolean onKeyDown(int keyCode, KeyEvent event) { 
+
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
     	if(keyCode == KeyEvent.KEYCODE_BACK) {
     		if( null != loginThread )
     		{
@@ -270,10 +271,10 @@ public class Login extends Activity {
     	}
     	return false;
     }
-    
+
 	private void restoreUIState() {
 		SharedPreferences settings = getPreferences(MODE_PRIVATE);
-				
+
 		boolean isSaveIdPw = settings.getBoolean(SAVE_ID_PW_KEY, false);
 		String savedId = settings.getString(SAVED_ID, "");
 		String savedPw = settings.getString(SAVED_PW, "");
@@ -282,14 +283,14 @@ public class Login extends Activity {
 			savedId = decrypt(savedId);
 			savedPw = decrypt(savedPw);
 		}
-		
+
 		if (isSaveIdPw) {
 			saveIdPw.setChecked(isSaveIdPw);
 			loginId.setText(savedId);
 			loginPw.setText(savedPw);
 		}
 	}
-	
+
 	private class LoginThread extends Thread implements Runnable {
 		private String id, pw;
 
@@ -323,7 +324,7 @@ public class Login extends Activity {
 					}
 				} catch (Exception e) {
 					isb.disconnect();
-					handler.sendEmptyMessage(2);					
+					handler.sendEmptyMessage(2);
 					Log.i(logName, "Connection Lost.");
 				}
 			}
@@ -333,29 +334,29 @@ public class Login extends Activity {
 	}
 
 	private synchronized void login() {
-		signedInId = loginId.getText().toString();		
+		signedInId = loginId.getText().toString();
 		if (signedInId.length() < 1) {
 			Toast.makeText(Login.this, "ID is emptry. Check it plz.", Toast.LENGTH_SHORT).show();
 			return;
 		}
-		
+
 		String pw = loginPw.getText().toString();
 		if (pw.length() < 1) {
 			Toast.makeText(Login.this, "PW is emptry. Check it plz.", Toast.LENGTH_SHORT).show();
 			return;
 		}
-		
+
 		pd = ProgressDialog.show(Login.this, "Isb", "Logging in...", true, true);
-		
+
 		(loginThread = new LoginThread(signedInId, pw)).start();
 	}
-	
+
 	private void logout() {
 		if (isb.isConnected()) {
 			isb.disconnect();
 			idPwInput.setVisibility(View.VISIBLE);
 			logedIn.setVisibility(View.INVISIBLE);
-											
+
 			Log.i(logName, "Connection Failed.");
 		}
 	}

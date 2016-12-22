@@ -30,9 +30,11 @@ import android.content.ComponentName;
 import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -149,10 +151,12 @@ public class NotesList extends ListActivity {
         // Setup the menu header
         menu.setHeaderTitle(cursor.getString(COLUMN_INDEX_TITLE));
 
+        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         // Add a menu item to delete the note
         menu.add(0, MENU_ITEM_SEND, 0, R.string.menu_send);
         menu.add(0, MENU_ITEM_EDIT, 1, R.string.menu_edit);
-        menu.add(0, MENU_ITEM_DELETE, 2, R.string.menu_delete);
+        menu.add(0, MENU_ITEM_DELETE, 2, R.string.menu_delete)
+                .setEnabled(!SP.getBoolean("disable_delete", false));
     }
         
     @Override
