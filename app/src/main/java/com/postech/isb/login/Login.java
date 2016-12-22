@@ -218,7 +218,7 @@ public class Login extends Activity {
 		@Override
 		public void handleMessage(Message message) {
 			Log.i(logName, "sending heartbeat...");
-			isb.sendHeartBeat();
+			isb.sendHeartbeat();
 		}
 	}
 

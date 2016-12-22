@@ -1332,11 +1332,10 @@ public class IsbSession {
 		return result;
 	}
 	
-	public void sendHeartBeat(){
+	public void sendHeartbeat(){
 		try {
 			if (state == MAIN) {
-				telnet.send_wo_r("p");
-				telnet.waitfor("\007");
+				telnet.send_heartbeat();
 			}
 		}
 		catch (IOException e) {

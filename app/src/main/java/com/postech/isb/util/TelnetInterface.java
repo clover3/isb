@@ -31,6 +31,8 @@ public class TelnetInterface {
     static final int COLS = 40;
     static final String username = "bbs";
 
+    private boolean sent_packet_recently;
+
     TelnetInterface(final int rows, final int cols) {
         jsch=new JSch();
     }
@@ -62,6 +64,8 @@ public class TelnetInterface {
         in = channel.getInputStream();
         out = channel.getOutputStream();
         channel.connect();
+
+        sent_packet_recently = false;
     }
 
     public void disconnect() throws IOException {
@@ -132,6 +136,7 @@ public class TelnetInterface {
         public void raw_send(String cmd) throws IOException {
             out.write((cmd).getBytes(charset));
             out.flush();
+            sent_packet_recently = true;
         }
 
         public String raw_waitfor(String match) throws IOException {
@@ -202,5 +207,14 @@ public class TelnetInterface {
             return null;
         }
 
+    }
+
+    public void send_heartbeat() throws IOException{
+        // FIXME: acquire a lock to prevent contention with user networking.
+        if (!sent_packet_recently) {
+            send_wo_r("p");
+            waitfor("\007");
+        }
+        sent_packet_recently = false;
     }
 }
