@@ -449,13 +449,13 @@ public class ReadThread extends Activity {
 				LayoutParams.WRAP_CONTENT));
 
 		row.addView(writer);
+		when = new TextView(this);
+		when.setPadding(0, 0, 5, 0);
 		SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 		if (SP.getBoolean("display_comment_time", false)) {
-			when = new TextView(this);
 			when.setText(strWhen);
-			when.setPadding(0, 0, 5, 0);
-			row.addView(when);
 		}
+		row.addView(when);
 		row.addView(comment);
 
 		comments.addView(row);

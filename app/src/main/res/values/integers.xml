@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--  for Heartbeat -->
-    <integer name="heartbeat_period">600000</integer> <!-- Heartbeat period(milliseconds) -->
+    <integer name="heartbeat_period">300000</integer> <!-- Heartbeat period(milliseconds) -->
 </resources>
