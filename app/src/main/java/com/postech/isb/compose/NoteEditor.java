@@ -160,7 +160,7 @@ public class NoteEditor extends Activity {
             String targetBoard = intent.getStringExtra("board");
             editFromBoard = intent.getBooleanExtra("edit", false);
             board = targetBoard;
-            if (targetBoard.equals("mail")) {
+            if (targetBoard != null && targetBoard.equals("mail")) {
                 // When board == mail, targetBoard means the list of receiver separated by spaces.
                 targetBoard = EMPTY_RECEIVER;
             }

@@ -690,13 +690,9 @@ public class ReadThread extends Activity {
 	int GetTouchResult(int nTouchPosX, int nTouchPosY)
 	{
 		int result = 0;
-		Log.i("newm", "nTouchPosX: "+nTouchPosX+" nTouchPosY: "+nTouchPosY);
 		
 		Display display = getWindowManager().getDefaultDisplay();
 		int width = display.getWidth();
-
-		Log.i("clover", "x : " + m_nPreTouchPosX + " -> " + nTouchPosX);
-		Log.i("clover", "Width = " + width );
 		
 		if( Math.abs(nTouchPosX - m_nPreTouchPosX) < 4 
 		 && Math.abs(nTouchPosY - m_nPreTouchPosY) < 4  )
