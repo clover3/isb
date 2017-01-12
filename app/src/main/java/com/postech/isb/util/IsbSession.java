@@ -1062,7 +1062,6 @@ public class IsbSession {
 					
 		// Until meet (end)
 		while(in_loop) {
-			Log.i("newm", "11111111111111");
 			m = p.matcher(msg);
 			if (m.find())
 				current_percent = Integer.valueOf(m.replaceAll("$1")); //Know how many lines.
@@ -1077,7 +1076,6 @@ public class IsbSession {
 				result.append(parsePage(msg));
 			}
 			else if (state == PRESS_J){
-				Log.i("newm", "1111222221111");
 				debugMessage ("More lines. appending..", INFO);
 				String [] list = msg.split("\n");
 				if (list.length == 1)
@@ -1088,7 +1086,6 @@ public class IsbSession {
 					String line = list[list.length - 2];
 					if (line.charAt(0) == '\r')
 						line = line.substring(1);
-					Log.i("newm", byteArrayToHex(line.getBytes()));
 					result.append(line + "\n");
 				}
 			}

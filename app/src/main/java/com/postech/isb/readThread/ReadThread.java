@@ -315,7 +315,7 @@ public class ReadThread extends Activity {
 		String delimiter = "\n";
 		String[] astr = str.split(delimiter);
 
-		boolean fReadingUrl = true;
+		boolean fReadingUrl = false;
 		boolean fAddLF = true;
 		for (int i = 0; i < astr.length; i++) {
 			// Log.i("clover", String.format("%d : ", i) + astr[i] );
@@ -343,7 +343,7 @@ public class ReadThread extends Activity {
 	}
 
 	static String TrimLine(String str) {
-
+		// TODO: Optimize me
 		int lastNewline = -1;
 		int i;
 		for (i = 0; i < str.length(); i++) {
@@ -354,9 +354,8 @@ public class ReadThread extends Activity {
 					&& str.charAt(i) != '\b' && str.charAt(i) != '\t')
 				break;
 		}
-		if (lastNewline >= 0 && i < str.length() && lastNewline < str.length()) {
+		if (lastNewline >= 0 && i < str.length() && lastNewline < str.length())
 			str = str.substring(lastNewline + 1);
-		}
 
 		int lastChar = -1;
 		for (i = 0; i < str.length(); i++) {
@@ -470,6 +469,14 @@ public class ReadThread extends Activity {
 		}
 	}
 
+	private String byteArrayToHex(byte[] a) {
+		// Just for debugging
+		StringBuilder sb = new StringBuilder();
+		for(final byte b: a)
+			sb.append(String.format("%02x ", b&0xff));
+		return sb.toString();
+	}
+
 	private boolean updateThread(int _num) {
 		try {
 			if (isb.isMain()) {
@@ -485,7 +492,9 @@ public class ReadThread extends Activity {
 
 					// link ref maker
 					// XXX: I cannot remember why I TrimLine the contents....
+					Log.i("newm", "thread: " + byteArrayToHex(t.contents.substring(0,6).getBytes()));
 					String strContent = preprocessLink(TrimLine(t.contents));
+					Log.i("newm", "thread: " + byteArrayToHex(strContent.substring(0,6).getBytes()));
 					addRefLink(threadBody, strContent);
 
 					Linkify.addLinks(threadBody, Linkify.WEB_URLS);
