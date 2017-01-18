@@ -492,9 +492,7 @@ public class ReadThread extends Activity {
 
 					// link ref maker
 					// XXX: I cannot remember why I TrimLine the contents....
-					Log.i("newm", "thread: " + byteArrayToHex(t.contents.substring(0,6).getBytes()));
 					String strContent = preprocessLink(TrimLine(t.contents));
-					Log.i("newm", "thread: " + byteArrayToHex(strContent.substring(0,6).getBytes()));
 					addRefLink(threadBody, strContent);
 
 					Linkify.addLinks(threadBody, Linkify.WEB_URLS);
