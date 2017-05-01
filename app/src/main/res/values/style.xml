@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="MyNoTitleBar" parent="@android:style/Theme.NoTitleBar">
+        <item name="android:contextPopupMenuStyle">@style/MyContextPopupMenuStyle</item>
+    </style>
+
+    <style name="MyContextPopupMenuStyle" parent="@android:style/Widget.Holo.Light.PopupMenu">
+        <item name="android:overlapAnchor">true</item>
+    </style>
+</resources>

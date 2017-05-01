@@ -1,15 +1,15 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 14
+    compileSdkVersion 24
     buildToolsVersion "23.0.1"
     compileOptions.encoding = 'x-windows-949'
 
 
     defaultConfig {
         applicationId "com.postech.isb"
-        minSdkVersion 14
-        targetSdkVersion 14
+        minSdkVersion 24
+        targetSdkVersion 24
 
         ndk {
             moduleName "hangul_cutter"
@@ -25,6 +25,6 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:18.0.0'
+    compile 'com.android.support:support-v4:24.0.0'
     compile project(':jsch-0.1.54')
 }
