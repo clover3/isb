@@ -5,4 +5,5 @@
 	<color name="boardlist_margin">#90FF0000</color>
 	<color name="boardlist_text">#FFFFFF00</color>
 	<color name="boardlist_lines_highlight">#FF555555</color>
+	<color name="optionmenu">#e0000000</color>
 </resources>

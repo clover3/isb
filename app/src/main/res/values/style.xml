@@ -2,6 +2,8 @@
 <resources>
     <style name="MyNoTitleBar" parent="@android:style/Theme.NoTitleBar">
         <item name="android:contextPopupMenuStyle">@style/MyContextPopupMenuStyle</item>
+        <item name="android:panelFullBackground">@color/optionmenu</item>
+        <!-- <item name="android:itemBackground">#00FF00</item> -->
     </style>
 
     <style name="MyContextPopupMenuStyle" parent="@android:style/Widget.Holo.Light.PopupMenu">
