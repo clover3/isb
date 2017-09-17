@@ -752,23 +752,46 @@ public class IsbSession {
 			debugMessage("writeToBoard: go to board fail.", INFO);
 			return false;
 		}
-		
-			telnet.send_wo_r("W"); // We use capital 'W' for writing in an empty board
-			String msg = telnet.waitfor("(?s).*제목 : $");
-			
-			telnet.send(title);			
-			msg = telnet.waitfor("(?s).*\\[1;1H$");
-			
+
+		telnet.send_wo_r("W"); // We use capital 'W' for writing in an empty board
+		String msg = telnet.waitfor("(?s).*제목 : $");
+
+		telnet.send(title);
+		msg = telnet.waitfor("(?s).*\\[1;1H$");
+		boolean is_vim = !msg.contains("Ctrl-Z를 누르면 도움말이 나옵니다.");
+
+		// Write content
+		if (is_vim) {
+			telnet.send_wo_r("i");
+			int[] cut_result = hangulVimCutter(content);
+			int[] cut = new int[cut_result.length + 2];
+			System.arraycopy(cut_result, 0, cut, 1, cut_result.length);
+			cut[0] = 0;
+			cut[cut_result.length + 1] = content.length();
+			for (int i = 0; i < cut.length-1; i++) {
+				telnet.send(content.substring(cut[i],cut[i+1]));
+			}
+		}
+		else {
 			telnet.send(content);
+		}
+
+		// Finish writing
+		if (is_vim) {
+			telnet.send("\033:wq");
+		}
+		else {
 			telnet.send_wo_r("\027");
 			msg = telnet.waitfor("(?s).* \\[S\\] $");
-			
+
 			telnet.send_wo_r("S");
-			msg = telnet.waitfor("(?s).*누르세요\\]$");
-			
-			telnet.send_wo_r(" ");
-			msg = telnet.waitfor(expect(BOARD));
-				
+		}
+		msg = telnet.waitfor("(?s).*누르세요\\]$");
+
+
+		telnet.send_wo_r(" ");
+		msg = telnet.waitfor(expect(BOARD));
+
 		debugMessage("Write success", INFO);
 		if (gotoMenu(MAIN))
 			debugMessage("Back to main success", INFO);
@@ -1154,7 +1177,7 @@ public class IsbSession {
 		telnet.waitfor("(?s).*(?:;2H|>)$");
 
 		//String remaining = cmt;
-		int[] cut = hangulCutter(cmt);
+		int[] cut = hangulCommentCutter(cmt);
 		int cut_len = cut.length;
 		
 		int begin = 0, end = 0;
@@ -1348,7 +1371,8 @@ public class IsbSession {
 	}
 	
 	
-	public native int[] hangulCutter(String jstr);
+	public native int[] hangulCommentCutter(String jstr);
+	public native int[] hangulVimCutter(String jstr);
 	public native int[] hangulAscii(String jstr);
 	public native int[] hangulDebug(String jstr);
 	public native int[] hangulDebug2(String jstr);
