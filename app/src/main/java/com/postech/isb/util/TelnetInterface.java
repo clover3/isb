@@ -18,6 +18,7 @@ import com.jcraft.jsch.*;
 public class TelnetInterface {
     static final int WAITFOR = 3;
     static final int SEND = 6;
+    static final int WAITFOR_SKIP_NEWLINE = 9;
 
     private JSch jsch;
     private Session session;
@@ -85,12 +86,38 @@ public class TelnetInterface {
         return waitfor(oneMatch);
     }
 
+    public String waitfor_skip_newline(String[] matches) throws IOException {
+        if (matches == null)
+            return null;
+        if (matches.length == 0)
+            return null;
+
+        String oneMatch = TextUtils.join("|", matches);
+        return waitfor_skip_newline(oneMatch);
+    }
+
+
     public String waitfor(String match) throws IOException {
         Holder<String> ret = new Holder<String>();
         SshAsyncTask task = new SshAsyncTask(match, ret);
         IOException e;
         try {
             e = task.execute(WAITFOR).get();
+        } catch (Exception e1) {
+            e1.printStackTrace();
+            return null;
+        }
+        if (e != null)
+            throw e;
+        return ret.value;
+    }
+
+    public String waitfor_skip_newline(String match) throws IOException {
+        Holder<String> ret = new Holder<String>();
+        SshAsyncTask task = new SshAsyncTask(match, ret);
+        IOException e;
+        try {
+            e = task.execute(WAITFOR_SKIP_NEWLINE).get();
         } catch (Exception e1) {
             e1.printStackTrace();
             return null;
@@ -139,8 +166,51 @@ public class TelnetInterface {
             sent_packet_recently = true;
         }
 
+        public String raw_waitfor_skip_newline(String match) throws IOException {
+            byte[] tmp = new byte[ROWS * COLS + 1000];
+            byte[] tmp_wo_newline = new byte[ROWS * COLS + 1000];
+            byte[] block = new byte[0];
+            String s_block = "";
+
+            Log.i("isb", "waitfor(" + match + ")");
+            boolean fKeepRead = true;
+            while(fKeepRead) {
+                // TODO: optimize me: directly read data into 'tmp'
+                int n_read = in.read(tmp, 0, ROWS * COLS + 1000);
+                if (n_read < 0)
+                    throw new IOException();
+                // Remove newline
+                int last_copy_index = 0;
+                int last_copy_dest = 0;
+                for (int i = 1; i < n_read; i++) {
+                    if (tmp[i] == '\r' && tmp[i-1] == '\n') {
+                        int len = i - 1 - last_copy_index;
+                        System.arraycopy(tmp, last_copy_index, tmp_wo_newline,last_copy_dest, len);
+                        last_copy_index = i + 1;
+                        last_copy_dest += len;
+                    }
+                }
+                System.arraycopy(tmp, last_copy_index, tmp_wo_newline, last_copy_dest,
+                        n_read - last_copy_index);
+                n_read -= last_copy_index - last_copy_dest;
+
+                int cur_length = block.length + n_read;
+                byte[] new_block = new byte[cur_length];
+
+                System.arraycopy(block, 0, new_block, 0, block.length);
+                System.arraycopy(tmp_wo_newline, 0, new_block, block.length, n_read);
+                block = new_block;
+
+                s_block = new String(block, 0, cur_length, charset);
+                if (s_block.matches(match)) {
+                    break;
+                }
+            }
+            return s_block;
+        }
+
         public String raw_waitfor(String match) throws IOException {
-            byte[] tmp=new byte[ROWS * COLS + 1000];
+            byte[] tmp = new byte[ROWS * COLS + 1000];
             byte[] block = new byte[0];
             String s_block = "";
 
@@ -199,6 +269,13 @@ public class TelnetInterface {
                 case WAITFOR:
                     try {
                         ret_s.value = raw_waitfor(s);
+                    } catch (IOException e) {
+                        return e;
+                    }
+                    break;
+                case WAITFOR_SKIP_NEWLINE:
+                    try {
+                        ret_s.value = raw_waitfor_skip_newline(s);
                     } catch (IOException e) {
                         return e;
                     }

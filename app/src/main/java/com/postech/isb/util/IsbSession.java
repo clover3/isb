@@ -1219,7 +1219,7 @@ public class IsbSession {
 		response1[0] = "(?s).*\\]$"; // Already last page.
 		response1[1] = "\007"; // No thread
 
-		msg = telnet.waitfor(response1);
+		msg = telnet.waitfor_skip_newline(response1);
 		Log.i("clover",msg);
 		if (msg.equals("\007")) // Case : Ctrl+U is unavailable
 			strReader = null;
