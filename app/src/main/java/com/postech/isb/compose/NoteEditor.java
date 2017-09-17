@@ -81,6 +81,7 @@ public class NoteEditor extends Activity {
     private static final int DISCARD_ID = Menu.FIRST + 1;
     private static final int DELETE_ID = Menu.FIRST + 2;
     private static final int FINISH_ID = Menu.FIRST + 3;
+    private static final int SAVE_ID = Menu.FIRST + 4;
 
     // The different distinct states the activity can be run in.
     private static final int STATE_EDIT = 0;
@@ -379,9 +380,6 @@ public class NoteEditor extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
 
-        menu.add(0, FINISH_ID, 0, R.string.menu_finish)
-        .setIcon(android.R.drawable.ic_menu_add);
-        
         // Build the menus that are shown when editing.
         if (mState == STATE_EDIT) {
             menu.add(0, REVERT_ID, 0, R.string.menu_revert)
@@ -397,15 +395,21 @@ public class NoteEditor extends Activity {
 
         // Build the menus that are shown when inserting.
         } else if (editFromBoard) {
+            menu.add(0, FINISH_ID, 0, R.string.menu_finish)
+                    .setIcon(android.R.drawable.ic_menu_add);
             menu.add(0, REVERT_ID, 0, R.string.menu_revert)
                     .setShortcut('0', 'r')
                     .setIcon(android.R.drawable.ic_menu_revert);
         }
         else {
+            menu.add(0, FINISH_ID, 0, R.string.menu_finish)
+                    .setIcon(android.R.drawable.ic_menu_add);
             menu.add(0, DISCARD_ID, 0, R.string.menu_discard)
                     .setShortcut('0', 'd')
                     .setIcon(android.R.drawable.ic_menu_delete);
         }
+        menu.add(0, SAVE_ID, 0, R.string.menu_save)
+                .setIcon(android.R.drawable.ic_menu_save);
 
         /*
         // If we are working on a full note, then append to the
@@ -438,6 +442,9 @@ public class NoteEditor extends Activity {
         case DISCARD_ID:
             cancelNote();
             break;
+        case SAVE_ID:
+            saveNote();
+            break;
         case REVERT_ID:
             cancelNote();
             break;
@@ -463,6 +470,14 @@ public class NoteEditor extends Activity {
                 deleteNote();
             }
         }
+        setResult(RESULT_CANCELED);
+        finish();
+    }
+
+    private final void saveNote() {
+        Toast.makeText(getApplicationContext(),
+                "Saved!", Toast.LENGTH_SHORT)
+                .show();
         setResult(RESULT_CANCELED);
         finish();
     }

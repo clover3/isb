@@ -58,6 +58,7 @@
     <string name="menu_revert">Revert</string>
     <string name="menu_discard">Discard</string>
     <string name="menu_finish">Submit</string>
+	<string name="menu_save">Save</string>
 
     <string name="resolve_edit">Edit Draft</string>
     <string name="resolve_title">Edit title</string>  

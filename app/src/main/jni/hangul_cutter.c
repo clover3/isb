@@ -3,7 +3,9 @@
 #include <string.h>
 #include<android/log.h>
 #define LOGI(msg) __android_log_print(ANDROID_LOG_INFO, "libnav", msg) 
- 
+
+jintArray internal_hangulCutter(JNIEnv* env, jobject thiz, jstring jstr, int line_length);
+
 /* hangleCountLiens.
  * Count the expected number of lines of a given comment line.
  * Usage: Refer com.postech.isb.readThread.ReadThread.commentWatcherInput.onTextChanged
@@ -56,15 +58,25 @@ JNIEXPORT jintArray JNICALL Java_com_postech_isb_readThread_ReadThread_hangulCou
  * @param orig: First String class argument. UTF-8 String comment.
  * @return: Int[] which represents the number of characters which each line contains.
  */
-JNIEXPORT jintArray JNICALL Java_com_postech_isb_util_IsbSession_hangulCutter(JNIEnv* env, jobject thiz, jstring jstr)
+JNIEXPORT jintArray JNICALL Java_com_postech_isb_util_IsbSession_hangulCommentCutter(JNIEnv* env, jobject thiz, jstring jstr)
+{
+	return internal_hangulCutter(env, thiz, jstr, 50);
+}
+JNIEXPORT jintArray JNICALL Java_com_postech_isb_util_IsbSession_hangulVimCutter(JNIEnv* env, jobject thiz, jstring jstr)
+{
+	return internal_hangulCutter(env, thiz, jstr, 79);
+}
+#define MAX_LINE 200
+jintArray internal_hangulCutter(JNIEnv* env, jobject thiz, jstring jstr, int line_length)
 {
 	const char *orig = (*env)->GetStringUTFChars(env, jstr, NULL);
 	int len = strlen(orig);
-	int cut_len[50] = {0,};
+	int cut_len[MAX_LINE] = {0,}; //FIXME: dynamically adjust me.
 	int i, j, char_byte = 0, char_num = 0;
 	jintArray result;
-	for (i = 0, j = 0; i < len && j < 50;){
-
+	for (i = 0, j = 0; i < len && j < MAX_LINE;){
+		if(orig[i] == '\n' || orig[i] == '\r')
+			i += 1, char_byte = 0;
 		if((((int)orig[i]) & (int)0x80) == (int)0x00)
 			i += 1, char_byte += 1;
 		else if((((int)orig[i]) & (int)0xE0) == (int)0xC0)
@@ -74,11 +86,11 @@ JNIEXPORT jintArray JNICALL Java_com_postech_isb_util_IsbSession_hangulCutter(JN
 		else
 			i += 4, char_byte += 2;
 		char_num += 1;
-		if (char_byte == 50){
+		if (char_byte == line_length){
 			cut_len[j++] = char_num;
 			char_byte = 0;
 		}
-		else if (char_byte > 50){
+		else if (char_byte > line_length){
 			cut_len[j++] = char_num-1;
 			char_byte = 2;
 		}
