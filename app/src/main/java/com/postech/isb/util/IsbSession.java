@@ -833,22 +833,49 @@ public class IsbSession {
 		msg = telnet.waitfor("(?s).*\033\\[3;7H$");
 		telnet.send(title);
 		msg = telnet.waitfor("(?s).*\033\\[1;1H$");
-		while(true){
-			String [] response1 = new String[3];
-			String clear_string = "\013";
-			telnet.send_wo_r(clear_string); //Ctrl-k
-			response1[0] = "\033\\[.?K$";
-			response1[1] = "(?s).*\033\\[1;1H$";
-			response1[2] = "(?s).*\007$"; // EOF
-			msg = telnet.waitfor(response1);
-			if (msg.contains("\007"))
-				break;
+		boolean is_vim = !msg.contains("Ctrl-Z를 누르면 도움말이 나옵니다.");
+
+		// Write content
+		if (is_vim) {
+			Log.i("newm", "it is vim!");
+			telnet.send_wo_r("vG$d");
+			telnet.send_wo_r("i");
+			int[] cut_result = hangulVimCutter(content);
+			int[] cut = new int[cut_result.length + 2];
+			System.arraycopy(cut_result, 0, cut, 1, cut_result.length);
+			cut[0] = 0;
+			cut[cut_result.length + 1] = content.length();
+			for (int i = 0; i < cut.length-1; i++) {
+				telnet.send(content.substring(cut[i],cut[i+1]));
+			}
 		}
-			
-		telnet.send(content);
-		telnet.send_wo_r("\027");
-		msg = telnet.waitfor("(?s).* \\[S\\] $");
-		telnet.send_wo_r("S");
+		else {
+			Log.i("newm", "it is emacs!");
+			while (true) {
+				String[] response1 = new String[3];
+				String clear_string = "\013";
+				telnet.send_wo_r(clear_string); //Ctrl-k
+				response1[0] = "\033\\[.?K$";
+				response1[1] = "(?s).*\033\\[1;1H$";
+				response1[2] = "(?s).*\007$"; // EOF
+				msg = telnet.waitfor(response1);
+				if (msg.contains("\007"))
+					break;
+			}
+
+			telnet.send(content);
+		}
+
+		// Finish writing
+		if (is_vim) {
+			telnet.send("\033:wq");
+		}
+		else {
+			telnet.send_wo_r("\027");
+			msg = telnet.waitfor("(?s).* \\[S\\] $");
+			telnet.send_wo_r("S");
+		}
+
 		msg = telnet.waitfor("(?s).* \\[N\\]\\? $");
 		telnet.send_wo_r("\r\n");
 		msg = telnet.waitfor(expect(BOARD));
