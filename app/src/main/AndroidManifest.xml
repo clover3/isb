@@ -45,7 +45,7 @@
         <activity android:name=".myBBS.MyBBS">
         </activity>
         
-        <activity android:label="@string/title_notes_list" android:name=".compose.NotesList">
+        <activity android:label="@string/title_notes_list" android:name=".compose.NotesList" android:theme="@style/MyNotTransparentMenu">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.EDIT" />
@@ -60,9 +60,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:theme="@android:style/Theme.Light"
+        <activity android:theme="@style/MyNotTransparentMenuThemeLight"
             android:label="@string/title_note"
-            android:configChanges="keyboardHidden|orientation" android:name=".compose.NoteEditor">
+            android:configChanges="keyboardHidden|orientation" android:name=".compose.NoteEditor" >
             <!-- This filter says that we can view or edit the data of
                  a single note -->
             <intent-filter android:label="@string/resolve_edit">

@@ -6,6 +6,14 @@
         <!-- <item name="android:itemBackground">#00FF00</item> -->
     </style>
 
+    <style name="MyNotTransparentMenu" parent="@android:style/Theme.NoTitleBar">
+        <item name="android:panelFullBackground">@color/optionmenu</item>
+    </style>
+
+    <style name="MyNotTransparentMenuThemeLight" parent="@android:style/Theme.Light">
+        <item name="android:panelFullBackground">@color/optionmenu</item>
+    </style>
+
     <style name="MyContextPopupMenuStyle" parent="@android:style/Widget.Holo.Light.PopupMenu">
         <item name="android:overlapAnchor">true</item>
     </style>
