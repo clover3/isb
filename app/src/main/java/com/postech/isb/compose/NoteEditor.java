@@ -387,6 +387,8 @@ public class NoteEditor extends Activity {
                     .setIcon(android.R.drawable.ic_menu_revert);
             if (!mNoteOnly) {
                 SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                menu.add(0, SAVE_ID, 0, R.string.menu_save)
+                        .setIcon(android.R.drawable.ic_menu_save);
                 menu.add(0, DELETE_ID, 0, R.string.menu_delete)
                         .setShortcut('1', 'd')
                         .setIcon(android.R.drawable.ic_menu_delete)
@@ -397,6 +399,8 @@ public class NoteEditor extends Activity {
         } else if (editFromBoard) {
             menu.add(0, FINISH_ID, 0, R.string.menu_finish)
                     .setIcon(android.R.drawable.ic_menu_add);
+            menu.add(0, SAVE_ID, 0, R.string.menu_save)
+                    .setIcon(android.R.drawable.ic_menu_save);
             menu.add(0, REVERT_ID, 0, R.string.menu_revert)
                     .setShortcut('0', 'r')
                     .setIcon(android.R.drawable.ic_menu_revert);
@@ -404,12 +408,13 @@ public class NoteEditor extends Activity {
         else {
             menu.add(0, FINISH_ID, 0, R.string.menu_finish)
                     .setIcon(android.R.drawable.ic_menu_add);
+            menu.add(0, SAVE_ID, 0, R.string.menu_save)
+                    .setIcon(android.R.drawable.ic_menu_save);
             menu.add(0, DISCARD_ID, 0, R.string.menu_discard)
                     .setShortcut('0', 'd')
                     .setIcon(android.R.drawable.ic_menu_delete);
         }
-        menu.add(0, SAVE_ID, 0, R.string.menu_save)
-                .setIcon(android.R.drawable.ic_menu_save);
+
 
         /*
         // If we are working on a full note, then append to the
