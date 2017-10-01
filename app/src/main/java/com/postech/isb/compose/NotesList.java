@@ -172,7 +172,7 @@ public class NotesList extends ListActivity {
         switch (item.getItemId()) {
             case MENU_ITEM_DELETE: {
                 AlertDialog.Builder alert_confirm = new AlertDialog.Builder(NotesList.this);
-                alert_confirm.setMessage(R.string.delete_confirm).setCancelable(false).setPositiveButton(R.string.delete,
+                alert_confirm.setMessage(R.string.delete_confirm).setCancelable(false).setNegativeButton(R.string.delete,
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -181,7 +181,7 @@ public class NotesList extends ListActivity {
                                 Uri noteUri = ContentUris.withAppendedId(getIntent().getData(), info.id);
                                 getContentResolver().delete(noteUri, null, null);
                             }
-                        }).setNegativeButton(R.string.cancle,
+                        }).setPositiveButton(R.string.cancle,
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {

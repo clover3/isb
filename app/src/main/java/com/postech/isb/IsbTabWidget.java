@@ -64,8 +64,8 @@ public class IsbTabWidget extends TabActivity {
 				res.getDrawable(R.drawable.ic_tab_mybbs))
 				.setContent(intent);
 		tabHost.addTab(spec);
-	    
-	    tabHost.setCurrentTab(1);
+		if (tabHost.getCurrentTab() != 1)
+			tabHost.setCurrentTab(1);
 	}
 	
 	@Override
