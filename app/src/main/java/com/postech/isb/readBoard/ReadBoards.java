@@ -480,7 +480,7 @@ public class ReadBoards extends ListActivity {
 				alertDlg.setTitle(R.string.delete);
 				global_t = t;
 				alertDlg.setMessage(R.string.delete_confirm);
-				alertDlg.setPositiveButton(R.string.delete,
+				alertDlg.setNegativeButton(R.string.delete,
 						new DialogInterface.OnClickListener() {
 
 							@Override
@@ -509,7 +509,7 @@ public class ReadBoards extends ListActivity {
 								}
 							}
 						});
-				alertDlg.setNegativeButton(R.string.cancle,
+				alertDlg.setPositiveButton(R.string.cancle,
 						new DialogInterface.OnClickListener() {
 
 							@Override
