@@ -67,7 +67,7 @@
     <string name="title_edit">Edit draft</string>
 	<string name="title_notes_list">Isb Drafts</string>   
 	<string name="title_note">Note</string>  
-	<string name="title_edit_title">Note title:</string>  
+	<string name="title_edit_title">Note title:</string>
 		
 	<string name="button_ok">OK</string>
 	<string name="button_cancel">CANCEL</string>  
@@ -78,8 +78,7 @@
 	<string name="info">information</string>
 	<string name="user">users</string>
 	<string name="viewUserTItle">View Users</string>
-	<string name="info_content">New Version available at\n\n 
-	    https://github.com/clover3/isb/releases/latest \n\n 
-	    Source Code available at \n\n
-	     https://github.com/clover3/isb</string>
+	<string name="info_content"><![CDATA[Patch note at <a href="https://github.com/clover3/isb/wiki/Patch-Note">Github Wiki</a><br/><br/>
+		Download from <a href="https://play.google.com/store/apps/details?id=com.postech.isb">Google Play</a><br/><br/>
+	    Source Code available at <a href="https://github.com/clover3/isb">Github</a>]]></string>
 </resources>

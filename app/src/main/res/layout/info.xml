@@ -17,9 +17,7 @@
         android:id="@+id/version_check"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:autoLink="web"
         android:gravity="center_horizontal"
-        android:text="@string/info_content"
         android:textSize="15sp" />
 
 </LinearLayout>
