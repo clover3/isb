@@ -128,7 +128,7 @@ public class TelnetInterface {
     }
 
     public void send_wo_r(String cmd) throws IOException {
-        Log.i("isb", "send_wo_r(" + cmd + ")");
+        // Log.i("isb", "send_wo_r(" + cmd + ")");
         SshAsyncTask task = new SshAsyncTask(cmd);
         IOException e;
         try {
@@ -145,7 +145,7 @@ public class TelnetInterface {
     }
 
     public void send(String cmd) throws IOException{
-        Log.i("isb", "send(" + cmd + ")");
+        // Log.i("isb", "send(" + cmd + ")");
         send_wo_r(cmd + "\r");
     }
 
@@ -172,7 +172,7 @@ public class TelnetInterface {
             byte[] block = new byte[0];
             String s_block = "";
 
-            Log.i("isb", "waitfor(" + match + ")");
+            // Log.i("isb", "waitfor(" + match + ")");
             boolean fKeepRead = true;
             while(fKeepRead) {
                 // TODO: optimize me: directly read data into 'tmp'
@@ -214,7 +214,7 @@ public class TelnetInterface {
             byte[] block = new byte[0];
             String s_block = "";
 
-            Log.i("isb", "waitfor(" + match + ")");
+            // Log.i("isb", "waitfor(" + match + ")");
             boolean fKeepRead = true;
             while(fKeepRead) {
                 // TODO: optimize me: directly read data into 'tmp'

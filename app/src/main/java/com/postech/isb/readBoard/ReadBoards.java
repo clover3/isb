@@ -227,7 +227,6 @@ public class ReadBoards extends ListActivity {
 
 	@Override
 	public void onResume() {
-
 		Log.i("debug", "onResume ");
 		super.onResume();
 		try {
@@ -270,7 +269,9 @@ public class ReadBoards extends ListActivity {
 		Intent readThread = new Intent(ReadBoards.this, ReadThread.class);
 		readThread.putExtra("board", board);
 		readThread.putExtra("num", t.num);
+		Log.i("newm", "start to read thread");
 		startActivity(readThread);
+		Log.i("newm", "end to read thread");
 	}
 
 	@Override

@@ -63,7 +63,6 @@ public class IsbSession {
 	private void checkNewMail(String msg) {
 		// Note! Just entering the board list does not refresh 'new_mail'.
 		if (msg.contains("[새편지왔어요~]")) {
-			Log.i("newmbewb", "new mail!");
 			new_mail = true;
 		}
 		else
@@ -96,7 +95,6 @@ public class IsbSession {
 	}
 
 	public void disconnect() {
-		Log.i("isb", "disconnecting...");
 		try {
 		switch (state)
 		{
@@ -466,7 +464,6 @@ public class IsbSession {
 					line.cnt = 0;
 					line.header = "";
 					line.title = remain.substring(date_position + 7);
-					Log.i("newmbewb", "data:"+date);
 				}
 				else {
 					line.writer = new String(m.replaceAll("$" + g_writer));
@@ -837,7 +834,7 @@ public class IsbSession {
 
 		// Write content
 		if (is_vim) {
-			Log.i("newm", "it is vim!");
+			// it is vim!
 			telnet.send_wo_r("vG$d");
 			telnet.send_wo_r("i");
 			int[] cut_result = hangulVimCutter(content);
@@ -850,7 +847,7 @@ public class IsbSession {
 			}
 		}
 		else {
-			Log.i("newm", "it is emacs!");
+			// it is emacs!
 			while (true) {
 				String[] response1 = new String[3];
 				String clear_string = "\013";
@@ -973,8 +970,7 @@ public class IsbSession {
 				comments.append("\n");
 				Matcher match = p_comment.matcher(token.toString());
 				if (token.length() > 0 && !match.matches()){
-					Log.i("newm", "Unfinished comment!");
-					Log.i("newm", "hex: " + byteArrayToHex(token.getBytes()) + " length: " + token.length());
+					// Unfinished comment!
 					t.contents += commentHeader+"\n";
 					t.contents += comments.toString();
 					t.comments = "";
@@ -994,7 +990,7 @@ public class IsbSession {
 				String token = s.next();
 				remaining_lines.append(token);
 				if (s.hasNext(p_not_white_space)){
-					Log.i("newm", "Lines after comment have been detected!");
+					// Lines after comment have been detected!
 					end_of_thread = false;
 					t.contents += commentHeader + "\n";
 					t.contents += t.comments;
@@ -1015,19 +1011,14 @@ public class IsbSession {
 	private int getLastThreadNum(String msg) {
 		int lastIdx = msg.lastIndexOf("\n\r");
 		msg = msg.substring(lastIdx+2);
-		Log.i("newmbewb", "getLastThreadNum start");
-		Log.i("newmbewb", msg);
+		// getLastThreadNum start
 		
 		Matcher m = lastNumP.matcher(msg);
 
 		if (m.matches()){
-			Log.i("newmbewb", m.replaceAll("$1"));
-			
 			lastIdx = Integer.valueOf(m.replaceAll("$1"));
-			Log.i("newmbewb", "Last number: "+Integer.toString(lastIdx));
 		}
 		else {
-			Log.i("newmbewb", "get last thread num error");
 			debugMessage ("readThead: get last thread num error.", ERROR);
 			lastIdx = 100000;
 		}
@@ -1073,7 +1064,7 @@ public class IsbSession {
 		
 		String end_symbol = "(?s).*\\(end\\)\033\\[27m(?:\033\\[K)?$";
 		Matcher m;
-		Log.i("newmbewb", "readThread start");
+		// readThread start
 		if (!goToBoard(board)) {
 			debugMessage("readThread: go to board fail.", INFO);
 			return null;
@@ -1084,12 +1075,9 @@ public class IsbSession {
 		//TODO check idx
 		String msg = telnet.waitfor(expect(BOARD));
 		int lastIdx = getLastThreadNum(msg);
-		Log.i("newmbewb", Integer.toString(lastIdx));
 		
 		if (idx < 1 || lastIdx < idx) {
 			debugMessage("Invalid thread number", WARN);
-			Log.i("newmbewb", "Invalid thread number");
-			
 			if (gotoMenu(MAIN))
 				debugMessage("Go back to main successfully", WARN);
 			return null;
@@ -1211,7 +1199,6 @@ public class IsbSession {
 		for (int i = 0; i < cut_len; i++)
 		{		
 			end = cut[i];
-			Log.i("newmbewb", "error:"+Integer.toString(cmt.length())+Integer.toString(end));
 			telnet.send_wo_r("c");
 			telnet.send(cmt.substring(begin, end));
 			telnet.waitfor(expect(BOARD));
@@ -1270,7 +1257,6 @@ public class IsbSession {
 		response1[1] = "\007"; // No thread
 
 		msg = telnet.waitfor_skip_newline(response1);
-		Log.i("clover",msg);
 		if (msg.equals("\007")) // Case : Ctrl+U is unavailable
 			strReader = null;
 		else
