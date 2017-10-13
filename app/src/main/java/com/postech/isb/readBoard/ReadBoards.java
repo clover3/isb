@@ -3,6 +3,8 @@ package com.postech.isb.readBoard;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.postech.isb.PostechIsb;
 import com.postech.isb.R;
@@ -220,11 +222,16 @@ public class ReadBoards extends ListActivity {
 				// Do nothing
 			}
 			else {
-				int listIdx = curLstIdx - focus - 5;
-				if (listIdx < 0)
+				int listIdx;
+				if (focus == lastReadNothing)
 					listIdx = 0;
-				else if (listIdx > lastPage.size() - 1)
-					listIdx = lastPage.size() - 1;
+				else {
+					listIdx = curLstIdx - focus - 5;
+					if (listIdx < 0)
+						listIdx = 0;
+					else if (listIdx > lastPage.size() - 1)
+						listIdx = lastPage.size() - 1;
+				}
 				lv.setSelection(listIdx);
 				lv.requestFocus();
 			}
@@ -265,11 +272,16 @@ public class ReadBoards extends ListActivity {
 			// Do nothing
 		}
 		else {
-			int listIdx = curLstIdx - focus - 5;
-			if (listIdx < 0)
+			int listIdx;
+			if (focus == lastReadNothing)
 				listIdx = 0;
-			else if (listIdx > lastPage.size() - 1)
-				listIdx = lastPage.size() - 1;
+			else {
+				listIdx = curLstIdx - focus - 5;
+				if (listIdx < 0)
+					listIdx = 0;
+				else if (listIdx > lastPage.size() - 1)
+					listIdx = lastPage.size() - 1;
+			}
 			lv.setSelection(listIdx);
 			lv.requestFocus();
 		}
@@ -302,10 +314,13 @@ public class ReadBoards extends ListActivity {
 			if (isb.isMain()) {
 				if (idxInFirstPage(lastReadIdx)) {
 					// This case should be checked first
-					if (idxInCurPage(lastReadIdx))
+					if (idxInCurPage(lastReadIdx)) {
 						displayFirstPage(0);
-					else
+					}
+					else {
+						// Moved by reading threads
 						displayFirstPage(lastReadIdx);
+					}
 				}
 				else if (idxInCurPage(lastReadIdx)) {
 					displayPage(curFstIdx, curLstIdx, 0);
@@ -728,6 +743,11 @@ public class ReadBoards extends ListActivity {
 				t = isb.readThread(board, editing_t);
 				String title = listAdapter.getItem(index).GetRawTitle();
 				String note;
+				// Delete whitespace at the end of highlighted lines,
+				Pattern p = Pattern.compile("^(!.*?)\\s*$", Pattern.MULTILINE);
+				Matcher m = p.matcher(t.contents);
+				t.contents = m.replaceAll("$1");
+
 				if (title.matches("[\\s]*$")) {
 					title = "tmp_title_for_empty_title_haha_hehe_hoho_huhu_nyahahahahahahaha";
 					note = (title + t.contents).trim();
