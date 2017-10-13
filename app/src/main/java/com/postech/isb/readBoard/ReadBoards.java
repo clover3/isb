@@ -308,7 +308,7 @@ public class ReadBoards extends ListActivity {
 						displayFirstPage(lastReadIdx);
 				}
 				else if (idxInCurPage(lastReadIdx)) {
-					// Do nothing
+					displayPage(curFstIdx, curLstIdx, 0);
 				}
 				else {
 					// Find a proper page
