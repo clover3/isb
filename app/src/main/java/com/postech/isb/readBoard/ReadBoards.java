@@ -744,7 +744,7 @@ public class ReadBoards extends ListActivity {
 				String title = listAdapter.getItem(index).GetRawTitle();
 				String note;
 				// Delete whitespace at the end of highlighted lines,
-				Pattern p = Pattern.compile("^(!.*?)\\s*$", Pattern.MULTILINE);
+				Pattern p = Pattern.compile("^(!.*?) *$", Pattern.MULTILINE);
 				Matcher m = p.matcher(t.contents);
 				t.contents = m.replaceAll("$1");
 
