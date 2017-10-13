@@ -20,6 +20,7 @@ import com.postech.isb.compose.NotePad.Notes;
 import com.postech.isb.util.IsbSession;
 import com.postech.isb.util.IsbThread;
 import com.postech.isb.util.ThreadList;
+import com.postech.isb.readBoard.ReadBoards;
 
 import android.R.string;
 import android.app.Activity;
@@ -65,7 +66,6 @@ import android.text.TextWatcher;
 import android.text.Editable;
 
 public class ReadThread extends Activity {
-
 	private IsbSession isb;
 	private String board;
 	private int num;
@@ -118,12 +118,14 @@ public class ReadThread extends Activity {
 		if (board == null) {
 			Toast.makeText(getApplicationContext(), "Board is missing",
 					Toast.LENGTH_SHORT).show();
+			retResultNothing();
 			finish();
 		}
 
 		if (num == -1) {
 			Toast.makeText(getApplicationContext(), "Thread number is missing",
 					Toast.LENGTH_SHORT).show();
+			retResultNothing();
 			finish();
 		}
 
@@ -153,6 +155,7 @@ public class ReadThread extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				startActivity(gotoAnotherBoard);
+				retResultNothing();
 				finish();
 			}
 		});
@@ -231,7 +234,7 @@ public class ReadThread extends Activity {
 		public void onClick(View view) {
 			boolean fValidFormat = true;
 			try {
-				Log.i("debug", "onClick : " + m_str);
+				//Log.i("debug", "onClick : " + m_str);
 				String strNum = m_str.substring(m_str.indexOf('/') + 3);
 				int _num = Integer.parseInt(strNum.trim());
 				num = _num;
@@ -488,7 +491,7 @@ public class ReadThread extends Activity {
 					boardName.setText(board + " (" + _num + ")");
 					// t.cc has \n itself.
 					threadHead.setText(t.writer + "\n" + t.date + "\n" + t.title + t.cc);
-					Log.i("debug", "write : " + t.writer);
+					//Log.i("debug", "write : " + t.writer);
 
 					// link ref maker
 					// XXX: I cannot remember why I TrimLine the contents....
@@ -501,7 +504,7 @@ public class ReadThread extends Activity {
 					Scanner s = new Scanner(t.comments);
 					s.useDelimiter("\n");
 
-					Log.i("debug", "ReadThread : " + t.comments);
+					//Log.i("debug", "ReadThread : " + t.comments);
 
 					Pattern p = Pattern
 							.compile("^\\s*(\\w+)\\((\\d+,\\d+:\\d+)\\):\"(.*)\"\n?$");
@@ -533,6 +536,7 @@ public class ReadThread extends Activity {
 					Toast.makeText(getApplicationContext(), "No more thread!",
 							Toast.LENGTH_SHORT).show();
 					// next.setVisibility(View.INVISIBLE);
+					retResultNothing();
 					finish();
 				}
 			} else {
@@ -586,6 +590,7 @@ public class ReadThread extends Activity {
 								if (isb.modifyThread(board, num, isb.THREAD_DELETE)) {
 									Toast.makeText(getApplicationContext(),
 											"Delete success", Toast.LENGTH_SHORT).show();
+									retResultNothing();
 									finish();
 								} else {
 									Toast.makeText(getApplicationContext(), "Delete fail.",
@@ -619,6 +624,21 @@ public class ReadThread extends Activity {
 		return false;
 	}
 
+	@Override
+	public void onBackPressed() {
+		Intent intent = new Intent();
+		intent.putExtra("idx", num);
+		setResult(RESULT_OK, intent);
+		super.onBackPressed();
+	}
+
+	// TODO: Can I be removed?
+	private void retResultNothing() {
+		Intent intent = new Intent();
+		intent.putExtra("idx", ReadBoards.lastReadNothing);
+		setResult(RESULT_OK, intent);
+	}
+
 	private int m_nPreTouchPosY = 0;
 	private int m_nPreTouchPosX = 0;
 	private boolean on_drag = false;
@@ -632,7 +652,6 @@ public class ReadThread extends Activity {
 				on_drag = true;
 				m_nPreTouchPosX = (int) event.getX();
 				m_nPreTouchPosY = (int) event.getY();
-				Log.i("newm", "m_nPreTouchPosX: "+m_nPreTouchPosX+" m_nPreTouchPosY: "+m_nPreTouchPosY);
 			}
 			else if( event.getAction() == MotionEvent.ACTION_MOVE && on_drag)
 			{
@@ -678,7 +697,7 @@ public class ReadThread extends Activity {
 				m_nPreTouchPosY = nTouchPosY;
 			}
 			else{
-				Log.i("newm", "event.getAction(): "+event.getAction());
+				//Log.i("newm", "event.getAction(): "+event.getAction());
 			}
 			return false;
 		}
@@ -761,6 +780,7 @@ public class ReadThread extends Activity {
 								.show();
 				}
 			}
+			retResultNothing();
 			finish();
 			break;
 		}
