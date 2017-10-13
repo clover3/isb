@@ -896,11 +896,15 @@ public class IsbSession {
 
 	private IsbThread parsingThread(String str) {
 		IsbThread t = new IsbThread();
-		
-		// Delete all '[\033[K' and '\r\000's 
-		Pattern p = Pattern.compile("\033\\[K|\r\0|\033\\[\\d+;\\d+H|\033\\[7m|\033\\[27m");
-		Matcher m = p.matcher(str);
 
+		// Replace the start of highlight lines into
+		Pattern p = Pattern.compile("\033\\[7m");
+		Matcher m = p.matcher(str);
+		str = m.replaceAll("!");
+
+		// Delete all '[\033[K' and '\r\000's
+		p = Pattern.compile("\033\\[K|\r\0|\033\\[\\d+;\\d+H|\033\\[7m|\033\\[27m");
+		m = p.matcher(str);
 		str = m.replaceAll("");
 
 		// Warning : No exception handling.

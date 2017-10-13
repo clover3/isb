@@ -5,6 +5,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -286,8 +288,31 @@ public class ReadThread extends Activity {
 
 	private void addRefLink(TextView textview, String str) {
 		String strThreadBody = str;
+		// Find all highlight lines in advance
+		List<Integer> highlightStartList = new ArrayList<Integer>();
+		List<Integer> highlightEndList = new ArrayList<Integer>();
+		int deletedBytes = 0;
+
+		Pattern highlightPattern = Pattern
+				.compile("^!.*$", Pattern.MULTILINE);
+		Matcher match = highlightPattern.matcher(strThreadBody);
+		while (match.find()) { // Find each match in turn; String can't do this.
+			highlightStartList.add(match.start() - deletedBytes);
+			deletedBytes += 1;
+			highlightEndList.add(match.end() - deletedBytes);
+		}
+		// Delete '!' for highlights
+		StringBuilder sb = new StringBuilder(strThreadBody);
+		ListIterator<Integer> li_s = highlightStartList.listIterator();
+		// Iterate in reverse.
+		while(li_s.hasNext()) {
+			sb.deleteCharAt(li_s.next());
+		}
+		strThreadBody = sb.toString();
+
 		SpannableString text = new SpannableString(strThreadBody);
 		textview.setText(text);
+
 
 		// Pattern pattern =
 		// Pattern.compile("\\s[a-zA-z]/[a-zA-z]\\s\\d{1,}\\s");
@@ -295,7 +320,7 @@ public class ReadThread extends Activity {
 		// FIXME: cannot parse hangul link...
 		Pattern linkPattern = Pattern
 				.compile("(\\s|^)[a-zA-z0-9]/[a-zA-z0-9]\\s\\d{1,}(\\s|$)");
-		Matcher match = linkPattern.matcher(strThreadBody);
+		match = linkPattern.matcher(strThreadBody);
 		while (match.find()) { // Find each match in turn; String can't do this.
 			ClickableSpan clickableSpan = new ClickableSpanLink(match.group());
 			text.setSpan(clickableSpan, match.start(), match.end(), 0);
@@ -303,16 +328,14 @@ public class ReadThread extends Activity {
 		textview.setMovementMethod(LinkMovementMethod.getInstance());
 
 		// Set highlight
-		Pattern highlightPattern = Pattern
-				.compile("^\033\\[7m.*\033\\[27m", Pattern.MULTILINE);
-		match = highlightPattern.matcher(strThreadBody);
-		for (int i = 0; i < strThreadBody.length(); i++) {
-			Log.i("newm", "byte: " + (int)strThreadBody.charAt(i));
-		}
-		while (match.find()) { // Find each match in turn; String can't do this.
-			text.setSpan(new ForegroundColorSpan(Color.BLACK), match.start(), match.end(), 0);
-			text.setSpan(new BackgroundColorSpan(Color.WHITE), match.start(), match.end(), 0);
-
+		li_s = highlightStartList.listIterator();
+		ListIterator<Integer> li_e = highlightEndList.listIterator();
+		// Iterate in reverse.
+		while(li_s.hasNext()) {
+			int idx_s = li_s.next();
+			int idx_e = li_e.next();
+			text.setSpan(new ForegroundColorSpan(Color.BLACK), idx_s, idx_e, 0);
+			text.setSpan(new BackgroundColorSpan(Color.WHITE), idx_s, idx_e, 0);
 		}
 
 		textview.setText(text, BufferType.SPANNABLE);

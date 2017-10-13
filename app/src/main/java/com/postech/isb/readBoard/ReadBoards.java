@@ -3,6 +3,8 @@ package com.postech.isb.readBoard;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.postech.isb.PostechIsb;
 import com.postech.isb.R;
@@ -741,6 +743,11 @@ public class ReadBoards extends ListActivity {
 				t = isb.readThread(board, editing_t);
 				String title = listAdapter.getItem(index).GetRawTitle();
 				String note;
+				// Delete whitespace at the end of highlighted lines,
+				Pattern p = Pattern.compile("^(!.*?)\\s*$", Pattern.MULTILINE);
+				Matcher m = p.matcher(t.contents);
+				t.contents = m.replaceAll("$1");
+
 				if (title.matches("[\\s]*$")) {
 					title = "tmp_title_for_empty_title_haha_hehe_hoho_huhu_nyahahahahahahaha";
 					note = (title + t.contents).trim();
