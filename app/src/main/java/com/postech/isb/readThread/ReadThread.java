@@ -32,10 +32,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.style.BackgroundColorSpan;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
@@ -287,16 +291,30 @@ public class ReadThread extends Activity {
 
 		// Pattern pattern =
 		// Pattern.compile("\\s[a-zA-z]/[a-zA-z]\\s\\d{1,}\\s");
+		// Set thread link
 		// FIXME: cannot parse hangul link...
 		Pattern linkPattern = Pattern
 				.compile("(\\s|^)[a-zA-z0-9]/[a-zA-z0-9]\\s\\d{1,}(\\s|$)");
 		Matcher match = linkPattern.matcher(strThreadBody);
-		final Context context = this;
 		while (match.find()) { // Find each match in turn; String can't do this.
 			ClickableSpan clickableSpan = new ClickableSpanLink(match.group());
 			text.setSpan(clickableSpan, match.start(), match.end(), 0);
 		}
 		textview.setMovementMethod(LinkMovementMethod.getInstance());
+
+		// Set highlight
+		Pattern highlightPattern = Pattern
+				.compile("^\033\\[7m.*\033\\[27m", Pattern.MULTILINE);
+		match = highlightPattern.matcher(strThreadBody);
+		for (int i = 0; i < strThreadBody.length(); i++) {
+			Log.i("newm", "byte: " + (int)strThreadBody.charAt(i));
+		}
+		while (match.find()) { // Find each match in turn; String can't do this.
+			text.setSpan(new ForegroundColorSpan(Color.BLACK), match.start(), match.end(), 0);
+			text.setSpan(new BackgroundColorSpan(Color.WHITE), match.start(), match.end(), 0);
+
+		}
+
 		textview.setText(text, BufferType.SPANNABLE);
 
 	}

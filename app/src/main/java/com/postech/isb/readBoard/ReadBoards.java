@@ -220,11 +220,16 @@ public class ReadBoards extends ListActivity {
 				// Do nothing
 			}
 			else {
-				int listIdx = curLstIdx - focus - 5;
-				if (listIdx < 0)
+				int listIdx;
+				if (focus == lastReadNothing)
 					listIdx = 0;
-				else if (listIdx > lastPage.size() - 1)
-					listIdx = lastPage.size() - 1;
+				else {
+					listIdx = curLstIdx - focus - 5;
+					if (listIdx < 0)
+						listIdx = 0;
+					else if (listIdx > lastPage.size() - 1)
+						listIdx = lastPage.size() - 1;
+				}
 				lv.setSelection(listIdx);
 				lv.requestFocus();
 			}
@@ -265,11 +270,16 @@ public class ReadBoards extends ListActivity {
 			// Do nothing
 		}
 		else {
-			int listIdx = curLstIdx - focus - 5;
-			if (listIdx < 0)
+			int listIdx;
+			if (focus == lastReadNothing)
 				listIdx = 0;
-			else if (listIdx > lastPage.size() - 1)
-				listIdx = lastPage.size() - 1;
+			else {
+				listIdx = curLstIdx - focus - 5;
+				if (listIdx < 0)
+					listIdx = 0;
+				else if (listIdx > lastPage.size() - 1)
+					listIdx = lastPage.size() - 1;
+			}
 			lv.setSelection(listIdx);
 			lv.requestFocus();
 		}
@@ -302,10 +312,13 @@ public class ReadBoards extends ListActivity {
 			if (isb.isMain()) {
 				if (idxInFirstPage(lastReadIdx)) {
 					// This case should be checked first
-					if (idxInCurPage(lastReadIdx))
+					if (idxInCurPage(lastReadIdx)) {
 						displayFirstPage(0);
-					else
+					}
+					else {
+						// Moved by reading threads
 						displayFirstPage(lastReadIdx);
+					}
 				}
 				else if (idxInCurPage(lastReadIdx)) {
 					displayPage(curFstIdx, curLstIdx, 0);
