@@ -67,6 +67,9 @@ public class ReadBoards extends ListActivity {
 	private int curLstIdx;
 	private int lastIdx;
 
+	private int lastReadIdx;
+	static final public int lastReadNothing = -1;
+
 	private IsbSession isb;
 	private ThreadList global_t;
 	private int editing_t;
@@ -86,8 +89,9 @@ public class ReadBoards extends ListActivity {
 	private static final int COLUMN_INDEX_NOTE = 2;
 	private static final int COLUMN_INDEX_TARGET_BOARD = 3;
 
-	private static final int NewNote = 1;
-	private static final int EditNote = 2;
+	private static final int reqNewNote = 1;
+	private static final int reqEditNote = 2;
+	private static final int reqReadThread = 3;
 
 	private Intent gotoAnotherBoard;
 
@@ -144,28 +148,9 @@ public class ReadBoards extends ListActivity {
 			public void onClick(View v) {
 				try {
 					if (isb.isMain()) {
-						ArrayList<ThreadList> lastPage = isb.getThreadList(
-								board, Math.max(curFstIdx - threadPerPage, 1),
-								Math.max(curFstIdx - 1, 1));
-						Collections.sort(lastPage);
-						if (lastPage.size() > 0) {
-							isbThreadItems.clear();
-							isbThreadItems.addAll(lastPage);
-							listAdapter.notifyDataSetInvalidated();
-							curFstIdx = lastPage.get(lastPage.size() - 1).num;
-							curLstIdx = lastPage.get(0).num;
-							if (curLstIdx > lastIdx)
-								lastIdx = curLstIdx;
-
-							if (curFstIdx > 1)
-								prevBtn.setVisibility(View.VISIBLE);
-							else
-								prevBtn.setVisibility(View.INVISIBLE);
-
-							nextBtn.setVisibility(View.VISIBLE);
-							// lv.scrollTo(0, 0);
-						} else
-							prevBtn.setVisibility(View.INVISIBLE);
+						int fstIdx = Math.max(curFstIdx - threadPerPage, 1);
+						int lstIdx = Math.max(curFstIdx - 1, 1);
+						displayPage(fstIdx, lstIdx, lstIdx);
 					} else {
 						Toast.makeText(getApplicationContext(),
 								"Login First, plz...", Toast.LENGTH_SHORT)
@@ -188,26 +173,13 @@ public class ReadBoards extends ListActivity {
 			public void onClick(View v) {
 				try {
 					if (isb.isMain()) {
-						ArrayList<ThreadList> lastPage = isb.getThreadList(
-								board, Math.min(curLstIdx + 1, lastIdx),
-								curLstIdx + threadPerPage);
-						Collections.sort(lastPage);
-						if (lastPage.size() > 0) {
-							isbThreadItems.clear();
-							isbThreadItems.addAll(lastPage);
-							listAdapter.notifyDataSetInvalidated();
-
-							curFstIdx = lastPage.get(lastPage.size() - 1).num;
-							curLstIdx = lastPage.get(0).num;
-							if (lastIdx > curLstIdx)
-								nextBtn.setVisibility(View.VISIBLE);
-							else
-								nextBtn.setVisibility(View.INVISIBLE);
-
-							prevBtn.setVisibility(View.VISIBLE);
-							// lv.scrollTo(0, 0);
-						} else
-							prevBtn.setVisibility(View.INVISIBLE);
+						if (curLstIdx + threadPerPage == lastIdx)
+							displayFirstPage(lastIdx + threadPerPage);
+						else {
+							int fstIdx = Math.min(curLstIdx + 1, lastIdx);
+							int lstIdx = curLstIdx + threadPerPage;
+							displayPage(fstIdx, lstIdx, lstIdx);
+						}
 					} else {
 						Toast.makeText(getApplicationContext(),
 								"Login First, plz...", Toast.LENGTH_SHORT)
@@ -225,28 +197,143 @@ public class ReadBoards extends ListActivity {
 		});
 	}
 
+	private void displayFirstPage(int focus) throws IOException {
+		ArrayList<ThreadList> lastPage = isb
+				.getLastPageThreadList(board);
+		Collections.sort(lastPage);
+		isbThreadItems.clear();
+		isbThreadItems.addAll(lastPage);
+		listAdapter.notifyDataSetChanged();
+		if (lastPage.size() > 0) {
+			curFstIdx = lastPage.get(lastPage.size() - 1).num;
+			curLstIdx = lastPage.get(0).num;
+			lastIdx = curLstIdx;
+
+			if (curFstIdx > 1)
+				prevBtn.setVisibility(View.VISIBLE);
+
+			if (curLstIdx < lastIdx)
+				nextBtn.setVisibility(View.VISIBLE);
+
+			// Set focus
+			if (focus == 0) {
+				// Do nothing
+			}
+			else {
+				int listIdx = curLstIdx - focus - 5;
+				if (listIdx < 0)
+					listIdx = 0;
+				else if (listIdx > lastPage.size() - 1)
+					listIdx = lastPage.size() - 1;
+				lv.setSelection(listIdx);
+				lv.requestFocus();
+			}
+		}
+	}
+
+	private void displayPage(int FstIdx, int LstIdx, int focus) throws IOException {
+		ArrayList<ThreadList> lastPage = isb.getThreadList(
+				board, FstIdx, LstIdx);
+		Collections.sort(lastPage);
+		if (lastPage.size() > 0) {
+			isbThreadItems.clear();
+			isbThreadItems.addAll(lastPage);
+			listAdapter.notifyDataSetInvalidated();
+
+			curFstIdx = lastPage.get(lastPage.size() - 1).num;
+			curLstIdx = lastPage.get(0).num;
+			if (curLstIdx > lastIdx)
+				lastIdx = curLstIdx;
+
+			// Set visibility of buttons
+			if (curFstIdx > 1)
+				prevBtn.setVisibility(View.VISIBLE);
+			else
+				prevBtn.setVisibility(View.INVISIBLE);
+
+			if (curLstIdx < lastIdx)
+				nextBtn.setVisibility(View.VISIBLE);
+			else
+				nextBtn.setVisibility(View.INVISIBLE);
+
+			//lv.scrollTo(0, 0);
+		} else
+			prevBtn.setVisibility(View.INVISIBLE);
+
+		// Set focus
+		if (focus == 0) {
+			// Do nothing
+		}
+		else {
+			int listIdx = curLstIdx - focus - 5;
+			if (listIdx < 0)
+				listIdx = 0;
+			else if (listIdx > lastPage.size() - 1)
+				listIdx = lastPage.size() - 1;
+			lv.setSelection(listIdx);
+			lv.requestFocus();
+		}
+	}
+
+	boolean idxInPage(int idx, int fstIdx) {
+		if (idx < fstIdx)
+			return false;
+		if (idx >= fstIdx + threadPerPage)
+			return false;
+		return true;
+	}
+
+	boolean idxInCurPage(int idx) {
+		return idxInPage(idx, curFstIdx);
+	}
+	boolean idxInFirstPage(int idx) {
+		if (idx == lastReadNothing)
+			return true;
+		if (idx > lastIdx - threadPerPage)
+			return true;
+		return false;
+	}
+
 	@Override
 	public void onResume() {
 		Log.i("debug", "onResume ");
 		super.onResume();
 		try {
 			if (isb.isMain()) {
-				ArrayList<ThreadList> lastPage = isb
-						.getLastPageThreadList(board);
-				Collections.sort(lastPage);
-				isbThreadItems.clear();
-				isbThreadItems.addAll(lastPage);
-				listAdapter.notifyDataSetChanged();
-				if (lastPage.size() > 0) {
-					curFstIdx = lastPage.get(lastPage.size() - 1).num;
-					curLstIdx = lastPage.get(0).num;
-					lastIdx = curLstIdx;
-
-					if (curFstIdx > 1)
-						prevBtn.setVisibility(View.VISIBLE);
-
-					if (curLstIdx < lastIdx)
-						nextBtn.setVisibility(View.VISIBLE);
+				if (idxInFirstPage(lastReadIdx)) {
+					// This case should be checked first
+					if (idxInCurPage(lastReadIdx))
+						displayFirstPage(0);
+					else
+						displayFirstPage(lastReadIdx);
+				}
+				else if (idxInCurPage(lastReadIdx)) {
+					// Do nothing
+				}
+				else {
+					// Find a proper page
+					int newFstIdx;
+					int newLstIdx;
+					if (lastReadIdx < curFstIdx) {
+						for (newFstIdx = curFstIdx; newFstIdx > 1; newFstIdx -= threadPerPage) {
+							if (idxInPage(lastReadIdx, newFstIdx))
+								break;
+						}
+					}
+					else {
+						for (newFstIdx = curFstIdx; newFstIdx < lastIdx;
+							 newFstIdx += threadPerPage) {
+							if (idxInPage(lastReadIdx, newFstIdx))
+								break;
+						}
+					}
+					newFstIdx = Math.max(newFstIdx, 1);
+					newLstIdx = newFstIdx + threadPerPage - 1;
+					if (newLstIdx >= lastIdx) {
+						displayFirstPage(lastReadIdx);
+					}
+					else
+						displayPage(newFstIdx, newLstIdx, lastReadIdx);
 				}
 			} else {
 				Toast.makeText(getApplicationContext(), "Login First, plz...",
@@ -269,9 +356,7 @@ public class ReadBoards extends ListActivity {
 		Intent readThread = new Intent(ReadBoards.this, ReadThread.class);
 		readThread.putExtra("board", board);
 		readThread.putExtra("num", t.num);
-		Log.i("newm", "start to read thread");
-		startActivity(readThread);
-		Log.i("newm", "end to read thread");
+		startActivityForResult(readThread, reqReadThread);
 	}
 
 	@Override
@@ -303,14 +388,14 @@ public class ReadBoards extends ListActivity {
 				Intent giveMeNewThread = new Intent(Intent.ACTION_INSERT,
 						Notes.CONTENT_URI);
 				giveMeNewThread.putExtra("board", board);
-				startActivityForResult(giveMeNewThread, NewNote);
+				startActivityForResult(giveMeNewThread, reqNewNote);
 				return true;
 			}
 			case SEND_MAIL: {
 				Intent giveMeNewThread = new Intent(Intent.ACTION_INSERT,
 						Notes.CONTENT_URI);
 				giveMeNewThread.putExtra("board", board);
-				startActivityForResult(giveMeNewThread, NewNote);
+				startActivityForResult(giveMeNewThread, reqNewNote);
 				return true;
 			}
 		}
@@ -323,114 +408,123 @@ public class ReadBoards extends ListActivity {
 		super.onActivityResult(reqCode, resCode, data);
 
 		switch (reqCode) {
-		case (NewNote): {
-			if (resCode == Activity.RESULT_OK) {
-				String result = data.getAction();
-				Uri resultUri = Uri.parse(result);
-
-				Cursor cursor = managedQuery(resultUri, PROJECTION, null, null,
-						Notes.DEFAULT_SORT_ORDER);
-
-				if (cursor.moveToFirst()) {
-					String title = cursor.getString(COLUMN_INDEX_TITLE);
-					String content = cursor.getString(COLUMN_INDEX_NOTE);
-					String targetBoard = cursor
-							.getString(COLUMN_INDEX_TARGET_BOARD);
-
-					if (isb.isMain()) {
-						try {
-							if (board.equals("mail")) {
-								if (isb.writeMail(targetBoard, title, content)) {
-									Toast.makeText(getApplicationContext(),
-											"Write success", Toast.LENGTH_SHORT)
-											.show();
-									ContentResolver cr = getContentResolver();
-									if (cr.delete(resultUri, null, null) > 0) {
-										Log.i("debug", "Delete success");
-									}
-								} else {
-									Toast.makeText(getApplicationContext(),
-											"Fail! Invalid user?",
-											Toast.LENGTH_SHORT).show();
-								}
-							}
-							else {
-								if (isb.writeToBoard(targetBoard, title, content)) {
-									Toast.makeText(getApplicationContext(),
-											"Write success", Toast.LENGTH_SHORT)
-											.show();
-									ContentResolver cr = getContentResolver();
-									if (cr.delete(resultUri, null, null) > 0) {
-										Log.i("debug", "Delete success");
-									}
-								} else {
-									Toast.makeText(getApplicationContext(),
-											"Fail! Invalid board?",
-											Toast.LENGTH_SHORT).show();
-								}
-							}
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-							Toast.makeText(getApplicationContext(),
-									"Connection lost", Toast.LENGTH_SHORT)
-									.show();
-							isb.disconnect();
-						}
-					} else
-						Toast.makeText(getApplicationContext(),
-								"Login first plz...", Toast.LENGTH_SHORT)
-								.show();
+			case (reqReadThread): {
+				if (resCode == Activity.RESULT_OK) {
+					int idx = data.getIntExtra("idx", lastReadNothing);
+					lastReadIdx = idx;
 				}
+				break;
 			}
-			break;
-		}
-		case (EditNote): {
-			if (resCode == Activity.RESULT_OK) {
-				String result = data.getAction();
-				Uri resultUri = Uri.parse(result);
+			case (reqNewNote): {
+				lastReadIdx = lastReadNothing;
+				if (resCode == Activity.RESULT_OK) {
+					String result = data.getAction();
+					Uri resultUri = Uri.parse(result);
 
-				Cursor cursor = managedQuery(resultUri, PROJECTION, null, null,
-						Notes.DEFAULT_SORT_ORDER);
+					Cursor cursor = managedQuery(resultUri, PROJECTION, null, null,
+							Notes.DEFAULT_SORT_ORDER);
 
-				if (cursor.moveToFirst()) {
-					String title = cursor.getString(COLUMN_INDEX_TITLE);
-					String content = cursor.getString(COLUMN_INDEX_NOTE);
-					String targetBoard = cursor
-							.getString(COLUMN_INDEX_TARGET_BOARD);
+					if (cursor.moveToFirst()) {
+						String title = cursor.getString(COLUMN_INDEX_TITLE);
+						String content = cursor.getString(COLUMN_INDEX_NOTE);
+						String targetBoard = cursor
+								.getString(COLUMN_INDEX_TARGET_BOARD);
 
-					if (isb.isMain()) {
-						try {
-							if (isb.EditToBoard(targetBoard, title, content,
-									editing_t))
+						if (isb.isMain()) {
+							try {
+								if (board.equals("mail")) {
+									if (isb.writeMail(targetBoard, title, content)) {
+										Toast.makeText(getApplicationContext(),
+												"Write success", Toast.LENGTH_SHORT)
+												.show();
+										ContentResolver cr = getContentResolver();
+										if (cr.delete(resultUri, null, null) > 0) {
+											Log.i("debug", "Delete success");
+										}
+									} else {
+										Toast.makeText(getApplicationContext(),
+												"Fail! Invalid user?",
+												Toast.LENGTH_SHORT).show();
+									}
+								}
+								else {
+									if (isb.writeToBoard(targetBoard, title, content)) {
+										Toast.makeText(getApplicationContext(),
+												"Write success", Toast.LENGTH_SHORT)
+												.show();
+										ContentResolver cr = getContentResolver();
+										if (cr.delete(resultUri, null, null) > 0) {
+											Log.i("debug", "Delete success");
+										}
+									} else {
+										Toast.makeText(getApplicationContext(),
+												"Fail! Invalid board?",
+												Toast.LENGTH_SHORT).show();
+									}
+								}
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
 								Toast.makeText(getApplicationContext(),
-										"Edit success", Toast.LENGTH_SHORT)
+										"Connection lost", Toast.LENGTH_SHORT)
 										.show();
-							else
-								Toast.makeText(getApplicationContext(),
-										"Edit fail.", Toast.LENGTH_SHORT)
-										.show();
-							ContentResolver cr = getContentResolver();
-							if (cr.delete(resultUri, null, null) > 0) {
-								Log.i("debug", "Edit success");
+								isb.disconnect();
 							}
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+						} else
 							Toast.makeText(getApplicationContext(),
-									"Connection lost", Toast.LENGTH_SHORT)
+									"Login first plz...", Toast.LENGTH_SHORT)
 									.show();
-							isb.disconnect();
-						}
-					} else {
-						Toast.makeText(getApplicationContext(),
-								"Login first plz...", Toast.LENGTH_SHORT)
-								.show();
 					}
 				}
+				break;
 			}
-			break;
-		}
+			case (reqEditNote): {
+				lastReadIdx = lastReadNothing;
+				if (resCode == Activity.RESULT_OK) {
+					String result = data.getAction();
+					Uri resultUri = Uri.parse(result);
+
+					Cursor cursor = managedQuery(resultUri, PROJECTION, null, null,
+							Notes.DEFAULT_SORT_ORDER);
+
+					if (cursor.moveToFirst()) {
+						String title = cursor.getString(COLUMN_INDEX_TITLE);
+						String content = cursor.getString(COLUMN_INDEX_NOTE);
+						String targetBoard = cursor
+								.getString(COLUMN_INDEX_TARGET_BOARD);
+
+						if (isb.isMain()) {
+							try {
+								if (isb.EditToBoard(targetBoard, title, content,
+										editing_t))
+									Toast.makeText(getApplicationContext(),
+											"Edit success", Toast.LENGTH_SHORT)
+											.show();
+								else
+									Toast.makeText(getApplicationContext(),
+											"Edit fail.", Toast.LENGTH_SHORT)
+											.show();
+								ContentResolver cr = getContentResolver();
+								if (cr.delete(resultUri, null, null) > 0) {
+									Log.i("debug", "Edit success");
+								}
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+								Toast.makeText(getApplicationContext(),
+										"Connection lost", Toast.LENGTH_SHORT)
+										.show();
+								isb.disconnect();
+							}
+						} else {
+							Toast.makeText(getApplicationContext(),
+									"Login first plz...", Toast.LENGTH_SHORT)
+									.show();
+						}
+					}
+				}
+				break;
+			}
 		}
 	}
 
@@ -645,7 +739,7 @@ public class ReadBoards extends ListActivity {
 					note = (title + t.contents).replaceAll("\\s*$", "");
 				giveMeNewThread.putExtra("note", note);
 				giveMeNewThread.putExtra("edit", true);
-				startActivityForResult(giveMeNewThread, EditNote);
+				startActivityForResult(giveMeNewThread, reqEditNote);
 			} catch (IOException e) {
 				e.printStackTrace();
 				Toast.makeText(getApplicationContext(), "Connection lost",
