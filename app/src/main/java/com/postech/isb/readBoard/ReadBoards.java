@@ -102,6 +102,7 @@ public class ReadBoards extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		lastReadIdx = lastReadNothing;
 		setContentView(R.layout.read_board);
 
 		isb = ((PostechIsb) getApplicationContext()).isb;
