@@ -19,6 +19,7 @@ import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.app.Service;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -44,6 +45,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.util.ListIterator;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -72,10 +74,29 @@ public class BoardList extends ListActivity {
 	private static final String SAVE_MY_BOARD = "SAVE_MY_BOARD";
 	private static final String SAVED_MYBOARD_GROUP = "SAVED_MYBOARD_GROUP";
 	private static final String SAVED_MYBOARD_NAME = "SAVED_MYBOARD_NAME";
+	private static final String PREFERENCE_COPIED_1 = "PREFERENCE_COPIED_1";
 
 	private boolean favoriteOnly = false;
 	private ArrayList<Board> board_items;
 
+	public static String getMyBoard(SharedPreferences settings) {
+		boolean fExistMyboard = settings.getBoolean(SAVE_MY_BOARD, false);
+		if( fExistMyboard )
+		{
+			return settings.getString(SAVED_MYBOARD_NAME, "");
+		}
+		else {
+			return "";
+		}
+	}
+	public static void setMyboard(SharedPreferences settings, String name)
+	{
+		SharedPreferences.Editor editor = settings.edit();
+
+		editor.putBoolean(SAVE_MY_BOARD, true);
+		editor.putString(SAVED_MYBOARD_NAME, name);
+		editor.commit();
+	}
 	// Handler for thread. Show error messages.
 	private Handler handler = new Handler() {
 		@Override
@@ -133,7 +154,28 @@ public class BoardList extends ListActivity {
 		boardAdapter.getFilter().filter(search.getText().toString());
 		
 	}
-	
+
+	// Just for backward compatibility
+	// Old versions used 'getPreferences(MODE_PRIVATE)', so I need to copy them
+	// into new SharedPreferences
+	void copySharedPreferences()
+	{
+		SharedPreferences newSettings = PreferenceManager.getDefaultSharedPreferences(this);
+		if (newSettings.getBoolean(PREFERENCE_COPIED_1, false))
+			// Already copied
+			return;
+		else {
+			// Start to copy
+			SharedPreferences oldSettings = getPreferences(MODE_PRIVATE);
+			SharedPreferences.Editor editor = newSettings.edit();
+			editor.putBoolean(PREFERENCE_COPIED_1, true);
+
+			editor.putBoolean(FAVORITE_ONLY_KEY, oldSettings.getBoolean(FAVORITE_ONLY_KEY, false));
+			editor.putBoolean(SAVE_MY_BOARD, oldSettings.getBoolean(SAVE_MY_BOARD, false));
+			editor.putString(SAVED_MYBOARD_NAME,  oldSettings.getString(SAVED_MYBOARD_NAME, ""));
+			editor.commit();
+		}
+	}
 
 	/*
 	 * static class theLock extends Object { } static public theLock lockObject
@@ -182,6 +224,7 @@ public class BoardList extends ListActivity {
 		restoreUIState();
 
 		// DB
+		copySharedPreferences();
 		loadPreference();
 		boardDBAdapter = new IsbDBAdapter(this);
 		boardDBAdapter.open();
@@ -189,7 +232,7 @@ public class BoardList extends ListActivity {
 	}
 
 	private void restoreUIState() {
-		SharedPreferences settings = getPreferences(MODE_PRIVATE);
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		favoriteOnly = settings.getBoolean(FAVORITE_ONLY_KEY, false);
 	}
 
@@ -222,8 +265,9 @@ public class BoardList extends ListActivity {
 
 	@Override
 	protected void onPause() {
+		// FIXME:Am i needed?
 		super.onPause();
-		SharedPreferences uiState = getPreferences(MODE_PRIVATE);
+		SharedPreferences uiState = PreferenceManager.getDefaultSharedPreferences(this);
 		SharedPreferences.Editor editor = uiState.edit();
 		editor.putBoolean(FAVORITE_ONLY_KEY, favoriteOnly);
 		editor.commit();
@@ -292,6 +336,7 @@ public class BoardList extends ListActivity {
 			newItem = new Board(name, favorite, false);
 		return newItem;
 	}
+
 	
 	private void updateArray() {
 		boardListCursor.requery();
@@ -332,7 +377,6 @@ public class BoardList extends ListActivity {
 		if( fExistMyboard )
 		{
 			f = myBoardName.equalsIgnoreCase(name);
-			
 		}
 		
 		return f;
@@ -491,9 +535,9 @@ public class BoardList extends ListActivity {
 	
 	// f == true -> Set 
 	// f == false -> Reset
-	void SetAsMyboard(String name, boolean f)
+	private void SetAsMyboard(String name, boolean f)
 	{
-		SharedPreferences uiState = getPreferences(MODE_PRIVATE);
+		SharedPreferences uiState = PreferenceManager.getDefaultSharedPreferences(this);
 		SharedPreferences.Editor editor = uiState.edit();
 
 		editor.putBoolean(SAVE_MY_BOARD, f);
@@ -528,7 +572,7 @@ public class BoardList extends ListActivity {
 	
 
 	private void loadPreference() {
-		SharedPreferences settings = getPreferences(MODE_PRIVATE);
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 				
 		fExistMyboard = settings.getBoolean(SAVE_MY_BOARD, false);
 		if( fExistMyboard )
