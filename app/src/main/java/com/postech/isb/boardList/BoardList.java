@@ -150,7 +150,8 @@ public class BoardList extends ListActivity {
 		}
 		
 		boardAdapter.notifyDataSetChanged();
-		isEmpty = boardAdapter.isEmpty();
+		if (isEmpty == true)
+			isEmpty = boardAdapter.isEmpty();
 		boardAdapter.getFilter().filter(search.getText().toString());
 		
 	}
