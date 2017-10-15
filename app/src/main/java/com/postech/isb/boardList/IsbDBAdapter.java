@@ -103,6 +103,11 @@ public class IsbDBAdapter {
 	  
 	  return true;
   }
+
+	public boolean existBoardByName(String name) {
+		Cursor cr = db.query(DATABASE_TABLE, null, KEY_BOARD + "=\"" + name+ "\"", null, null, null, null);
+		return cr.getCount() > 0;
+	}
   
   public boolean setFavoriteByName(String name, boolean favorite) {
 	  ContentValues newValue = new ContentValues();

@@ -75,8 +75,8 @@ public class ReadBoards extends ListActivity {
 	private IsbSession isb;
 	private ThreadList global_t;
 	private int editing_t;
-	private final int NUM_ROWS = 80; // FIX HERE FOR THE NEW NUMBER OF ROWS
-	private final int threadPerPage = NUM_ROWS - 4;
+	private static final int NUM_ROWS = 80; // FIX HERE FOR THE NEW NUMBER OF ROWS
+	public static final int threadPerPage = NUM_ROWS - 4;
 	private TouchMenuManager menuMan;
 	/**
 	 * Standard projection for the interesting columns of a normal note.
