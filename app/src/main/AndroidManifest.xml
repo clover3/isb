@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.postech.isb"
-      android:versionCode="52" android:versionName="1.2.06">
+    android:versionCode="1053" android:versionName="1.2.07 (for Nougat or later)">
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
     <uses-sdk android:minSdkVersion="24" android:targetSdkVersion="24"/>
     <application android:icon="@drawable/icon" android:label="@string/app_name" android:name="PostechIsb">
