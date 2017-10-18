@@ -205,6 +205,12 @@ public class ReadBoards extends ListActivity {
 	private void displayFirstPage(int focus) throws IOException {
 		ArrayList<ThreadList> lastPage = isb
 				.getLastPageThreadList(board);
+		if (lastPage == null) {
+			Toast.makeText(getApplicationContext(),
+					"This board does not exist. Try 'Refresh' at the board list.", Toast.LENGTH_SHORT)
+					.show();
+			lastPage = new ArrayList<ThreadList>(); // Empty list
+		}
 		Collections.sort(lastPage);
 		isbThreadItems.clear();
 		isbThreadItems.addAll(lastPage);

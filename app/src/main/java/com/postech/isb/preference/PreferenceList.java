@@ -94,6 +94,13 @@ public class PreferenceList extends PreferenceActivity  {
 		if (isb.isMain()) {
 			try {
 				ArrayList<ThreadList> page = isb.getLastPageThreadList("diary");
+				if (page == null) {
+					// This should not be happen
+					Toast.makeText(getApplicationContext(),
+							"Something wrong! Please ask the developer", Toast.LENGTH_SHORT)
+							.show();
+					page = new ArrayList<ThreadList>(); // Empty list
+				}
 
 				int targetNum = -1;
 				do {
