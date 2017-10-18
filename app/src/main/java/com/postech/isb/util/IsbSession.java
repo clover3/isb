@@ -630,14 +630,15 @@ public class IsbSession {
 
 		return result;
 	}
-		
+
+	// Return 'null' when the board does not exist
 	public ArrayList<ThreadList> getLastPageThreadList(String board) throws IOException {
-		ArrayList<ThreadList> result = new ArrayList<ThreadList>();
+		ArrayList<ThreadList> result;
 		String msg;
 		
 		if (!goToBoard(board)) {
 			debugMessage("getLastPageThread: go to board fail.", INFO);
-			return result;
+			return null;
 		}
 		debugMessage("getLastPageThread: go to board success.", INFO);
 		
