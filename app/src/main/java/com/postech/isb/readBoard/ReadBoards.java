@@ -70,6 +70,7 @@ public class ReadBoards extends ListActivity {
 	private int lastIdx;
 
 	private int lastReadIdx;
+	private boolean lastFollowLink;
 	static final public int lastReadNothing = -1;
 
 	private IsbSession isb;
@@ -103,6 +104,7 @@ public class ReadBoards extends ListActivity {
 		super.onCreate(savedInstanceState);
 
 		lastReadIdx = lastReadNothing;
+		lastFollowLink = false;
 		setContentView(R.layout.read_board);
 
 		isb = ((PostechIsb) getApplicationContext()).isb;
@@ -372,6 +374,7 @@ public class ReadBoards extends ListActivity {
 		Intent readThread = new Intent(ReadBoards.this, ReadThread.class);
 		readThread.putExtra("board", board);
 		readThread.putExtra("num", t.num);
+		lastReadIdx = t.num;
 		startActivityForResult(readThread, reqReadThread);
 	}
 
@@ -427,7 +430,11 @@ public class ReadBoards extends ListActivity {
 			case (reqReadThread): {
 				if (resCode == Activity.RESULT_OK) {
 					int idx = data.getIntExtra("idx", lastReadNothing);
-					lastReadIdx = idx;
+
+					lastFollowLink = data.getBooleanExtra("follow_link", false);
+					if (!lastFollowLink)
+						// Apply the new read idx only when follow_link is false
+						lastReadIdx = idx;
 				}
 				break;
 			}

@@ -75,6 +75,7 @@ public class ReadThread extends Activity {
 	private IsbSession isb;
 	private String board;
 	private int num;
+	private boolean followLink; // 'true' when the user clink a board link (e.g., e/m 10)
 
 	private TextView boardName;
 	private Button prev;
@@ -118,6 +119,7 @@ public class ReadThread extends Activity {
 		Intent intent = getIntent();
 		board = intent.getStringExtra("board");
 		num = intent.getIntExtra("num", -1);
+		followLink = false;
 
 		isb = ((PostechIsb) getApplicationContext()).isb;
 
@@ -255,8 +257,10 @@ public class ReadThread extends Activity {
 			if (board.length() <= 0)
 				fValidFormat = false;
 
-			if (fValidFormat)
+			if (fValidFormat) {
+				followLink = true;
 				updateThread(num);
+			}
 		}
 
 		public String getBoardNameByInitial(String initial) {
@@ -577,7 +581,7 @@ public class ReadThread extends Activity {
 					Toast.makeText(getApplicationContext(), "No more thread!",
 							Toast.LENGTH_SHORT).show();
 					// next.setVisibility(View.INVISIBLE);
-					retResultNothing();
+					retResultCurrentNum();
 					finish();
 				}
 			} else {
@@ -667,16 +671,21 @@ public class ReadThread extends Activity {
 
 	@Override
 	public void onBackPressed() {
-		Intent intent = new Intent();
-		intent.putExtra("idx", num);
-		setResult(RESULT_OK, intent);
+		retResultCurrentNum();
 		super.onBackPressed();
 	}
 
-	// TODO: Can I be removed?
+	private void retResultCurrentNum() {
+		Intent intent = new Intent();
+		intent.putExtra("idx", num);
+		intent.putExtra("follow_link", followLink);
+		setResult(RESULT_OK, intent);
+	}
+
 	private void retResultNothing() {
 		Intent intent = new Intent();
 		intent.putExtra("idx", ReadBoards.lastReadNothing);
+		intent.putExtra("follow_link", followLink);
 		setResult(RESULT_OK, intent);
 	}
 
