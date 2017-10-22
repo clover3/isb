@@ -290,33 +290,46 @@ public class ReadThread extends Activity {
 		}
 	}
 
-	private void addRefLink(TextView textview, String str) {
+	private void applySpecialText(TextView textview, String str, boolean highlight) {
 		String strThreadBody = str;
 		// Find all highlight lines in advance
-		List<Integer> highlightStartList = new ArrayList<Integer>();
-		List<Integer> highlightEndList = new ArrayList<Integer>();
 		int deletedBytes = 0;
-
-		Pattern highlightPattern = Pattern
-				.compile("^!.*$", Pattern.MULTILINE);
-		Matcher match = highlightPattern.matcher(strThreadBody);
-		while (match.find()) { // Find each match in turn; String can't do this.
-			highlightStartList.add(match.start() - deletedBytes);
-			deletedBytes += 1;
-			highlightEndList.add(match.end() - deletedBytes);
-		}
-		// Delete '!' for highlights
-		StringBuilder sb = new StringBuilder(strThreadBody);
-		ListIterator<Integer> li_s = highlightStartList.listIterator();
-		// Iterate in reverse.
-		while(li_s.hasNext()) {
-			sb.deleteCharAt(li_s.next());
-		}
-		strThreadBody = sb.toString();
+		Matcher match;
 
 		SpannableString text = new SpannableString(strThreadBody);
 		textview.setText(text);
 
+		if (highlight) {
+			List<Integer> highlightStartList = new ArrayList<Integer>();
+			List<Integer> highlightEndList = new ArrayList<Integer>();
+			Pattern highlightPattern = Pattern
+					.compile("^!.*$", Pattern.MULTILINE);
+			match = highlightPattern.matcher(strThreadBody);
+			while (match.find()) { // Find each match in turn; String can't do this.
+				highlightStartList.add(match.start() - deletedBytes);
+				deletedBytes += 1;
+				highlightEndList.add(match.end() - deletedBytes);
+			}
+			// Delete '!' for highlights
+			StringBuilder sb = new StringBuilder(strThreadBody);
+			ListIterator<Integer> li_s = highlightStartList.listIterator();
+			// Iterate in reverse.
+			while (li_s.hasNext()) {
+				sb.deleteCharAt(li_s.next());
+			}
+			strThreadBody = sb.toString();
+
+			// Set highlight
+			li_s = highlightStartList.listIterator();
+			ListIterator<Integer> li_e = highlightEndList.listIterator();
+			// Iterate in reverse.
+			while(li_s.hasNext()) {
+				int idx_s = li_s.next();
+				int idx_e = li_e.next();
+				text.setSpan(new ForegroundColorSpan(Color.BLACK), idx_s, idx_e, 0);
+				text.setSpan(new BackgroundColorSpan(Color.WHITE), idx_s, idx_e, 0);
+			}
+		}
 
 		// Pattern pattern =
 		// Pattern.compile("\\s[a-zA-z]/[a-zA-z]\\s\\d{1,}\\s");
@@ -330,18 +343,6 @@ public class ReadThread extends Activity {
 			text.setSpan(clickableSpan, match.start(), match.end(), 0);
 		}
 		textview.setMovementMethod(LinkMovementMethod.getInstance());
-
-		// Set highlight
-		li_s = highlightStartList.listIterator();
-		ListIterator<Integer> li_e = highlightEndList.listIterator();
-		// Iterate in reverse.
-		while(li_s.hasNext()) {
-			int idx_s = li_s.next();
-			int idx_e = li_e.next();
-			text.setSpan(new ForegroundColorSpan(Color.BLACK), idx_s, idx_e, 0);
-			text.setSpan(new BackgroundColorSpan(Color.WHITE), idx_s, idx_e, 0);
-		}
-
 		textview.setText(text, BufferType.SPANNABLE);
 
 	}
@@ -483,7 +484,7 @@ public class ReadThread extends Activity {
 
 		comment = new TextView(this);
 
-		addRefLink(comment, strComment);
+		applySpecialText(comment, strComment, false);
 		comment.setTextColor(0xFFFFFFFF);
 		comment.setTextSize(15);
 
@@ -541,7 +542,7 @@ public class ReadThread extends Activity {
 					// link ref maker
 					// XXX: I cannot remember why I TrimLine the contents....
 					String strContent = preprocessLink(TrimLine(t.contents));
-					addRefLink(threadBody, strContent);
+					applySpecialText(threadBody, strContent, true);
 
 					Linkify.addLinks(threadBody, Linkify.WEB_URLS);
 
