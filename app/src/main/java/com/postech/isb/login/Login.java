@@ -47,12 +47,6 @@ import com.postech.isb.util.IsbSession;
 import com.postech.isb.util.TouchMenuManager;
 import com.postech.isb.viewUser.ViewUser;
 
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.PBEParameterSpec;
-
 public class Login extends Activity {
 
 	static final private int INFO = Menu.FIRST;
@@ -86,7 +80,7 @@ public class Login extends Activity {
 	private LoginThread loginThread;
 
 	protected static final String UTF8 = "utf-8";
-	private static final char[] SEKRIT = "damnthdusl1219".toCharArray() ;
+	private static final byte[] SEKRIT = "damnthdusl1219".getBytes() ;
 	private Handler heartbeatMessageHandler = new HearbeatMessageHandler();
 
 	// Handler for thread. Show error messages.
@@ -360,31 +354,34 @@ public class Login extends Activity {
 			Log.i(logName, "Connection Failed.");
 		}
 	}
+	private byte[] xorWithKey(byte[] a, byte[] key) {
+		byte[] out = new byte[a.length];
+		for (int i = 0; i < a.length; i++) {
+			out[i] = (byte) (a[i] ^ key[i%key.length]);
+		}
+		return out;
+	}
+
+	private final String ENC_TYPE_XOR_BASE64 = "!xorb64!";
 
 	protected String encrypt( String value ) {
 		try {
-			final byte[] bytes = value!=null ? value.getBytes(UTF8) : new byte[0];
-			SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBEWithMD5AndDES");
-			SecretKey key = keyFactory.generateSecret(new PBEKeySpec(SEKRIT));
-			Cipher pbeCipher = Cipher.getInstance("PBEWithMD5AndDES");
-			pbeCipher.init(Cipher.ENCRYPT_MODE, key, new PBEParameterSpec(Settings.Secure.getString(getApplicationContext().getContentResolver(),Settings.System.ANDROID_ID).getBytes(UTF8), 20));
-			return new String(Base64.encode(pbeCipher.doFinal(bytes), Base64.NO_WRAP),UTF8);
-
+			return ENC_TYPE_XOR_BASE64 + new String(Base64.encode(xorWithKey(value.getBytes(), SEKRIT), Base64.NO_WRAP),UTF8);
 		} catch( Exception e ) {
 			throw new RuntimeException(e);
 		}
-
 	}
 
 	protected String decrypt(String value){
+		if (value.length() < 9)
+			return "";
+		String enc_type = value.substring(0,8);
+		value = value.substring(8);
 		try {
-			final byte[] bytes = value!=null ? Base64.decode(value,Base64.DEFAULT) : new byte[0];
-			SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBEWithMD5AndDES");
-			SecretKey key = keyFactory.generateSecret(new PBEKeySpec(SEKRIT));
-			Cipher pbeCipher = Cipher.getInstance("PBEWithMD5AndDES");
-			pbeCipher.init(Cipher.DECRYPT_MODE, key, new PBEParameterSpec(Settings.Secure.getString(getApplicationContext().getContentResolver(),Settings.System.ANDROID_ID).getBytes(UTF8), 20));
-			return new String(pbeCipher.doFinal(bytes),UTF8);
-
+			if (enc_type.equals(ENC_TYPE_XOR_BASE64))
+				return new String(xorWithKey(Base64.decode(value.getBytes(), Base64.DEFAULT), SEKRIT),UTF8);
+			else
+				return "";
 		} catch( Exception e) {
 			throw new RuntimeException(e);
 		}
