@@ -293,13 +293,11 @@ public class ReadThread extends Activity {
 	private void applySpecialText(TextView textview, String str, boolean highlight) {
 		String strThreadBody = str;
 		// Find all highlight lines in advance
-		int deletedBytes = 0;
 		Matcher match;
-
-		SpannableString text = new SpannableString(strThreadBody);
-		textview.setText(text);
+		SpannableString text;
 
 		if (highlight) {
+			int deletedBytes = 0;
 			List<Integer> highlightStartList = new ArrayList<Integer>();
 			List<Integer> highlightEndList = new ArrayList<Integer>();
 			Pattern highlightPattern = Pattern
@@ -319,6 +317,9 @@ public class ReadThread extends Activity {
 			}
 			strThreadBody = sb.toString();
 
+			text = new SpannableString(strThreadBody);
+			textview.setText(text);
+
 			// Set highlight
 			li_s = highlightStartList.listIterator();
 			ListIterator<Integer> li_e = highlightEndList.listIterator();
@@ -329,6 +330,10 @@ public class ReadThread extends Activity {
 				text.setSpan(new ForegroundColorSpan(Color.BLACK), idx_s, idx_e, 0);
 				text.setSpan(new BackgroundColorSpan(Color.WHITE), idx_s, idx_e, 0);
 			}
+		}
+		else {
+			text = new SpannableString(strThreadBody);
+			textview.setText(text);
 		}
 
 		// Pattern pattern =
