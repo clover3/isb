@@ -16,7 +16,7 @@
             </intent-filter>
         </activity>
             
-        <activity android:name=".boardList.BoardList" android:theme="@android:style/Theme.NoTitleBar">
+        <activity android:name=".boardList.BoardList" android:theme="@style/MyYesTitleBar">
         	<intent-filter>
         		<action android:name="android.intent.action.PICK"></action>
         		<category android:name="android.intent.category.DEFAULT"></category>
