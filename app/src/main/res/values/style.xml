@@ -17,4 +17,25 @@
     <style name="MyContextPopupMenuStyle" parent="@android:style/Widget.Holo.Light.PopupMenu">
         <item name="android:overlapAnchor">true</item>
     </style>
+
+    <style name="MyYesTitleBar" parent="@android:style/Theme.NoTitleBar">
+        <item name="android:windowNoTitle">false</item>
+        <item name="android:windowActionBar">true</item>
+        <item name="android:logo">@android:color/transparent</item>
+        <item name="android:actionBarStyle">@style/CustomActionBar</item>
+        <!-- <item name="android:itemBackground">#00FF00</item> -->
+    </style>
+
+    <style name="CustomActionBarTheme" parent="android:style/Theme.Holo.Light">
+        <item name="android:actionBarStyle">@style/CustomActionBar</item>
+    </style>
+
+    <style name="CustomActionBar" parent="android:style/Widget.Holo.ActionBar">
+        <item name="android:titleTextStyle">@style/CustomActionBarTitleText</item>
+        <item name="android:background">@drawable/actionbar_background</item>
+    </style>
+
+    <style name="CustomActionBarTitleText" parent="android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+
+    </style>
 </resources>

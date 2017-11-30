@@ -17,7 +17,10 @@
 
     <PreferenceCategory android:title="Gesture"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:key="cat_gesture"
+        >
+
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="swipe_menu"
@@ -25,6 +28,7 @@
             android:title="Swipe menu"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="swipe_thread"
@@ -37,6 +41,14 @@
     <PreferenceCategory android:title="Customization"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <ListPreference
+            android:defaultValue="@string/preference_value_menuoption_not_selected"
+            android:dialogTitle="How to show the menus"
+            android:entries="@array/preference_menuoption_label"
+            android:entryValues="@array/preference_menuoption_value"
+            android:key="menu_option"
+            android:summary="How to show the menus"
+            android:title="How to show the menus" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="disable_delete"

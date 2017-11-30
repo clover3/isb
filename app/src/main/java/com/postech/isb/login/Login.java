@@ -1,13 +1,17 @@
 package com.postech.isb.login;
 
 import java.io.IOException;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -44,6 +48,7 @@ import com.postech.isb.info.Info;
 import com.postech.isb.preference.PreferenceList;
 import com.postech.isb.util.HeartbeaterReceiver;
 import com.postech.isb.util.IsbSession;
+import com.postech.isb.util.MenuOption;
 import com.postech.isb.util.TouchMenuManager;
 import com.postech.isb.viewUser.ViewUser;
 
@@ -97,6 +102,7 @@ public class Login extends Activity {
 				logedIn.setVisibility(View.VISIBLE);
 				logedId.setText(signedInId);
 				setNewMail();
+				showNotice();
 			}; break;
 			}
 		}
@@ -106,6 +112,7 @@ public class Login extends Activity {
 	private static final String SAVE_ID_PW_KEY = "SAVE_ID_PW_KEY";
 	private static final String SAVED_ID = "SAVED_ID";
 	private static final String SAVED_PW = "SAVED_PW";
+	private static final String LAST_NOTICE_HASH = "LAST_NOTICE_HASH";
 
 	@Override
 	protected void onResume () {
@@ -134,6 +141,29 @@ public class Login extends Activity {
 			editor.putString(SAVED_ID, encrypt(loginId.getText().toString()));
 			editor.putString(SAVED_PW, encrypt(loginPw.getText().toString()));
 		}
+		editor.commit();
+	}
+
+	private void backwardCompatibility(SharedPreferences SP){
+		// Convert swipe menu option into menu option
+		// If menu option is not set, set it following swipe_menu
+		String newValue;
+		String notSelected = getResources().getString(
+				R.string.preference_value_menuoption_not_selected);
+		String menuOption = SP.getString("menu_option", notSelected);
+		if (!menuOption.equals(notSelected)) {
+			// If menu option is already set
+			return;
+		}
+		boolean swipeMenuOption = SP.getBoolean("swipe_menu", true);
+		if (swipeMenuOption)
+			newValue = getResources().getString(R.string.preference_value_menuoption_swipe);
+		else
+			newValue = getResources().getString(R.string.preference_value_menuoption_menubutton);
+
+		SharedPreferences.Editor editor = SP.edit();
+
+		editor.putString("menu_option", newValue);
 		editor.commit();
 	}
 
@@ -187,6 +217,11 @@ public class Login extends Activity {
 		goUserList = new Intent(this, ViewUser.class);
 
 		SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+
+		backwardCompatibility(SP);
+
+		// Set useActionbar
+		MenuOption.setUseActionBar(this);
 
 		// Start to run heartbeater
 		Boolean runHeartbeat = SP.getBoolean("heartbeat", true);
@@ -396,5 +431,55 @@ public class Login extends Activity {
 			helloment.setText("Hello,");
 			mailIcon.setVisibility(View.GONE);
 		}
+	}
+
+	private static String toHexString(byte[] bytes) {
+		StringBuilder hexString = new StringBuilder();
+
+		for (int i = 0; i < bytes.length; i++) {
+			String hex = Integer.toHexString(0xFF & bytes[i]);
+			if (hex.length() == 1) {
+				hexString.append('0');
+			}
+			hexString.append(hex);
+		}
+
+		return hexString.toString();
+	}
+
+	private void showNotice() {
+		SharedPreferences settings = getPreferences(MODE_PRIVATE);
+		String savedNoticeHash = settings.getString(LAST_NOTICE_HASH, "");
+		String notice_content = getResources().getString(R.string.notice_content);
+		try {
+			// If the notice have been shown, do not show it anymore.
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			String thedigest = toHexString(md.digest(notice_content.getBytes("UTF-8")));
+			if (savedNoticeHash.equals(thedigest))
+				return;
+			else {
+				SharedPreferences uiState = getPreferences(MODE_PRIVATE);
+				SharedPreferences.Editor editor = uiState.edit();
+
+				editor.putString(LAST_NOTICE_HASH, thedigest);
+				editor.commit();
+			}
+		}
+		catch (Exception e){
+			// Any exception
+			return;
+		}
+
+		new AlertDialog.Builder(Login.this)
+				.setTitle(R.string.notice_title)
+				.setMessage(R.string.notice_content)
+				.setNeutralButton("OK",
+						new DialogInterface.OnClickListener() {
+							public void onClick(
+									DialogInterface dialog,
+									int whichButton) {
+								// ...ÇÒÀÏ
+							}
+						}).show();
 	}
 }
