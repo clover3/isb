@@ -48,6 +48,7 @@ import com.postech.isb.info.Info;
 import com.postech.isb.preference.PreferenceList;
 import com.postech.isb.util.HeartbeaterReceiver;
 import com.postech.isb.util.IsbSession;
+import com.postech.isb.util.MenuOption;
 import com.postech.isb.util.TouchMenuManager;
 import com.postech.isb.viewUser.ViewUser;
 
@@ -218,6 +219,9 @@ public class Login extends Activity {
 		SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
 		backwardCompatibility(SP);
+
+		// Set useActionbar
+		MenuOption.setUseActionBar(this);
 
 		// Start to run heartbeater
 		Boolean runHeartbeat = SP.getBoolean("heartbeat", true);

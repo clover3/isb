@@ -13,6 +13,7 @@ import com.postech.isb.R.layout;
 import com.postech.isb.R.string;
 import com.postech.isb.readBoard.ReadBoards;
 import com.postech.isb.util.IsbSession;
+import com.postech.isb.util.MenuOption;
 import com.postech.isb.util.TouchMenuManager;
 
 import android.app.AlertDialog;
@@ -68,7 +69,8 @@ public class BoardList extends ListActivity {
 	private boolean fExistMyboard = false;
 	private String myBoardGroup;
 	private String myBoardName; 
-	private TouchMenuManager menuMan; 
+	private TouchMenuManager menuMan;
+
 
 	private static final String FAVORITE_ONLY_KEY = "FAVORITE_ONLY_KEY";
 	private static final String SAVE_MY_BOARD = "SAVE_MY_BOARD";
@@ -186,6 +188,8 @@ public class BoardList extends ListActivity {
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		MenuOption.setUseActionBar(this);
+		MenuOption.setTitleBar(this);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.board_list);
 
@@ -413,29 +417,37 @@ public class BoardList extends ListActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
-		getMenuInflater().inflate(R.menu.board_list, menu);
-		return true;
-		/*
-		menu.add(0, REFRESH, Menu.NONE, R.string.refresh).setIcon(
-				R.drawable.ic_menu_refresh);
-		menu.add(0, FAVORITE_ONLY, Menu.NONE, R.string.list_favorite_only)
-				.setIcon(R.drawable.list_favorite_only);
-		menu.add(0, SEARCH_NEW, Menu.NONE, R.string.list_new).setIcon(
-				R.drawable.list_new);
-		return true;
-		*/
+		if (MenuOption.useActionBar) {
+			getMenuInflater().inflate(R.menu.board_list, menu);
+			return true;
+		}
+		else {
+			menu.add(0, REFRESH, Menu.NONE, R.string.refresh).setIcon(
+					R.drawable.ic_menu_refresh);
+			menu.add(0, FAVORITE_ONLY, Menu.NONE, R.string.list_favorite_only)
+					.setIcon(R.drawable.list_favorite_only);
+			menu.add(0, SEARCH_NEW, Menu.NONE, R.string.list_new).setIcon(
+					R.drawable.list_new);
+			return true;
+		}
+	}
+
+	private void setFavoriteIcon(MenuItem item) {
+			item.setTitle(favoriteOnly ? R.string.list_all
+					: R.string.list_favorite_only);
+			item.setIcon(favoriteOnly ? R.drawable.list_all
+					: R.drawable.list_favorite_only);
 	}
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		super.onPrepareOptionsMenu(menu);
-/*
-		MenuItem listOption = menu.findItem(FAVORITE_ONLY);
-		listOption.setTitle(favoriteOnly ? R.string.list_all
-				: R.string.list_favorite_only);
-		listOption.setIcon(favoriteOnly ? R.drawable.list_all
-				: R.drawable.list_favorite_only);
-*/
+		MenuItem item;
+		if (MenuOption.useActionBar)
+			item = menu.findItem(R.id.favorite);
+		else
+			item = menu.findItem(FAVORITE_ONLY);
+		setFavoriteIcon(item);
 		return true;
 	}
 
@@ -443,21 +455,42 @@ public class BoardList extends ListActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
 
-		switch (item.getItemId()) {
-		case REFRESH: {
-			updateBoard();
-			return true;
+		if (MenuOption.useActionBar) {
+			switch (item.getItemId()) {
+				case R.id.refresh: {
+					updateBoard();
+					return true;
+				}
+				case R.id.favorite: {
+					favoriteOnly = !favoriteOnly;
+					updateArray();
+					setFavoriteIcon(item);
+					return true;
+				}
+				case R.id.search_new: {
+					favoriteOnly = true;
+					SearchNew();
+					return true;
+				}
+			}
 		}
-		case FAVORITE_ONLY: {
-			favoriteOnly = !favoriteOnly;
-			updateArray();
-			return true;
-		}
-		case SEARCH_NEW: {
-			favoriteOnly = true;
-			SearchNew();
-			return true;
-		}
+		else {
+			switch (item.getItemId()) {
+				case REFRESH: {
+					updateBoard();
+					return true;
+				}
+				case FAVORITE_ONLY: {
+					favoriteOnly = !favoriteOnly;
+					updateArray();
+					return true;
+				}
+				case SEARCH_NEW: {
+					favoriteOnly = true;
+					SearchNew();
+					return true;
+				}
+			}
 		}
 
 		return false;

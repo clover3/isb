@@ -7,6 +7,7 @@ import com.postech.isb.boardList.IsbDBAdapter;
 import com.postech.isb.readBoard.ReadBoards;
 import com.postech.isb.util.IsbSession;
 import com.postech.isb.util.IsbThread;
+import com.postech.isb.util.MenuOption;
 import com.postech.isb.util.ThreadList;
 
 import android.app.AlertDialog;
@@ -94,15 +95,16 @@ public class PreferenceList extends PreferenceActivity  {
 	}
 
 	private void changeMenuOptionSummary(ListPreference listpref_menu_option, String menuoption_entry) {
+		//MenuOption.setUseActionBar(this, menuoption_entry);
 		if (menuoption_entry != null) {
 			String summary = null;
-			if (menuoption_entry == getResources().getString(R.string.preference_value_menuoption_menubutton))
+			if (menuoption_entry.equals(getResources().getString(R.string.preference_value_menuoption_menubutton)))
 				summary = getResources().getString(R.string.preference_label_menuoption_menubutton) + ": " +
 						getResources().getString(R.string.preference_summary_menuoption_menubutton);
 			else if (menuoption_entry.equals(getResources().getString(R.string.preference_value_menuoption_swipe)))
 				summary = getResources().getString(R.string.preference_label_menuoption_swipe) + ": " +
 						getResources().getString(R.string.preference_summary_menuoption_swipe);
-			else if (menuoption_entry == getResources().getString(R.string.preference_value_menuoption_actionbar))
+			else if (menuoption_entry.equals(getResources().getString(R.string.preference_value_menuoption_actionbar)))
 				summary = getResources().getString(R.string.preference_label_menuoption_actionbar) + ": " +
 						getResources().getString(R.string.preference_summary_menuoption_actionbar);
 			if (summary != null)

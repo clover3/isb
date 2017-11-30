@@ -101,6 +101,8 @@ public class ReadBoards extends ListActivity {
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		MenuOption.setUseActionBar(this);
+		MenuOption.setTitleBar(this);
 		super.onCreate(savedInstanceState);
 
 		lastReadIdx = lastReadNothing;
@@ -387,14 +389,28 @@ public class ReadBoards extends ListActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
-
-		if (board.equals("mail"))
-			menu.add(0, SEND_MAIL, Menu.NONE, R.string.send_mail).setShortcut('3', 'a')
-					.setIcon(R.drawable.ic_menu_compose);
-		else
-			menu.add(0, WRITE, Menu.NONE, R.string.write).setShortcut('3', 'a')
-					.setIcon(android.R.drawable.ic_menu_add);
-		return true;
+		if (MenuOption.useActionBar) {
+			getMenuInflater().inflate(R.menu.read_boards, menu);
+			MenuItem item = menu.findItem(R.id.compose);
+			if (board.equals("mail")) {
+				item.setTitle(string.send_mail);
+				item.setIcon(R.drawable.ic_menu_compose);
+			}
+			else {
+				item.setTitle(string.write);
+				item.setIcon(android.R.drawable.ic_menu_edit);
+			}
+			return true;
+		}
+		else {
+			if (board.equals("mail"))
+				menu.add(0, SEND_MAIL, Menu.NONE, R.string.send_mail).setShortcut('3', 'a')
+						.setIcon(R.drawable.ic_menu_compose);
+			else
+				menu.add(0, WRITE, Menu.NONE, R.string.write).setShortcut('3', 'a')
+						.setIcon(android.R.drawable.ic_menu_add);
+			return true;
+		}
 	}
 
 	@Override
@@ -408,20 +424,33 @@ public class ReadBoards extends ListActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
 
-		switch (item.getItemId()) {
-			case WRITE: {
-				Intent giveMeNewThread = new Intent(Intent.ACTION_INSERT,
-						Notes.CONTENT_URI);
-				giveMeNewThread.putExtra("board", board);
-				startActivityForResult(giveMeNewThread, reqNewNote);
-				return true;
+		if (MenuOption.useActionBar) {
+			switch (item.getItemId()) {
+				case R.id.compose: {
+					Intent giveMeNewThread = new Intent(Intent.ACTION_INSERT,
+							Notes.CONTENT_URI);
+					giveMeNewThread.putExtra("board", board);
+					startActivityForResult(giveMeNewThread, reqNewNote);
+					return true;
+				}
 			}
-			case SEND_MAIL: {
-				Intent giveMeNewThread = new Intent(Intent.ACTION_INSERT,
-						Notes.CONTENT_URI);
-				giveMeNewThread.putExtra("board", board);
-				startActivityForResult(giveMeNewThread, reqNewNote);
-				return true;
+		}
+		else {
+			switch (item.getItemId()) {
+				case WRITE: {
+					Intent giveMeNewThread = new Intent(Intent.ACTION_INSERT,
+							Notes.CONTENT_URI);
+					giveMeNewThread.putExtra("board", board);
+					startActivityForResult(giveMeNewThread, reqNewNote);
+					return true;
+				}
+				case SEND_MAIL: {
+					Intent giveMeNewThread = new Intent(Intent.ACTION_INSERT,
+							Notes.CONTENT_URI);
+					giveMeNewThread.putExtra("board", board);
+					startActivityForResult(giveMeNewThread, reqNewNote);
+					return true;
+				}
 			}
 		}
 
