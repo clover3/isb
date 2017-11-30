@@ -9,7 +9,7 @@
         <provider android:authorities="com.postech.provider.Isb" android:name=".compose.IsbProvider"/>
         
         <activity android:name=".IsbTabWidget" android:label="@string/app_name"
-        	android:theme="@style/MyNoTitleBar" android:screenOrientation="unspecified">
+        	android:screenOrientation="unspecified">
         	<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

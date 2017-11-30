@@ -10,16 +10,26 @@ import com.postech.isb.readThread.ReadThread;
 
 import android.app.TabActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.TabHost;
 
 public class IsbTabWidget extends TabActivity {
 	
 	private static final String logName = "TabWidget";
-	
+
+	private void prefSetTheme() {
+		SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+		String savedId = SP.getString("saved_id", "");
+		if (savedId.equals("tester2"))
+			return;
+		setTheme(R.style.MyNoTitleBar);
+	}
 	public void onCreate(Bundle savedInstanceState) {
+		prefSetTheme();
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.main);
 

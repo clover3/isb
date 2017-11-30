@@ -167,6 +167,13 @@ public class Login extends Activity {
 		editor.commit();
 	}
 
+	private void prefSaveId(String id) {
+		SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+		SharedPreferences.Editor editor = SP.edit();
+		editor.putString("saved_id", id);
+		editor.commit();
+	}
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -310,6 +317,7 @@ public class Login extends Activity {
 		int nSettingVer = settings.getInt(SETTING_VER, 0);
 		if( nSettingVer > 0 ) {
 			savedId = decrypt(savedId);
+			prefSaveId(savedId);
 			savedPw = decrypt(savedPw);
 		}
 
@@ -397,7 +405,7 @@ public class Login extends Activity {
 		return out;
 	}
 
-	private final String ENC_TYPE_XOR_BASE64 = "!xorb64!";
+	private static final String ENC_TYPE_XOR_BASE64 = "!xorb64!";
 
 	protected String encrypt( String value ) {
 		try {
@@ -433,7 +441,7 @@ public class Login extends Activity {
 		}
 	}
 
-	private static String toHexString(byte[] bytes) {
+	private String toHexString(byte[] bytes) {
 		StringBuilder hexString = new StringBuilder();
 
 		for (int i = 0; i < bytes.length; i++) {
