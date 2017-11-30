@@ -87,11 +87,16 @@
 	<string name="notice_content">hello world</string>
 
 	<!-- for Preference -->
-	<string name="preference_summary_menu_button">Use the menu button only</string>
-	<string name="preference_summary_swipe_up">Swipe up from the bottom of the screen</string>
-	<string name="preference_summary_actionbar">Show menus above windows</string>
+	<string name="preference_label_menuoption_menubutton">Menu button</string>
+	<string name="preference_label_menuoption_swipe">Swipe up</string>
+	<string name="preference_label_menuoption_actionbar">Top of windows</string>
 
-	<string name="preference_menuoption_default">default</string>
-	<string name="preference_menuoption_swipe">swipe</string>
-	<string name="preference_menuoption_actionbar">actionbar</string>
+	<string name="preference_summary_menuoption_menubutton">Use the menu button only</string>
+	<string name="preference_summary_menuoption_swipe">Swipe up from the bottom of the screen</string>
+	<string name="preference_summary_menuoption_actionbar">Show menus above windows</string>
+
+	<string name="preference_value_menuoption_menubutton">menubutton</string>
+	<string name="preference_value_menuoption_swipe">swipe</string>
+	<string name="preference_value_menuoption_actionbar">actionbar</string>
+	<string name="preference_value_menuoption_not_selected">not_selected</string>
 </resources>

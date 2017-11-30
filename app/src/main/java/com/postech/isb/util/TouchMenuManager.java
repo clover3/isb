@@ -8,6 +8,8 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.postech.isb.R;
+
 
 public class TouchMenuManager
 {
@@ -47,9 +49,11 @@ public class TouchMenuManager
 				if( result == 1 )
 				{
 					SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(activity.getBaseContext());
-					if (SP.getBoolean("swipe_menu", true)) {
+					String swipe = activity.getResources().getString(
+							R.string.preference_value_menuoption_swipe);
+					String menuOption = SP.getString("menu_option", swipe);
+					if (menuOption.equals(swipe)) {
 						activity.openOptionsMenu();
-						Log.i("newm", "Menu Called");
 					}
 				}
 					

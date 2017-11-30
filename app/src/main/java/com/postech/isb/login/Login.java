@@ -143,6 +143,29 @@ public class Login extends Activity {
 		editor.commit();
 	}
 
+	private void backwardCompatibility(SharedPreferences SP){
+		// Convert swipe menu option into menu option
+		// If menu option is not set, set it following swipe_menu
+		String newValue;
+		String notSelected = getResources().getString(
+				R.string.preference_value_menuoption_not_selected);
+		String menuOption = SP.getString("menu_option", notSelected);
+		if (!menuOption.equals(notSelected)) {
+			// If menu option is already set
+			return;
+		}
+		boolean swipeMenuOption = SP.getBoolean("swipe_menu", true);
+		if (swipeMenuOption)
+			newValue = getResources().getString(R.string.preference_value_menuoption_swipe);
+		else
+			newValue = getResources().getString(R.string.preference_value_menuoption_menubutton);
+
+		SharedPreferences.Editor editor = SP.edit();
+
+		editor.putString("menu_option", newValue);
+		editor.commit();
+	}
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -193,6 +216,8 @@ public class Login extends Activity {
 		goUserList = new Intent(this, ViewUser.class);
 
 		SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+
+		backwardCompatibility(SP);
 
 		// Start to run heartbeater
 		Boolean runHeartbeat = SP.getBoolean("heartbeat", true);
@@ -426,7 +451,6 @@ public class Login extends Activity {
 			// If the notice have been shown, do not show it anymore.
 			MessageDigest md = MessageDigest.getInstance("MD5");
 			String thedigest = toHexString(md.digest(notice_content.getBytes("UTF-8")));
-			Log.i("newm", "old: " + savedNoticeHash + " new: " + thedigest);
 			if (savedNoticeHash.equals(thedigest))
 				return;
 			else {

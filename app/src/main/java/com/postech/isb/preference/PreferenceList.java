@@ -19,8 +19,10 @@ import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -44,6 +46,11 @@ public class PreferenceList extends PreferenceActivity  {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.layout.preferencelist);
+
+		// Delete swipe menu preference: Do not use it anymore
+		Preference swipeMenuPreference = findPreference("swipe_menu");
+		PreferenceCategory preferenceCategory = (PreferenceCategory) findPreference("cat_gesture");
+		preferenceCategory.removePreference(swipeMenuPreference);
 
 		// Setup onClick
 		Preference favBackup = findPreference("fav_backup");
@@ -74,9 +81,33 @@ public class PreferenceList extends PreferenceActivity  {
 			}
 		});
 
+		// Set menu option summary
 		ListPreference listpref_menu_option = (ListPreference) findPreference("menu_option");
-		String menuoption_entry = listpref_menu_option.getEntry().toString();
-		listpref_menu_option.setSummary(listPref.getEntry());
+		changeMenuOptionSummary(listpref_menu_option, listpref_menu_option.getValue());
+		listpref_menu_option.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+			@Override
+			public boolean onPreferenceChange(Preference preference, Object newValue) {
+				changeMenuOptionSummary((ListPreference)preference, (String)newValue);
+				return true;
+			}
+		});
+	}
+
+	private void changeMenuOptionSummary(ListPreference listpref_menu_option, String menuoption_entry) {
+		if (menuoption_entry != null) {
+			String summary = null;
+			if (menuoption_entry == getResources().getString(R.string.preference_value_menuoption_menubutton))
+				summary = getResources().getString(R.string.preference_label_menuoption_menubutton) + ": " +
+						getResources().getString(R.string.preference_summary_menuoption_menubutton);
+			else if (menuoption_entry.equals(getResources().getString(R.string.preference_value_menuoption_swipe)))
+				summary = getResources().getString(R.string.preference_label_menuoption_swipe) + ": " +
+						getResources().getString(R.string.preference_summary_menuoption_swipe);
+			else if (menuoption_entry == getResources().getString(R.string.preference_value_menuoption_actionbar))
+				summary = getResources().getString(R.string.preference_label_menuoption_actionbar) + ": " +
+						getResources().getString(R.string.preference_summary_menuoption_actionbar);
+			if (summary != null)
+				listpref_menu_option.setSummary(summary);
+		}
 	}
 
 	private void restoreFavList() {

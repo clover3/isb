@@ -2,13 +2,13 @@
 <resources>
     <!-- Preference -->
     <string-array name="preference_menuoption_label">
-        <item>Menu button</item>
-        <item>Swipe up</item>
-        <item>Action bar</item>
+        <item>@string/preference_label_menuoption_menubutton</item>
+        <item>@string/preference_label_menuoption_swipe</item>
+        <item>@string/preference_label_menuoption_actionbar</item>
     </string-array>
     <string-array name="preference_menuoption_value">
-        <item>@string/preference_menuoption_default</item>
-        <item>@string/preference_menuoption_swipe</item>
-        <item>@string/preference_menuoption_actionbar</item>
+        <item>@string/preference_value_menuoption_menubutton</item>
+        <item>@string/preference_value_menuoption_swipe</item>
+        <item>@string/preference_value_menuoption_actionbar</item>
     </string-array>
 </resources>
