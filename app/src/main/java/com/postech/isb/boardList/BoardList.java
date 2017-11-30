@@ -413,7 +413,9 @@ public class BoardList extends ListActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
-
+		getMenuInflater().inflate(R.menu.board_list, menu);
+		return true;
+		/*
 		menu.add(0, REFRESH, Menu.NONE, R.string.refresh).setIcon(
 				R.drawable.ic_menu_refresh);
 		menu.add(0, FAVORITE_ONLY, Menu.NONE, R.string.list_favorite_only)
@@ -421,18 +423,19 @@ public class BoardList extends ListActivity {
 		menu.add(0, SEARCH_NEW, Menu.NONE, R.string.list_new).setIcon(
 				R.drawable.list_new);
 		return true;
+		*/
 	}
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		super.onPrepareOptionsMenu(menu);
-
+/*
 		MenuItem listOption = menu.findItem(FAVORITE_ONLY);
 		listOption.setTitle(favoriteOnly ? R.string.list_all
 				: R.string.list_favorite_only);
 		listOption.setIcon(favoriteOnly ? R.drawable.list_all
 				: R.drawable.list_favorite_only);
-
+*/
 		return true;
 	}
 

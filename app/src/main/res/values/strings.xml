@@ -85,4 +85,13 @@
 	<!--  for Notice -->
 	<string name="notice_title">업데이트</string>
 	<string name="notice_content">hello world</string>
+
+	<!-- for Preference -->
+	<string name="preference_summary_menu_button">Use the menu button only</string>
+	<string name="preference_summary_swipe_up">Swipe up from the bottom of the screen</string>
+	<string name="preference_summary_actionbar">Show menus above windows</string>
+
+	<string name="preference_menuoption_default">default</string>
+	<string name="preference_menuoption_swipe">swipe</string>
+	<string name="preference_menuoption_actionbar">actionbar</string>
 </resources>

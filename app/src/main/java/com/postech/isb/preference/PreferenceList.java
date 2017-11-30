@@ -16,6 +16,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
@@ -68,24 +69,14 @@ public class PreferenceList extends PreferenceActivity  {
 		favRestore.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 			@Override
 			public boolean onPreferenceClick(Preference preference) {
-				String title = "Restore favorite list";
 				restoreFavList();
-				/*
-				new AlertDialog.Builder(PreferenceList.this)
-						.setTitle(title)
-						.setMessage("Save your favorite list in your diary")
-						.setNeutralButton("OK",
-								new DialogInterface.OnClickListener() {
-									public void onClick(
-											DialogInterface dialog,
-											int whichButton) {
-										backupFavList();
-									}
-								}).show();
-								*/
 				return false;
 			}
 		});
+
+		ListPreference listpref_menu_option = (ListPreference) findPreference("menu_option");
+		String menuoption_entry = listpref_menu_option.getEntry().toString();
+		listpref_menu_option.setSummary(listPref.getEntry());
 	}
 
 	private void restoreFavList() {

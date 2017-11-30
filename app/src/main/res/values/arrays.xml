@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Preference -->
+    <string-array name="preference_menuoption_label">
+        <item>Menu button</item>
+        <item>Swipe up</item>
+        <item>Action bar</item>
+    </string-array>
+    <string-array name="preference_menuoption_value">
+        <item>@string/preference_menuoption_default</item>
+        <item>@string/preference_menuoption_swipe</item>
+        <item>@string/preference_menuoption_actionbar</item>
+    </string-array>
+</resources>
