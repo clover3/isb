@@ -27,4 +27,8 @@ public class MenuOption {
         if (useActionBar)
             activity.setTheme(R.style.MyYesTitleBar);
     }
+    static public void setNoteEditorTitleBar(Activity activity) {
+        if (useActionBar)
+            activity.setTheme(R.style.NoteEditorTitleBar);
+    }
 }

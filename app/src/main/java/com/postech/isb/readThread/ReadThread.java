@@ -59,6 +59,7 @@ import android.widget.Button;
 import android.widget.EdgeEffect;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -115,7 +116,6 @@ public class ReadThread extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		MenuOption.setUseActionBar(this);
-		MenuOption.setTitleBar(this);
 		super.onCreate(savedInstanceState);
 
 		// getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -156,20 +156,33 @@ public class ReadThread extends Activity {
 		readThreadScroll = (MyScrollView) findViewById(R.id.readThreadScroll);
 
 		boardName.setText(board);
+		if (MenuOption.useActionBar)
+			boardName.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.menubar_white_36, 0);
 
 		gotoAnotherBoard = new Intent(this, BoardList.class);
 		gotoAnotherBoard.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-		boardName.setOnClickListener(new OnClickListener() {
+		if (MenuOption.useActionBar) {
+			RelativeLayout titlebar = (RelativeLayout) findViewById(R.id.titlebar);
+			titlebar.setOnClickListener(new OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				startActivity(gotoAnotherBoard);
-				retResultNothing();
-				finish();
-			}
-		});
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					openOptionsMenu();
+				}
+			});
+		}
+		else {
+			boardName.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					startActivity(gotoAnotherBoard);
+					finish();
+				}
+			});
+		}
 
 		prev.setOnClickListener(new OnClickListener() {
 			@Override
@@ -608,132 +621,73 @@ public class ReadThread extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
-		if (MenuOption.useActionBar) {
-			getMenuInflater().inflate(R.menu.read_thread, menu);
-		}
-		else {
-			SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-			menu.add(0, WRITE, Menu.NONE, R.string.write).setShortcut('3', 'w')
-					.setIcon(android.R.drawable.ic_menu_add);
-			menu.add(0, DELETE, Menu.NONE, R.string.delete).setShortcut('4', 'd')
-					.setIcon(android.R.drawable.ic_menu_delete)
-					.setEnabled(!SP.getBoolean("disable_delete", false));
-		}
+		SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+		menu.add(0, WRITE, Menu.NONE, R.string.write).setShortcut('3', 'w')
+				.setIcon(android.R.drawable.ic_menu_add);
+		menu.add(0, DELETE, Menu.NONE, R.string.delete).setShortcut('4', 'd')
+				.setIcon(android.R.drawable.ic_menu_delete)
+				.setEnabled(!SP.getBoolean("disable_delete", false));
 
 		return true;
 	}
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		if (MenuOption.useActionBar) {
-			SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-			menu.findItem(id.delete).setEnabled(!SP.getBoolean("disable_delete", false));
-		}
 		return super.onPrepareOptionsMenu(menu);
-
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
-
-		if (MenuOption.useActionBar) {
-			switch (item.getItemId()) {
-				case id.delete: {
-					if (isb.isMain()) {
-//				try {
-						AlertDialog.Builder alert_confirm = new AlertDialog.Builder(ReadThread.this);
-						alert_confirm.setMessage(R.string.delete_confirm).setCancelable(false).setPositiveButton(R.string.delete,
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog, int which) {
-										// 'YES'
-										try {
-											if (isb.modifyThread(board, num, isb.THREAD_DELETE)) {
-												Toast.makeText(getApplicationContext(),
-														"Delete success", Toast.LENGTH_SHORT).show();
-												retResultNothing();
-												finish();
-											} else {
-												Toast.makeText(getApplicationContext(), "Delete fail.",
-														Toast.LENGTH_SHORT).show();
-											}
-										} catch (IOException e) {
-											e.printStackTrace();
-											Toast.makeText(getApplicationContext(), "Connection lost", Toast.LENGTH_SHORT).show();
-											isb.disconnect();
-										}
-									}
-								}).setNegativeButton(R.string.cancle,
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog, int which) {
-										// 'No'
-										return;
-									}
-								});
-						AlertDialog alert = alert_confirm.create();
-						alert.show();
-
-					} else
-						Toast.makeText(getApplicationContext(), "Login first plz...",
-								Toast.LENGTH_SHORT).show();
-
-					return true;
-				}
+		switch (item.getItemId()) {
+			case WRITE: {
+				Intent giveMeNewThread = new Intent(Intent.ACTION_INSERT,
+						Notes.CONTENT_URI);
+				giveMeNewThread.putExtra("board", board);
+				startActivityForResult(giveMeNewThread, NewNote);
+				return true;
 			}
-		}
-		else {
-			switch (item.getItemId()) {
-				case WRITE: {
-					Intent giveMeNewThread = new Intent(Intent.ACTION_INSERT,
-							Notes.CONTENT_URI);
-					giveMeNewThread.putExtra("board", board);
-					startActivityForResult(giveMeNewThread, NewNote);
-					return true;
-				}
-				case DELETE: {
-					if (isb.isMain()) {
+			case DELETE: {
+				if (isb.isMain()) {
 //				try {
-						AlertDialog.Builder alert_confirm = new AlertDialog.Builder(ReadThread.this);
-						alert_confirm.setMessage(R.string.delete_confirm).setCancelable(false).setPositiveButton(R.string.delete,
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog, int which) {
-										// 'YES'
-										try {
-											if (isb.modifyThread(board, num, isb.THREAD_DELETE)) {
-												Toast.makeText(getApplicationContext(),
-														"Delete success", Toast.LENGTH_SHORT).show();
-												retResultNothing();
-												finish();
-											} else {
-												Toast.makeText(getApplicationContext(), "Delete fail.",
-														Toast.LENGTH_SHORT).show();
-											}
-										} catch (IOException e) {
-											e.printStackTrace();
-											Toast.makeText(getApplicationContext(), "Connection lost", Toast.LENGTH_SHORT).show();
-											isb.disconnect();
+					AlertDialog.Builder alert_confirm = new AlertDialog.Builder(ReadThread.this);
+					alert_confirm.setMessage(R.string.delete_confirm).setCancelable(false).setNegativeButton(R.string.delete,
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									// 'YES'
+									try {
+										if (isb.modifyThread(board, num, isb.THREAD_DELETE)) {
+											Toast.makeText(getApplicationContext(),
+													"Delete success", Toast.LENGTH_SHORT).show();
+											retResultNothing();
+											finish();
+										} else {
+											Toast.makeText(getApplicationContext(), "Delete fail.",
+													Toast.LENGTH_SHORT).show();
 										}
+									} catch (IOException e) {
+										e.printStackTrace();
+										Toast.makeText(getApplicationContext(), "Connection lost", Toast.LENGTH_SHORT).show();
+										isb.disconnect();
 									}
-								}).setNegativeButton(R.string.cancle,
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog, int which) {
-										// 'No'
-										return;
-									}
-								});
-						AlertDialog alert = alert_confirm.create();
-						alert.show();
+								}
+							}).setPositiveButton(R.string.cancle,
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									// 'No'
+									return;
+								}
+							});
+					AlertDialog alert = alert_confirm.create();
+					alert.show();
 
-					} else
-						Toast.makeText(getApplicationContext(), "Login first plz...",
-								Toast.LENGTH_SHORT).show();
+				} else
+					Toast.makeText(getApplicationContext(), "Login first plz...",
+							Toast.LENGTH_SHORT).show();
 
-					return true;
-				}
+				return true;
 			}
 		}
 

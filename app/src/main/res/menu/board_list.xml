@@ -2,17 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
      <item
          android:id="@+id/refresh"
-         android:icon="@drawable/ic_menu_refresh"
+         android:icon="@drawable/ic_menu_refresh_36"
          android:showAsAction="always"
          android:title="@string/refresh"/>
      <item
          android:id="@+id/favorite"
-         android:icon="@drawable/list_all"
+         android:icon="@drawable/list_all_36"
          android:showAsAction="always"
          android:title="@string/list_all"/>
      <item
          android:id="@+id/search_new"
-         android:icon="@drawable/list_new"
+         android:icon="@drawable/list_new_36"
          android:showAsAction="always"
          android:title="@string/list_new"/>
 </menu>

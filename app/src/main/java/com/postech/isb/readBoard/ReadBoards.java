@@ -43,6 +43,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -102,7 +103,6 @@ public class ReadBoards extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		MenuOption.setUseActionBar(this);
-		MenuOption.setTitleBar(this);
 		super.onCreate(savedInstanceState);
 
 		lastReadIdx = lastReadNothing;
@@ -132,6 +132,8 @@ public class ReadBoards extends ListActivity {
 
 		boardName = (TextView) findViewById(R.id.currentBoard);
 		boardName.setText(board);
+		if (MenuOption.useActionBar)
+			boardName.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.menubar_white_36, 0);
 
 		gotoAnotherBoard = new Intent(this, BoardList.class);
 		gotoAnotherBoard.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -139,15 +141,27 @@ public class ReadBoards extends ListActivity {
 		menuMan = new TouchMenuManager(this);
 		lv.setOnTouchListener(menuMan.MyTouchListener);
 
-		boardName.setOnClickListener(new OnClickListener() {
+		if (MenuOption.useActionBar) {
+			RelativeLayout titlebar = (RelativeLayout) findViewById(R.id.titlebar);
+			titlebar.setOnClickListener(new OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				startActivity(gotoAnotherBoard);
-				finish();
-			}
-		});
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					openOptionsMenu();
+				}
+			});
+		}
+		else {
+			boardName.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					startActivity(gotoAnotherBoard);
+					finish();
+				}
+			});
+		}
 
 		prevBtn = (Button) findViewById(R.id.prevList);
 		prevBtn.setOnClickListener(new OnClickListener() {
@@ -389,28 +403,13 @@ public class ReadBoards extends ListActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
-		if (MenuOption.useActionBar) {
-			getMenuInflater().inflate(R.menu.read_boards, menu);
-			MenuItem item = menu.findItem(R.id.compose);
-			if (board.equals("mail")) {
-				item.setTitle(string.send_mail);
-				item.setIcon(R.drawable.ic_menu_compose);
-			}
-			else {
-				item.setTitle(string.write);
-				item.setIcon(android.R.drawable.ic_menu_edit);
-			}
-			return true;
-		}
-		else {
-			if (board.equals("mail"))
-				menu.add(0, SEND_MAIL, Menu.NONE, R.string.send_mail).setShortcut('3', 'a')
-						.setIcon(R.drawable.ic_menu_compose);
-			else
-				menu.add(0, WRITE, Menu.NONE, R.string.write).setShortcut('3', 'a')
-						.setIcon(android.R.drawable.ic_menu_add);
-			return true;
-		}
+		if (board.equals("mail"))
+			menu.add(0, SEND_MAIL, Menu.NONE, R.string.send_mail).setShortcut('3', 'a')
+					.setIcon(R.drawable.ic_menu_compose);
+		else
+			menu.add(0, WRITE, Menu.NONE, R.string.write).setShortcut('3', 'a')
+					.setIcon(android.R.drawable.ic_menu_add);
+		return true;
 	}
 
 	@Override
@@ -424,33 +423,20 @@ public class ReadBoards extends ListActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
 
-		if (MenuOption.useActionBar) {
-			switch (item.getItemId()) {
-				case R.id.compose: {
-					Intent giveMeNewThread = new Intent(Intent.ACTION_INSERT,
-							Notes.CONTENT_URI);
-					giveMeNewThread.putExtra("board", board);
-					startActivityForResult(giveMeNewThread, reqNewNote);
-					return true;
-				}
+		switch (item.getItemId()) {
+			case WRITE: {
+				Intent giveMeNewThread = new Intent(Intent.ACTION_INSERT,
+						Notes.CONTENT_URI);
+				giveMeNewThread.putExtra("board", board);
+				startActivityForResult(giveMeNewThread, reqNewNote);
+				return true;
 			}
-		}
-		else {
-			switch (item.getItemId()) {
-				case WRITE: {
-					Intent giveMeNewThread = new Intent(Intent.ACTION_INSERT,
-							Notes.CONTENT_URI);
-					giveMeNewThread.putExtra("board", board);
-					startActivityForResult(giveMeNewThread, reqNewNote);
-					return true;
-				}
-				case SEND_MAIL: {
-					Intent giveMeNewThread = new Intent(Intent.ACTION_INSERT,
-							Notes.CONTENT_URI);
-					giveMeNewThread.putExtra("board", board);
-					startActivityForResult(giveMeNewThread, reqNewNote);
-					return true;
-				}
+			case SEND_MAIL: {
+				Intent giveMeNewThread = new Intent(Intent.ACTION_INSERT,
+						Notes.CONTENT_URI);
+				giveMeNewThread.putExtra("board", board);
+				startActivityForResult(giveMeNewThread, reqNewNote);
+				return true;
 			}
 		}
 
@@ -599,14 +585,12 @@ public class ReadBoards extends ListActivity {
 			menu.add(0, EDIT, Menu.NONE, R.string.edit);
 			menu.add(0, DELETE, Menu.NONE, R.string.delete)
 					.setEnabled(!SP.getBoolean("disable_delete", false));
-		}
-		else if(board.equals("mail")) {
+		} else if (board.equals("mail")) {
 			menu.add(0, INVERSE, Menu.NONE, R.string.inverse);
 			menu.add(0, MARK, Menu.NONE, R.string.mark);
 			menu.add(0, DELETE, Menu.NONE, R.string.delete)
 					.setEnabled(!SP.getBoolean("disable_delete", false));
-		}
-		else {
+		} else {
 			// board
 			menu.add(0, INVERSE, Menu.NONE, R.string.inverse);
 			menu.add(0, MARK, Menu.NONE, R.string.mark);

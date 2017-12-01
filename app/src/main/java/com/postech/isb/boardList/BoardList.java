@@ -433,10 +433,18 @@ public class BoardList extends ListActivity {
 	}
 
 	private void setFavoriteIcon(MenuItem item) {
+		if (MenuOption.useActionBar) {
+			item.setTitle(favoriteOnly ? R.string.list_all
+					: R.string.list_favorite_only);
+			item.setIcon(favoriteOnly ? R.drawable.list_all_36
+					: R.drawable.list_favorite_only_36);
+		}
+		else {
 			item.setTitle(favoriteOnly ? R.string.list_all
 					: R.string.list_favorite_only);
 			item.setIcon(favoriteOnly ? R.drawable.list_all
 					: R.drawable.list_favorite_only);
+		}
 	}
 
 	@Override

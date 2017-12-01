@@ -21,6 +21,7 @@ import com.postech.isb.R.id;
 import com.postech.isb.R.layout;
 import com.postech.isb.R.string;
 import com.postech.isb.compose.NotePad.Notes;
+import com.postech.isb.util.MenuOption;
 import com.postech.isb.util.TouchMenuManager;
 
 import android.app.Activity;
@@ -88,7 +89,7 @@ public class NoteEditor extends Activity {
     private static final int STATE_INSERT = 1;
 
     private int mState;
-    private boolean mNoteOnly = false;
+    private boolean mNoteOnly = false; // FIXME: What is it????????
     private Uri mUri;
     private Cursor mCursor;
     private EditText mText;
@@ -140,6 +141,8 @@ public class NoteEditor extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        MenuOption.setUseActionBar(this);
+        MenuOption.setNoteEditorTitleBar(this);
         super.onCreate(savedInstanceState);
 
         final Intent intent = getIntent();
@@ -380,40 +383,56 @@ public class NoteEditor extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
 
-        // Build the menus that are shown when editing.
-        if (mState == STATE_EDIT) {
-            menu.add(0, REVERT_ID, 0, R.string.menu_revert)
-                    .setShortcut('0', 'r')
-                    .setIcon(android.R.drawable.ic_menu_revert);
-            if (!mNoteOnly) {
+        if (MenuOption.useActionBar) {
+            if (mState == STATE_EDIT) {
                 SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-                menu.add(0, SAVE_ID, 0, R.string.menu_save)
-                        .setIcon(android.R.drawable.ic_menu_save);
-                menu.add(0, DELETE_ID, 0, R.string.menu_delete)
-                        .setShortcut('1', 'd')
-                        .setIcon(android.R.drawable.ic_menu_delete)
-                        .setEnabled(!SP.getBoolean("disable_delete", false));
+                getMenuInflater().inflate(R.menu.note_editor_edit, menu);
+                menu.findItem(id.delete).setEnabled(!SP.getBoolean("disable_delete", false));
+                if (mNoteOnly) {
+                    menu.findItem(id.save).setVisible(false);
+                    menu.findItem(id.delete).setVisible(false);
+                }
             }
-
-        // Build the menus that are shown when inserting.
-        } else if (editFromBoard) {
-            menu.add(0, FINISH_ID, 0, R.string.menu_finish)
-                    .setIcon(android.R.drawable.ic_menu_add);
-            menu.add(0, SAVE_ID, 0, R.string.menu_save)
-                    .setIcon(android.R.drawable.ic_menu_save);
-            menu.add(0, REVERT_ID, 0, R.string.menu_revert)
-                    .setShortcut('0', 'r')
-                    .setIcon(android.R.drawable.ic_menu_revert);
+            else if (editFromBoard)
+                getMenuInflater().inflate(R.menu.note_editor_from_board, menu);
+            else
+                getMenuInflater().inflate(R.menu.note_editor_else, menu);
+            return true;
         }
         else {
-            menu.add(0, FINISH_ID, 0, R.string.menu_finish)
-                    .setIcon(android.R.drawable.ic_menu_add);
-            menu.add(0, SAVE_ID, 0, R.string.menu_save)
-                    .setIcon(android.R.drawable.ic_menu_save);
-            menu.add(0, DISCARD_ID, 0, R.string.menu_discard)
-                    .setShortcut('0', 'd')
-                    .setIcon(android.R.drawable.ic_menu_delete);
-        }
+            // Build the menus that are shown when editing.
+            if (mState == STATE_EDIT) {
+                menu.add(0, REVERT_ID, 0, R.string.menu_revert)
+                        .setShortcut('0', 'r')
+                        .setIcon(android.R.drawable.ic_menu_revert);
+                if (!mNoteOnly) {
+                    SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                    menu.add(0, SAVE_ID, 0, R.string.menu_save)
+                            .setIcon(android.R.drawable.ic_menu_save);
+                    menu.add(0, DELETE_ID, 0, R.string.menu_delete)
+                            .setShortcut('1', 'd')
+                            .setIcon(android.R.drawable.ic_menu_delete)
+                            .setEnabled(!SP.getBoolean("disable_delete", false));
+                }
+
+                // Build the menus that are shown when inserting.
+            } else if (editFromBoard) {
+                menu.add(0, FINISH_ID, 0, R.string.menu_finish)
+                        .setIcon(android.R.drawable.ic_menu_add);
+                menu.add(0, SAVE_ID, 0, R.string.menu_save)
+                        .setIcon(android.R.drawable.ic_menu_save);
+                menu.add(0, REVERT_ID, 0, R.string.menu_revert)
+                        .setShortcut('0', 'r')
+                        .setIcon(android.R.drawable.ic_menu_revert);
+            } else {
+                menu.add(0, FINISH_ID, 0, R.string.menu_finish)
+                        .setIcon(android.R.drawable.ic_menu_add);
+                menu.add(0, SAVE_ID, 0, R.string.menu_save)
+                        .setIcon(android.R.drawable.ic_menu_save);
+                menu.add(0, DISCARD_ID, 0, R.string.menu_discard)
+                        .setShortcut('0', 'd')
+                        .setIcon(android.R.drawable.ic_menu_delete);
+            }
 
 
         /*
@@ -430,29 +449,51 @@ public class NoteEditor extends Activity {
         }
         */
 
-        return true;
+            return true;
+        }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle all of the possible menu actions.
-        switch (item.getItemId()) {
-        case FINISH_ID:
-        	finish();
-            break;
-        case DELETE_ID:
-            deleteNote();
-            finish();
-            break;
-        case DISCARD_ID:
-            cancelNote();
-            break;
-        case SAVE_ID:
-            saveNote();
-            break;
-        case REVERT_ID:
-            cancelNote();
-            break;
+        if (MenuOption.useActionBar) {
+            switch (item.getItemId()) {
+                case R.id.finish:
+                    finish();
+                    break;
+                case R.id.delete:
+                    deleteNote();
+                    finish();
+                case R.id.discard:
+                    cancelNote();
+                    break;
+                case R.id.save:
+                    saveNote();
+                    break;
+                case R.id.revert:
+                    cancelNote();
+                    break;
+            }
+        }
+        else {
+            switch (item.getItemId()) {
+                case FINISH_ID:
+                    finish();
+                    break;
+                case DELETE_ID:
+                    deleteNote();
+                    finish();
+                    break;
+                case DISCARD_ID:
+                    cancelNote();
+                    break;
+                case SAVE_ID:
+                    saveNote();
+                    break;
+                case REVERT_ID:
+                    cancelNote();
+                    break;
+            }
         }
         return super.onOptionsItemSelected(item);
     }
