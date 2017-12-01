@@ -21,6 +21,7 @@ import com.postech.isb.R.id;
 import com.postech.isb.R.layout;
 import com.postech.isb.R.string;
 import com.postech.isb.compose.NotePad.Notes;
+import com.postech.isb.util.MenuOption;
 import com.postech.isb.util.TouchMenuManager;
 
 import android.app.Activity;
@@ -140,6 +141,8 @@ public class NoteEditor extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        MenuOption.setUseActionBar(this);
+        MenuOption.setNoteEditorTitleBar(this);
         super.onCreate(savedInstanceState);
 
         final Intent intent = getIntent();
