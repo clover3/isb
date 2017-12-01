@@ -93,7 +93,7 @@ public class ReadThread extends Activity {
 	private LinearLayout linearLayout;
 	private LinearLayout linearLayoutInner;
 
-	static final private int WRITE = Menu.FIRST;
+	static final private int REPLY = Menu.FIRST;
 	static final private int DELETE = Menu.FIRST + 1;
 
 	/**
@@ -243,7 +243,6 @@ public class ReadThread extends Activity {
 		}
 		commentMessage.addTextChangedListener(commentWatcherInput);
 
-		registerForContextMenu(boardName);
 		updateThread(num);
 	} // End of onCreate
 
@@ -547,11 +546,12 @@ public class ReadThread extends Activity {
 		return sb.toString();
 	}
 
+	private IsbThread t;
 	private boolean updateThread(int _num) {
 		try {
 			if (isb.isMain()) {
 				boolean readNext = (_num >= num);
-				IsbThread t = isb.readThread(board, _num);
+				t = isb.readThread(board, _num);
 				CommentList _CommentList = new CommentList();
 				if (t != null) {
 					readThreadScroll.fullScroll(View.FOCUS_UP);
@@ -622,8 +622,8 @@ public class ReadThread extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-		menu.add(0, WRITE, Menu.NONE, R.string.write).setShortcut('3', 'w')
-				.setIcon(android.R.drawable.ic_menu_add);
+		menu.add(0, REPLY, Menu.NONE, R.string.reply).setShortcut('3', 'w')
+				.setIcon(R.drawable.ic_menu_reply);
 		menu.add(0, DELETE, Menu.NONE, R.string.delete).setShortcut('4', 'd')
 				.setIcon(android.R.drawable.ic_menu_delete)
 				.setEnabled(!SP.getBoolean("disable_delete", false));
@@ -636,13 +636,39 @@ public class ReadThread extends Activity {
 		return super.onPrepareOptionsMenu(menu);
 	}
 
+	private String getWriter(String line) {
+		Pattern p_writer1 = Pattern.compile("글쓴이: (.*?) \\(");
+		Pattern p_writer2 = Pattern.compile("보낸이: (.*?) \\(");
+
+		Matcher matcher = p_writer1.matcher(line);
+		if (matcher.find())
+			return matcher.group(1);
+
+		// If it was mail
+		matcher = p_writer2.matcher(line);
+		if (matcher.find())
+			return matcher.group(1);
+
+		return "";
+	}
+	private String getTitle(String line) {
+		Pattern p_writer = Pattern.compile("제  목: (.*)");
+		Matcher matcher = p_writer.matcher(line);
+		if (matcher.find())
+			return matcher.group(1);
+		else
+			return "";
+	}
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
 		switch (item.getItemId()) {
-			case WRITE: {
+			case REPLY: {
 				Intent giveMeNewThread = new Intent(Intent.ACTION_INSERT,
 						Notes.CONTENT_URI);
+				giveMeNewThread.putExtra("note", "(re:" +
+						getWriter(t.writer) + ") "+ getTitle(t.title));
 				giveMeNewThread.putExtra("board", board);
 				startActivityForResult(giveMeNewThread, NewNote);
 				return true;
