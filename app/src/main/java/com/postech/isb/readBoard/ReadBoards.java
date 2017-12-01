@@ -43,6 +43,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -140,19 +141,27 @@ public class ReadBoards extends ListActivity {
 		menuMan = new TouchMenuManager(this);
 		lv.setOnTouchListener(menuMan.MyTouchListener);
 
-		boardName.setOnClickListener(new OnClickListener() {
+		if (MenuOption.useActionBar) {
+			RelativeLayout titlebar = (RelativeLayout) findViewById(R.id.titlebar);
+			titlebar.setOnClickListener(new OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				if (MenuOption.useActionBar)
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
 					openOptionsMenu();
-				else {
+				}
+			});
+		}
+		else {
+			boardName.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
 					startActivity(gotoAnotherBoard);
 					finish();
 				}
-			}
-		});
+			});
+		}
 
 		prevBtn = (Button) findViewById(R.id.prevList);
 		prevBtn.setOnClickListener(new OnClickListener() {

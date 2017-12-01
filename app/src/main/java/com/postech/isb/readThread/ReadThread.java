@@ -59,6 +59,7 @@ import android.widget.Button;
 import android.widget.EdgeEffect;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -161,20 +162,27 @@ public class ReadThread extends Activity {
 		gotoAnotherBoard = new Intent(this, BoardList.class);
 		gotoAnotherBoard.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-		boardName.setOnClickListener(new OnClickListener() {
+		if (MenuOption.useActionBar) {
+			RelativeLayout titlebar = (RelativeLayout) findViewById(R.id.titlebar);
+			titlebar.setOnClickListener(new OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				if (MenuOption.useActionBar)
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
 					openOptionsMenu();
-				else {
+				}
+			});
+		}
+		else {
+			boardName.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
 					startActivity(gotoAnotherBoard);
-					retResultNothing();
 					finish();
 				}
-			}
-		});
+			});
+		}
 
 		prev.setOnClickListener(new OnClickListener() {
 			@Override

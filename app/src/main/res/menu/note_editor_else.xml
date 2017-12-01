@@ -6,28 +6,13 @@
         android:showAsAction="always"
         android:title="@string/menu_finish"/>
     <item
-        android:id="@+id/revert"
-        android:icon="@android:drawable/ic_menu_revert"
-        android:showAsAction="always"
-        android:title="@string/menu_revert"/>
-    <item
         android:id="@+id/save"
         android:icon="@android:drawable/ic_menu_save"
         android:showAsAction="always"
         android:title="@string/menu_save"/>
     <item
-        android:id="@+id/revert2"
-        android:icon="@android:drawable/ic_menu_revert"
-        android:showAsAction="always"
-        android:title="@string/menu_revert"/>
-    <item
         android:id="@+id/discard"
         android:icon="@android:drawable/ic_menu_delete"
         android:showAsAction="always"
         android:title="@string/menu_discard"/>
-    <item
-        android:id="@+id/delete"
-        android:icon="@android:drawable/ic_menu_delete"
-        android:showAsAction="always"
-        android:title="@string/menu_delete"/>
 </menu>
