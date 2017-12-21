@@ -630,8 +630,7 @@ public class ReadBoards extends ListActivity {
 										Toast.makeText(getApplicationContext(),
 												"Delete success",
 												Toast.LENGTH_SHORT).show();
-										listAdapter.remove(global_t);
-										listAdapter.notifyDataSetChanged();
+										onResume();
 									} else {
 										Toast.makeText(getApplicationContext(),
 												"Delete fail.",
