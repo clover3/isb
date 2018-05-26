@@ -598,6 +598,10 @@ public class ReadThread extends Activity {
 					next.setVisibility(View.VISIBLE);
 					readThreadScroll.smoothScrollTo(0, 0);
 
+					// Move the focus up to the top of the window
+					LinearLayout focusme;
+					focusme = (LinearLayout) findViewById(R.id.focusme);
+					focusme.requestFocus();
 					return true;
 				} else {
 					Toast.makeText(getApplicationContext(), "No more thread!",

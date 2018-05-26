@@ -6,6 +6,8 @@
   android:id="@+id/linearLayout"
   android:orientation="vertical">
 	<LinearLayout
+		android:id="@+id/focusme"
+		android:orientation="horizontal"
 		android:focusable="true"
 		android:focusableInTouchMode="true"
 		android:layout_width="0px"
