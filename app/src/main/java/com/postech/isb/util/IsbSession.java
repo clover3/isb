@@ -9,6 +9,8 @@ import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 
@@ -49,6 +51,7 @@ public class IsbSession {
 	private int state;
 	public static String userId;
 	public static boolean new_mail = false;
+	public static boolean auto_relogin = true;
 
 	public IsbSession() {
 		telnet = new TelnetInterface(80, NUM_ROWS);
@@ -115,7 +118,71 @@ public class IsbSession {
 	private final String LOGIN_ALREADY = "(?s).*\\?\\?\033\\[1;12H$";
 	private final String [] LOGIN = {LOGIN_SUCCESS, LOGIN_FAIL, LOGIN_ALREADY};
 
+	static private String savedId;
+	static private String savedPwd;
+	static private boolean savedEvict;
+	static private boolean savedLogin = false;
+
+	private boolean ping_and_relogin() {
+		//Log.i("newm", "in ping and relogin");
+		try {
+			telnet.isb_alive_check();
+		}
+		catch (Exception e) {
+			//Log.i("newm", "in ping and relogin: trying relogin");
+			return relogin();
+		}
+		return true;
+	}
+
+	private boolean relogin() {
+		if (!auto_relogin)
+			return false;
+		if (savedLogin) {
+			telnet = new TelnetInterface(80, NUM_ROWS);
+			state = NOT_CONNECTED;
+
+			if (!isConnected()) {
+				try {
+					Thread thread = new Thread(new Runnable(){
+						@Override
+						public void run() {
+							try {
+								connect();
+							} catch (Exception e) {
+							}
+						}
+					});
+					thread.start();
+					thread.join();
+				} catch (Exception e) {
+					e.printStackTrace();
+					disconnect();
+					return false;
+				}
+			}
+
+			if (isConnected()) {
+				try {
+					return login(savedId, savedPwd, savedEvict);
+				} catch (Exception e) {
+					disconnect();
+					return false;
+				}
+			}
+			return false;
+		}
+		else {
+			return false;
+		}
+	}
+
 	public boolean login(String id, String pwd, boolean evict) throws IOException, SocketTimeoutException {
+		savedId = id;
+		savedPwd = pwd;
+		savedEvict = evict;
+		savedLogin = true;
+
 		boolean result = false;
 		String msg;
 		userId = id;
@@ -206,7 +273,7 @@ public class IsbSession {
 		
 		return result;
 	}
-	
+
 	private String quitCommand(final int src) {
 		String result = new String ("");
 
@@ -319,47 +386,55 @@ public class IsbSession {
 	}
 
 	public boolean goToBoard(String board) throws IOException {
-		if (board.equals("diary")) {
-			if (state != MAIN) {
-				telnet.send_wo_r(quitCommand(state));
-				checkNewMail(telnet.waitfor(expect(MAIN)));
-				state = MAIN;
-			}
+		try {
+			if (board.equals("diary")) {
+				if (state != MAIN) {
+					telnet.send_wo_r(quitCommand(state));
+					checkNewMail(telnet.waitfor(expect(MAIN)));
+					state = MAIN;
+				}
 
-			telnet.send(gotoCommand(DIARY));
-			state = DIARY;
-			return true;
-		} else if (board.equals("mail")) {
-			if (state != MAIN) {
-				telnet.send_wo_r(quitCommand(state));
-				checkNewMail(telnet.waitfor(expect(MAIN)));
-				state = MAIN;
-			}
-
-			telnet.send(gotoCommand(MAIL));
-			state = MAIL;
-			return true;
-		} else {
-			gotoMenu(SELECT_BOARD);
-
-			telnet.send_wo_r(board);
-
-			String result = telnet.waitfor(board + "|\007+.*");
-
-			if (result.startsWith("\007")) {
-				debugMessage("Invalid board.", INFO);
-				for (int i = 0; i < board.length(); i++)
-					telnet.send_wo_r("\b");
-				telnet.send_wo_r("\r");
-				telnet.waitfor(expect(MAIN));
-				state = MAIN;
-				return false;
-			} else {
-				debugMessage("Go to board success.", INFO);
-				telnet.send_wo_r("\r");
-				state = BOARD;
+				telnet.send(gotoCommand(DIARY));
+				state = DIARY;
 				return true;
+			} else if (board.equals("mail")) {
+				if (state != MAIN) {
+					telnet.send_wo_r(quitCommand(state));
+					checkNewMail(telnet.waitfor(expect(MAIN)));
+					state = MAIN;
+				}
+
+				telnet.send(gotoCommand(MAIL));
+				state = MAIL;
+				return true;
+			} else {
+				gotoMenu(SELECT_BOARD);
+
+				telnet.send_wo_r(board);
+
+				String result = telnet.waitfor(board + "|\007+.*");
+
+				if (result.startsWith("\007")) {
+					debugMessage("Invalid board.", INFO);
+					for (int i = 0; i < board.length(); i++)
+						telnet.send_wo_r("\b");
+					telnet.send_wo_r("\r");
+					telnet.waitfor(expect(MAIN));
+					state = MAIN;
+					return false;
+				} else {
+					debugMessage("Go to board success.", INFO);
+					telnet.send_wo_r("\r");
+					state = BOARD;
+					return true;
+				}
 			}
+		}
+		catch (IOException e) {
+			if (relogin())
+				return goToBoard(board);
+			else
+				throw e;
 		}
 	}
 	
@@ -673,6 +748,22 @@ public class IsbSession {
 		return result;
 	}
 
+
+	private void gotoWriteMail() throws IOException {
+		try {
+			telnet.send(gotoCommand(WRITE_MAIL));
+			telnet.waitfor(expect(WRITE_MAIL));
+		}
+		catch (IOException e) {
+			if (relogin()) {
+				gotoWriteMail();
+				return;
+			}
+			else
+				throw e;
+		}
+	}
+
 	public boolean writeMail(String recver, String title, String content) throws IOException {
 		String [] user_list = recver.split("\\s");
 		String expected_response = "(?s).*받을 사람: ";
@@ -699,8 +790,7 @@ public class IsbSession {
 		if (user_list.length > 10)
 			return false;
 
-		telnet.send(gotoCommand(WRITE_MAIL));
-		telnet.waitfor(expect(WRITE_MAIL));
+		gotoWriteMail();
 		/* Enter users */
 		for (int i = 0; i < user_list.length; i++) {
 			telnet.send(user_list[i]);
@@ -1377,7 +1467,7 @@ public class IsbSession {
 		return result;
 	}
 	
-	public void sendHeartbeat(){
+	public boolean sendHeartbeat(){
 		try {
 			if (state == MAIN) {
 				telnet.send_heartbeat();
@@ -1385,7 +1475,9 @@ public class IsbSession {
 		}
 		catch (IOException e) {
 			disconnect();
+			return false;
 		}
+		return true;
 	}
 	
 	

@@ -667,6 +667,7 @@ public class ReadThread extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
+		//isb.ping_and_relogin();
 		switch (item.getItemId()) {
 			case REPLY: {/*
 				Intent giveMeNewThread = new Intent(Intent.ACTION_INSERT,

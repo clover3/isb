@@ -382,10 +382,14 @@ public class ReadBoards extends ListActivity {
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e.printStackTrace();/*
+			if (isb.relogin()) {
+				onResume();
+				return;
+			}*/
+			isb.disconnect();
 			Toast.makeText(getApplicationContext(), "Connection Lost",
 					Toast.LENGTH_SHORT).show();
-			isb.disconnect();
 		}
 	}
 
@@ -446,6 +450,7 @@ public class ReadBoards extends ListActivity {
 	@Override
 	public void onActivityResult(int reqCode, int resCode, Intent data) {
 		super.onActivityResult(reqCode, resCode, data);
+		//isb.ping_and_relogin();
 
 		switch (reqCode) {
 			case (reqReadThread): {

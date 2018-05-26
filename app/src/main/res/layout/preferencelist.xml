@@ -13,6 +13,13 @@
             android:title="Timeout prevention"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="auto_relogin"
+            android:summary="Relogin automatically when it lost connection"
+            android:title="Auto relogin"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Gesture"
