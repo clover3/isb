@@ -78,7 +78,9 @@ public class BoardList extends ListActivity {
 	private static final String SAVED_MYBOARD_NAME = "SAVED_MYBOARD_NAME";
 	private static final String PREFERENCE_COPIED_1 = "PREFERENCE_COPIED_1";
 
-	private boolean favoriteOnly = false;
+	private static boolean favoriteOnly = false;
+	private static boolean favoriteOnly_stored = false;
+	private static boolean searching_boards = false;
 	private ArrayList<Board> board_items;
 
 	public static String getMyBoard(SharedPreferences settings) {
@@ -221,11 +223,21 @@ public class BoardList extends ListActivity {
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before,
 					int count) {
-				if (s == "") {
+				//Log.i("newm", "on text changed: " + s + " start " + start + " before " + before + " count " + count);
+				if (s.length() == 0) {
 					// Original setting
+					favoriteOnly = favoriteOnly_stored;
+					searching_boards = false;
+					Log.i("newm", "finish searching");
+					updateArray();
 				}
-				else {
+				else if (searching_boards == false) {
 					// Show all board not only favorites
+					searching_boards = true;
+					favoriteOnly_stored = favoriteOnly;
+					favoriteOnly = false;
+					Log.i("newm", "searching and show favs");
+					updateArray();
 				}
 				boardAdapter.getFilter().filter(s);
 			}
@@ -245,6 +257,7 @@ public class BoardList extends ListActivity {
 	private void restoreUIState() {
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		favoriteOnly = settings.getBoolean(FAVORITE_ONLY_KEY, false);
+		favoriteOnly_stored = favoriteOnly;
 	}
 
 	@Override
@@ -280,7 +293,7 @@ public class BoardList extends ListActivity {
 		super.onPause();
 		SharedPreferences uiState = PreferenceManager.getDefaultSharedPreferences(this);
 		SharedPreferences.Editor editor = uiState.edit();
-		editor.putBoolean(FAVORITE_ONLY_KEY, favoriteOnly);
+		editor.putBoolean(FAVORITE_ONLY_KEY, favoriteOnly_stored);
 		editor.commit();
 	}
 
@@ -477,12 +490,14 @@ public class BoardList extends ListActivity {
 				}
 				case R.id.favorite: {
 					favoriteOnly = !favoriteOnly;
+					favoriteOnly_stored = favoriteOnly;
 					updateArray();
 					setFavoriteIcon(item);
 					return true;
 				}
 				case R.id.search_new: {
 					favoriteOnly = true;
+					favoriteOnly_stored = favoriteOnly;
 					SearchNew();
 					return true;
 				}
@@ -496,11 +511,13 @@ public class BoardList extends ListActivity {
 				}
 				case FAVORITE_ONLY: {
 					favoriteOnly = !favoriteOnly;
+					favoriteOnly_stored = favoriteOnly;
 					updateArray();
 					return true;
 				}
 				case SEARCH_NEW: {
 					favoriteOnly = true;
+					favoriteOnly_stored = favoriteOnly;
 					SearchNew();
 					return true;
 				}
