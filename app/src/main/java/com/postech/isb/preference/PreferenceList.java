@@ -82,6 +82,17 @@ public class PreferenceList extends PreferenceActivity  {
 			}
 		});
 
+		Preference autoRelogin = findPreference("auto_relogin");
+		autoRelogin.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+			@Override
+			public boolean onPreferenceClick(Preference preference) {
+				Toast.makeText(getApplicationContext(),
+						"you need to restart isb to apply this setting", Toast.LENGTH_SHORT)
+				.show();
+				return false;
+			}
+		});
+
 		// Set menu option summary
 		ListPreference listpref_menu_option = (ListPreference) findPreference("menu_option");
 		changeMenuOptionSummary(listpref_menu_option, listpref_menu_option.getValue());

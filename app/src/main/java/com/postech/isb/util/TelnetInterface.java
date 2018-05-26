@@ -286,6 +286,13 @@ public class TelnetInterface {
 
     }
 
+    public void isb_alive_check() throws IOException{
+        // FIXME: acquire a lock to prevent contention with user networking.
+        sent_packet_recently = true;
+        send_wo_r("p");
+        waitfor("\007");
+    }
+
     public void send_heartbeat() throws IOException{
         // FIXME: acquire a lock to prevent contention with user networking.
         if (!sent_packet_recently) {

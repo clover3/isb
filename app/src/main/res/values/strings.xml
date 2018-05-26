@@ -18,6 +18,7 @@
 
 	<string name="write">Write</string>
 	<string name="reply">Reply</string>
+	<string name="reply_copytext">본문을 복사할까요?</string>
 	<string name="send_mail">Write</string>
 	<string name="delete">Delete</string>
 	<string name="cancle">Cancel</string>

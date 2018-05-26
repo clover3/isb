@@ -353,6 +353,10 @@ public class Login extends Activity {
 			if (isb.isConnected()) {
 				try {
 					if (isb.login(id, pw, true)) {
+						// Set auto-relogin preference
+						SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+						Boolean auto_relogin = SP.getBoolean("auto_relogin", true);
+						isb.auto_relogin = auto_relogin;
 						handler.sendEmptyMessage(4);
 						Log.i(logName, "Login Success.");
 					} else {

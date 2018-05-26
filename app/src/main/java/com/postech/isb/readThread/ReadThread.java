@@ -667,15 +667,59 @@ public class ReadThread extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
+		//isb.ping_and_relogin();
 		switch (item.getItemId()) {
-			case REPLY: {
+			case REPLY: {/*
 				Intent giveMeNewThread = new Intent(Intent.ACTION_INSERT,
 						Notes.CONTENT_URI);
 				giveMeNewThread.putExtra("note", "(re:" +
 						getWriter(t.writer) + ") "+ getTitle(t.title));
-				giveMeNewThread.putExtra("board", board);
-				startActivityForResult(giveMeNewThread, NewNote);
-				return true;
+				giveMeNewThread.putExtra("board", board);*/
+
+				if (isb.isMain()) {
+					AlertDialog.Builder alertDlg = new AlertDialog.Builder(this);
+					alertDlg.setTitle(R.string.reply);
+					alertDlg.setMessage(R.string.reply_copytext);
+					alertDlg.setNegativeButton("Yes",
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+													int which) {
+									String newBody = t.contents;
+									newBody = newBody.replaceFirst("\\n++$", "");
+									newBody = newBody.replace("\n", "\n> ");
+									// I don't know why, but ISB always adds one more '>'
+									newBody = newBody + "\n> ";
+									Intent giveMeNewThread = new Intent(Intent.ACTION_INSERT,
+											Notes.CONTENT_URI);
+									giveMeNewThread.putExtra("note", "(re:" +
+											getWriter(t.writer) + ") " + getTitle(t.title) +
+											newBody);
+									giveMeNewThread.putExtra("board", board);
+									startActivityForResult(giveMeNewThread, NewNote);
+								}
+							});
+					alertDlg.setPositiveButton("No",
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+													int which) {
+									Intent giveMeNewThread = new Intent(Intent.ACTION_INSERT,
+											Notes.CONTENT_URI);
+									giveMeNewThread.putExtra("note", "(re:" +
+											getWriter(t.writer) + ") " + getTitle(t.title));
+									giveMeNewThread.putExtra("board", board);
+									startActivityForResult(giveMeNewThread, NewNote);
+								}
+							});
+					alertDlg.show();
+
+
+					//startActivityForResult(giveMeNewThread, NewNote);
+					return true;
+				}
 			}
 			case DELETE: {
 				if (isb.isMain()) {
