@@ -1060,7 +1060,7 @@ public class IsbSession {
 	}
 
 	public IsbThread readThread(String board, int idx)	throws IOException {
-		IsbThread thread = new IsbThread();
+		IsbThread thread;
 		int state = FIRST;
 		int initial_percent = 0;
 		int current_percent = 0;

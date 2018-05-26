@@ -221,6 +221,12 @@ public class BoardList extends ListActivity {
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before,
 					int count) {
+				if (s == "") {
+					// Original setting
+				}
+				else {
+					// Show all board not only favorites
+				}
 				boardAdapter.getFilter().filter(s);
 			}
 		};
