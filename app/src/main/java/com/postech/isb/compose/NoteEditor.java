@@ -352,7 +352,12 @@ public class NoteEditor extends Activity {
                     // Bump the modification time to now.
                     values.put(Notes.MODIFIED_DATE, System.currentTimeMillis());
 
-                    String title = text.split("\n")[0];
+                    String[] split_result = text.split("\n");
+                    String title;
+                    if (split_result.length == 0)
+                        title = "";
+                    else
+                        title = split_result[0];
                     length = title.length();
                     title = title.substring(0, Math.min(30, length));
                     if (length > 30) {
