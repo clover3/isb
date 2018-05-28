@@ -768,6 +768,19 @@ public class IsbSession {
 		}
 	}
 
+	public String queryUser(String user) throws IOException {
+		if (state == MAIN) {
+			String result;
+			telnet.send_wo_r("q\r");
+			telnet.send(user);
+			telnet.send_wo_r("q");
+			result = telnet.waitfor(expect(MAIN));
+			return result;
+		}
+		else
+			return null;
+	}
+
 	public boolean writeMail(String recver, String title, String content) throws IOException {
 		String [] user_list = recver.split("\\s");
 		String expected_response = "(?s).*받을 사람: ";

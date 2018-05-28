@@ -11,6 +11,7 @@ import com.postech.isb.R.drawable;
 import com.postech.isb.R.id;
 import com.postech.isb.R.layout;
 import com.postech.isb.R.string;
+import com.postech.isb.query.Query;
 import com.postech.isb.readBoard.ReadBoards;
 import com.postech.isb.util.IsbSession;
 import com.postech.isb.util.MenuOption;
@@ -504,6 +505,11 @@ public class BoardList extends ListActivity {
 					SearchNew();
 					return true;
 				}
+				case R.id.query: {
+					Intent intentQuery = new Intent(this, Query.class);
+					startActivity(intentQuery);
+					return true;
+				}
 			}
 		}
 		else {
@@ -522,6 +528,11 @@ public class BoardList extends ListActivity {
 					favoriteOnly = true;
 					favoriteOnly_stored = favoriteOnly;
 					SearchNew();
+					return true;
+				}
+				case QUERY: {
+					Intent intentQuery = new Intent(this, Query.class);
+					startActivity(intentQuery);
 					return true;
 				}
 			}

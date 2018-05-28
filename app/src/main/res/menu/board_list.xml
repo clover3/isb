@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
      <item
+         android:id="@+id/query"
+         android:icon="@drawable/user_36"
+         android:showAsAction="always"
+         android:title="@string/query"/>
+     <item
          android:id="@+id/refresh"
          android:icon="@drawable/ic_menu_refresh_36"
          android:showAsAction="always"

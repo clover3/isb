@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:id="@+id/linearlayout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+	<LinearLayout
+		android:focusable="true"
+		android:focusableInTouchMode="true"
+		android:layout_width="1px"
+		android:layout_height="30px"/>
+
+	<RelativeLayout
+		android:id="@+id/titlebar"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content">
+
+		<EditText
+			android:id="@+id/userID"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:hint="Search"
+			android:lines="1"
+			android:maxLength="64" />
+
+		<Button
+			android:id="@+id/search"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+			android:text="Search"/>
+	</RelativeLayout>
+
+	<LinearLayout
+		android:focusable="true"
+		android:focusableInTouchMode="true"
+		android:layout_width="0px"
+		android:layout_height="30px"/>
+
+	<TextView
+		android:id="@+id/queryResult"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:text="Result here!"
+		android:textSize="15sp"
+		android:textColor="#fff">
+	</TextView>
+	
+</LinearLayout>

@@ -43,6 +43,9 @@
 
         <activity android:name=".myBBS.MyBBS">
         </activity>
+
+        <activity android:name=".query.Query">
+        </activity>
         
         <activity android:label="@string/title_notes_list" android:name=".compose.NotesList">
             <intent-filter>
