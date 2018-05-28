@@ -57,6 +57,7 @@ public class BoardList extends ListActivity {
 	static final private int FAVORITE_ONLY = Menu.FIRST + 2;
 	static final private int SEARCH_NEW = Menu.FIRST + 3;
 	static final private int MY_BOARD = Menu.FIRST + 4;
+	static final private int QUERY = Menu.FIRST + 5;
 
 	private IsbSession isb;
 	private ArrayList<Board> boardItems;
@@ -78,9 +79,9 @@ public class BoardList extends ListActivity {
 	private static final String SAVED_MYBOARD_NAME = "SAVED_MYBOARD_NAME";
 	private static final String PREFERENCE_COPIED_1 = "PREFERENCE_COPIED_1";
 
-	private static boolean favoriteOnly = false;
-	private static boolean favoriteOnly_stored = false;
-	private static boolean searching_boards = false;
+	private boolean favoriteOnly = false;
+	private boolean favoriteOnly_stored = false;
+	private boolean searching_boards = false;
 	private ArrayList<Board> board_items;
 
 	public static String getMyBoard(SharedPreferences settings) {
@@ -441,6 +442,8 @@ public class BoardList extends ListActivity {
 			return true;
 		}
 		else {
+			menu.add(0, QUERY, Menu.NONE, R.string.query).setIcon(
+					R.drawable.user_48);
 			menu.add(0, REFRESH, Menu.NONE, R.string.refresh).setIcon(
 					R.drawable.ic_menu_refresh);
 			menu.add(0, FAVORITE_ONLY, Menu.NONE, R.string.list_favorite_only)

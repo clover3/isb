@@ -44,6 +44,7 @@
 <!--  for board list -->	
 	<string name="boardListTitle">Select board</string>
 	<string name="noEntry">게시판 목록이 없습니다.</string>
+	<string name="query">Query</string>
 	<string name="refresh">Refresh</string>
 	<string name="favorite">Toggle Favorite</string>
 	<string name="myboard">Toggle Myboard</string>
