@@ -430,11 +430,11 @@ public class IsbSession {
 				}
 			}
 		}
-		catch (IOException e) {
+		catch (Exception e) {
 			if (relogin())
 				return goToBoard(board);
 			else
-				throw e;
+				throw new IOException("Failed to relogin");
 		}
 	}
 	
@@ -754,13 +754,13 @@ public class IsbSession {
 			telnet.send(gotoCommand(WRITE_MAIL));
 			telnet.waitfor(expect(WRITE_MAIL));
 		}
-		catch (IOException e) {
+		catch (Exception e) {
 			if (relogin()) {
 				gotoWriteMail();
 				return;
 			}
 			else
-				throw e;
+				throw new IOException("Failed to relogin");
 		}
 	}
 

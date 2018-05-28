@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<string name="newmbewb">늄븁</string>
     <string name="hello">Hello World, isb!</string>
     <string name="app_name">Isb</string>
     <string name="id">ID</string>
