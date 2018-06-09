@@ -770,12 +770,21 @@ public class IsbSession {
 
 	public String queryUser(String user) throws IOException {
 		if (state == MAIN) {
-			String result;
-			telnet.send_wo_r("q\r");
-			telnet.send(user);
-			telnet.send_wo_r("q");
-			result = telnet.waitfor(expect(MAIN));
-			return result;
+			try {
+				String result;
+				telnet.send_wo_r("q\r");
+				telnet.send(user);
+				telnet.send_wo_r("q");
+				result = telnet.waitfor(expect(MAIN));
+				return result;
+			}
+			catch (IOException e) {
+				if (relogin()) {
+					return queryUser(user);
+				}
+				else
+					throw e;
+			}
 		}
 		else
 			return null;

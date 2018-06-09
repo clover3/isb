@@ -24,6 +24,7 @@
 			android:layout_height="wrap_content"
 			android:hint="Search"
 			android:lines="1"
+			android:inputType="text"
 			android:maxLength="64" />
 
 		<Button
