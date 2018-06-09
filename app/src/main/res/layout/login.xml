@@ -55,13 +55,22 @@
 	        android:layout_marginTop="10sp"
 	        android:layout_below="@id/currentId"        
 	        android:text="@string/goSurf"/>
+
+
+		<Button
+			android:id="@+id/query"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="10sp"
+			android:layout_below="@id/goSurf"
+			android:text="@string/query"/>
         
     	<Button
 	        android:id="@+id/logoutBtn"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_marginTop="10sp"
-	        android:layout_below="@id/goSurf"        
+	        android:layout_below="@id/query"
 	        android:text="@string/stop"/>
 	        
 	</RelativeLayout>

@@ -46,6 +46,7 @@ import com.postech.isb.boardList.Board;
 import com.postech.isb.boardList.BoardList;
 import com.postech.isb.info.Info;
 import com.postech.isb.preference.PreferenceList;
+import com.postech.isb.query.Query;
 import com.postech.isb.util.HeartbeaterReceiver;
 import com.postech.isb.util.IsbSession;
 import com.postech.isb.util.MenuOption;
@@ -64,6 +65,7 @@ public class Login extends Activity {
 	private Button loginButton;
 	private Button logoutButton;
 	private Button goSurfButton;
+	private Button queryButton;
 	private RelativeLayout idPwInput;
 	private RelativeLayout logedIn;
 	private TextView logedId;
@@ -78,6 +80,7 @@ public class Login extends Activity {
 	private ProgressDialog pd;
 
 	private Intent goSurf;
+	private Intent query;
 	private Intent goSetting;
 	private Intent goInfo;
 	private Intent goUserList;
@@ -181,6 +184,7 @@ public class Login extends Activity {
 		loginButton = (Button) findViewById(R.id.loginBtn);
 		logoutButton = (Button) findViewById(R.id.logoutBtn);
 		goSurfButton = (Button) findViewById(R.id.goSurf);
+		queryButton = (Button) findViewById(R.id.query);
 
 		idPwInput = (RelativeLayout) findViewById(R.id.idPwInput);
 		logedIn = (RelativeLayout) findViewById(R.id.logedIn);
@@ -211,7 +215,17 @@ public class Login extends Activity {
 			}
 		});
 
+		queryButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				startActivity(query);
+			}
+		});
+
 		goSurf = new Intent(this, BoardList.class);
+		query = new Intent(this, Query.class);
 		goSetting = new Intent(this, PreferenceList.class);
 		goInfo = new Intent(this, Info.class);
 		goUserList = new Intent(this, ViewUser.class);

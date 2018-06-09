@@ -11,7 +11,6 @@ import com.postech.isb.R.drawable;
 import com.postech.isb.R.id;
 import com.postech.isb.R.layout;
 import com.postech.isb.R.string;
-import com.postech.isb.query.Query;
 import com.postech.isb.readBoard.ReadBoards;
 import com.postech.isb.util.IsbSession;
 import com.postech.isb.util.MenuOption;
@@ -58,7 +57,6 @@ public class BoardList extends ListActivity {
 	static final private int FAVORITE_ONLY = Menu.FIRST + 2;
 	static final private int SEARCH_NEW = Menu.FIRST + 3;
 	static final private int MY_BOARD = Menu.FIRST + 4;
-	static final private int QUERY = Menu.FIRST + 5;
 
 	private IsbSession isb;
 	private ArrayList<Board> boardItems;
@@ -443,8 +441,6 @@ public class BoardList extends ListActivity {
 			return true;
 		}
 		else {
-			menu.add(0, QUERY, Menu.NONE, R.string.query).setIcon(
-					R.drawable.user_48);
 			menu.add(0, REFRESH, Menu.NONE, R.string.refresh).setIcon(
 					R.drawable.ic_menu_refresh);
 			menu.add(0, FAVORITE_ONLY, Menu.NONE, R.string.list_favorite_only)
@@ -505,11 +501,6 @@ public class BoardList extends ListActivity {
 					SearchNew();
 					return true;
 				}
-				case R.id.query: {
-					Intent intentQuery = new Intent(this, Query.class);
-					startActivity(intentQuery);
-					return true;
-				}
 			}
 		}
 		else {
@@ -528,11 +519,6 @@ public class BoardList extends ListActivity {
 					favoriteOnly = true;
 					favoriteOnly_stored = favoriteOnly;
 					SearchNew();
-					return true;
-				}
-				case QUERY: {
-					Intent intentQuery = new Intent(this, Query.class);
-					startActivity(intentQuery);
 					return true;
 				}
 			}
