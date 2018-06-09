@@ -78,9 +78,9 @@ public class BoardList extends ListActivity {
 	private static final String SAVED_MYBOARD_NAME = "SAVED_MYBOARD_NAME";
 	private static final String PREFERENCE_COPIED_1 = "PREFERENCE_COPIED_1";
 
-	private static boolean favoriteOnly = false;
-	private static boolean favoriteOnly_stored = false;
-	private static boolean searching_boards = false;
+	private boolean favoriteOnly = false;
+	private boolean favoriteOnly_stored = false;
+	private boolean searching_boards = false;
 	private ArrayList<Board> board_items;
 
 	public static String getMyBoard(SharedPreferences settings) {

@@ -49,13 +49,18 @@ public class IsbSession {
 	
 	private TelnetInterface telnet;
 	private int state;
+	private boolean heartbeat_failed;
 	public static String userId;
 	public static boolean new_mail = false;
 	public static boolean auto_relogin = true;
 
-	public IsbSession() {
+	private void initIsbSession() {
 		telnet = new TelnetInterface(80, NUM_ROWS);
 		state = NOT_CONNECTED;
+		heartbeat_failed = false;
+	}
+	public IsbSession() {
+		initIsbSession();
 	}
 	
 	private void debugMessage(String msg, int degree) {
@@ -118,10 +123,10 @@ public class IsbSession {
 	private final String LOGIN_ALREADY = "(?s).*\\?\\?\033\\[1;12H$";
 	private final String [] LOGIN = {LOGIN_SUCCESS, LOGIN_FAIL, LOGIN_ALREADY};
 
-	static private String savedId;
-	static private String savedPwd;
-	static private boolean savedEvict;
-	static private boolean savedLogin = false;
+	private String savedId;
+	private String savedPwd;
+	private boolean savedEvict;
+	private boolean savedLogin = false;
 
 	private boolean ping_and_relogin() {
 		//Log.i("newm", "in ping and relogin");
@@ -139,8 +144,7 @@ public class IsbSession {
 		if (!auto_relogin)
 			return false;
 		if (savedLogin) {
-			telnet = new TelnetInterface(80, NUM_ROWS);
-			state = NOT_CONNECTED;
+			initIsbSession();
 
 			if (!isConnected()) {
 				try {
@@ -762,6 +766,28 @@ public class IsbSession {
 			else
 				throw new IOException("Failed to relogin");
 		}
+	}
+
+	public String queryUser(String user) throws IOException {
+		if (state == MAIN) {
+			try {
+				String result;
+				telnet.send_wo_r("q\r");
+				telnet.send(user);
+				telnet.send_wo_r("q");
+				result = telnet.waitfor(expect(MAIN));
+				return result;
+			}
+			catch (IOException e) {
+				if (relogin()) {
+					return queryUser(user);
+				}
+				else
+					throw e;
+			}
+		}
+		else
+			return null;
 	}
 
 	public boolean writeMail(String recver, String title, String content) throws IOException {
@@ -1469,12 +1495,12 @@ public class IsbSession {
 	
 	public boolean sendHeartbeat(){
 		try {
-			if (state == MAIN) {
+			if (state == MAIN && !heartbeat_failed) {
 				telnet.send_heartbeat();
 			}
 		}
 		catch (IOException e) {
-			disconnect();
+			heartbeat_failed = true;
 			return false;
 		}
 		return true;
