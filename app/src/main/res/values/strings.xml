@@ -87,8 +87,9 @@
 	<string name="OK">OK</string>
 	<!--  for Notice -->
 	<string name="notice_title">업데이트</string>
-	<string name="notice_content">* 화면 상단에 메뉴바를 띄울 수 있습니다. MyBBS > Preference 에서 설정할 수 있습니다.\n
-	* 글 읽기 화면에서 답장 메뉴가 생겼습니다.</string>
+	<string name="notice_content">* 답글을 달 때 본문을 복사할 것인지 선택할 수 있습니다.\n
+	* 연결이 끊긴 경우 자동으로 다시 로그인 하도록 Preference에서 설정할 수 있습니다.\n
+	* Query 기능을 사용할 수 있습니다.</string>
 
 	<!-- for Preference -->
 	<string name="preference_label_menuoption_menubutton">Menu button</string>
