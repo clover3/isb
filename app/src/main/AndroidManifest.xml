@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.postech.isb"
-    android:versionCode="1059" android:versionName="1.2.11 (for Nougat or later)">
+    android:versionCode="1060" android:versionName="1.2.12 (for Nougat or later)">
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
     <uses-sdk android:minSdkVersion="24" android:targetSdkVersion="24"/>
     <application android:icon="@drawable/icon" android:label="@string/app_name" android:name="PostechIsb">
@@ -45,7 +45,8 @@
         <activity android:name=".myBBS.MyBBS">
         </activity>
 
-        <activity android:name=".query.Query">
+        <activity android:name=".query.Query"
+            android:windowSoftInputMode="stateAlwaysHidden" android:theme="@style/MyYesTitleBar">
         </activity>
         
         <activity android:label="@string/title_notes_list" android:name=".compose.NotesList" android:theme="@style/MyNotTransparentMenu">
