@@ -88,9 +88,15 @@ public class Query extends Activity {
         try {
             if (isb.isMain()) {
                 String result = isb.queryUser(user_id);
-                final String no_such_user = "No such user";
-                String []s = result.split("\033\\[4;1H");
-                String id_result = s[0].split("\\033\\[2;11H")[1].trim();
+                final String no_such_user = "No such user!";
+                String []s = result.split("\\033\\[4;1H");
+                String id_result;
+                if (s.length > 1)
+                    id_result = s[0].split("\\033\\[2;11H")[1];
+                else {
+                    id_result = s[0].split("사용자명: ")[1];
+                }
+                id_result = id_result.split("[\\000\\033]")[0];
                 Log.i("newm", "id: "+ id_result);
                 if (s.length < 2) {
                     queryResult.setText(no_such_user);
