@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="com.postech.isb"
-    android:versionCode="1060" android:versionName="1.2.12 (for Nougat or later)">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.postech.isb"
+    android:versionCode="1061"
+    android:versionName="1.2.12 (for Nougat or later)">
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
     <uses-sdk android:minSdkVersion="24" android:targetSdkVersion="24"/>
-    <application android:icon="@drawable/icon" android:label="@string/app_name" android:name="PostechIsb">
+    <application android:icon="@drawable/icon" android:label="@string/app_name" android:name="PostechIsb"
+        android:debuggable="true" tools:ignore="HardcodedDebugMode">
          
         <provider android:authorities="com.postech.provider.Isb" android:name=".compose.IsbProvider"/>
         
