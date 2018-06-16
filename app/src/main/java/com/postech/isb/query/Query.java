@@ -15,6 +15,7 @@ import com.postech.isb.R;
 import com.postech.isb.util.IsbSession;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Created by newmbewb on 2018-05-29.
@@ -69,35 +70,56 @@ public class Query extends Activity {
         return ret;
     }
 
-    private static String toHexString(byte[] bytes) {
-        StringBuilder hexString = new StringBuilder();
+    private static String formatHexDump(byte[] array, int offset, int length) {
+        final int width = 16;
 
-        for (int i = 0; i < bytes.length; i++) {
-            String hex = Integer.toHexString(0xFF & bytes[i]);
-            if (hex.length() == 1) {
-                hexString.append('0');
+        StringBuilder builder = new StringBuilder();
+
+        for (int rowOffset = offset; rowOffset < offset + length; rowOffset += width) {
+            builder.append(String.format("%06d:  ", rowOffset));
+
+            for (int index = 0; index < width; index++) {
+                if (rowOffset + index < array.length) {
+                    builder.append(String.format("%02x ", array[rowOffset + index]));
+                } else {
+                    builder.append("   ");
+                }
             }
-            hexString.append(hex);
+
+            if (rowOffset < array.length) {
+                int asciiWidth = Math.min(width, array.length - rowOffset);
+                builder.append("  |  ");
+                for (int i = rowOffset; i < asciiWidth + rowOffset; i++) {
+                    int c = (int)array[i];
+                    if (c >= 0x20 && c <= 0x7e)
+                        builder.append(String.format("%c", array[i]));
+                    else
+                        builder.append(".");
+                }
+            }
+
+            builder.append(String.format("%n"));
         }
 
-        return hexString.toString();
+        return builder.toString();
     }
-
     private void queryUser() {
         String user_id = userID.getText().toString();
         try {
             if (isb.isMain()) {
                 String result = isb.queryUser(user_id);
+
                 final String no_such_user = "No such user!";
-                String []s = result.split("\\033\\[4;1H");
+                String []s = result.split("이  름:");
+                String []s_id_tmp = s[0].split("\\033\\[2;11H");
                 String id_result;
-                if (s.length > 1)
-                    id_result = s[0].split("\\033\\[2;11H")[1];
+                if (s_id_tmp.length > 1)
+                    id_result = s_id_tmp[1];
                 else {
                     id_result = s[0].split("사용자명: ")[1];
                 }
-                id_result = id_result.split("[\\000\\033]")[0];
-                Log.i("newm", "id: "+ id_result);
+                id_result = id_result.split("[\\000\\033]")[0].trim();
+
                 if (s.length < 2) {
                     queryResult.setText(no_such_user);
                     return;
