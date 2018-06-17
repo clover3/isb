@@ -6,7 +6,8 @@
     <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="14"/>
     <application android:icon="@drawable/icon" android:label="@string/app_name" android:name="PostechIsb">
          
-        <provider android:authorities="com.postech.provider.Isb" android:name=".compose.IsbProvider"/>
+        <provider android:authorities="com.postech.provider.Isb" android:name=".compose.IsbProvider"
+            android:exported="false"/>
         
         <activity android:name=".IsbTabWidget" android:label="@string/app_name"
         	android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="unspecified">
