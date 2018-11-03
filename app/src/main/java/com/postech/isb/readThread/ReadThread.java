@@ -3,7 +3,9 @@ package com.postech.isb.readThread;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -72,6 +74,7 @@ import android.widget.Toast;
 import android.widget.TextView.BufferType;
 import android.text.TextWatcher;
 import android.text.Editable;
+import java.text.SimpleDateFormat;
 
 public class ReadThread extends Activity {
 	private IsbSession isb;
@@ -466,9 +469,23 @@ public class ReadThread extends Activity {
 			if( fPending )
 			{
 				int idxLast = arrComment.size()-1;
-				if( strWriter.equals(arrComment.get(idxLast).strWriter) )
-				{
-		//			Log.i("isb", "CommentList::Add() Match. Concat comment");
+				Comment commentPrev = arrComment.get(idxLast);
+
+                Date datePrevious, dateCurrent;
+                long diff = 100000;
+
+                try {
+                    datePrevious = new SimpleDateFormat("yyMMdd,HH:mm").parse(commentPrev.strWhen);
+                    dateCurrent = new SimpleDateFormat("yyMMdd,HH:mm").parse(strWhen);
+                    diff = (dateCurrent.getTime()-datePrevious.getTime())/1000;
+                }
+                catch (ParseException e){
+                    e.printStackTrace();
+                }
+
+                /* concat if (1) same writer (2) less then 3 minutes */
+                if( strWriter.equals(commentPrev.strWriter) && diff < 3*60 )
+                {
 					arrComment.get(idxLast).strComment = arrComment.get(idxLast).strComment + strComment;
 				}
 				else
