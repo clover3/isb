@@ -617,6 +617,34 @@ public class IsbSession {
 		}
 		return result;
 	}
+
+	public String getBoardTitle(String board) throws IOException {
+		if (!goToBoard(board)) {
+			debugMessage("getThreadList: go to board fail.", WARN);
+			return null;
+		}
+
+		debugMessage("getThreadList: go to board success.", INFO);
+
+		// TODO: index check.
+		String msg = telnet.waitfor(expect(BOARD));
+		Pattern p = Pattern.compile("\\033\\[7m(.*?)\\033\\[27m");   // the pattern to search for
+		Matcher m = p.matcher(msg);
+		String title;
+		if (m.find()) {
+			//Log.i("newm", "title: " + m.group(1));
+			title = m.group(1);
+		}
+		else {
+			//Log.i("newm", "no title!");
+			title = "";
+		}
+
+		if (gotoMenu(MAIN))
+			debugMessage("Go back to main successfully", INFO);
+		return title;
+	}
+
 	/**
 	 * 
 	 * @param start : Start thread number lower boundary?

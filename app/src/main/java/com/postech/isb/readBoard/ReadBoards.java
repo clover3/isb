@@ -62,6 +62,7 @@ public class ReadBoards extends ListActivity {
 	private ListView lv;
 	private String board;
 	private TextView boardName;
+	private TextView boardTitle;
 
 	private Button prevBtn;
 	private Button nextBtn;
@@ -130,10 +131,28 @@ public class ReadBoards extends ListActivity {
 
 		registerForContextMenu(lv);
 
+
+		String boardExplanation = "";
+		try {
+			boardExplanation = isb.getBoardTitle(board);
+		}
+		catch (IOException e) {
+            e.printStackTrace();
+			Toast.makeText(getApplicationContext(), "Connection lost!",
+					Toast.LENGTH_SHORT).show();
+		}
+
 		boardName = (TextView) findViewById(R.id.currentBoard);
-		boardName.setText(board);
-		if (MenuOption.useActionBar)
-			boardName.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.menubar_white_36, 0);
+		boardName.setText(board + "  "); // Blank for the menuicon
+		boardTitle = (TextView) findViewById(R.id.boardTitle);
+		boardTitle.setText(boardExplanation);
+		if (MenuOption.useActionBar) {
+			boardName.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.menubar_white_18, 0);
+			/*
+			menuButton = (TextView) findViewById(id.menuButton);
+			menuButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.menubar_white_36, 0);
+			*/
+		}
 
 		gotoAnotherBoard = new Intent(this, BoardList.class);
 		gotoAnotherBoard.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

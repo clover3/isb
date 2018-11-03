@@ -16,6 +16,7 @@ import com.postech.isb.util.IsbSession;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 
 /**
  * Created by newmbewb on 2018-05-29.
@@ -51,6 +52,8 @@ public class Query extends Activity {
         String name, email, login, posting, last, where, newmail;
         String newmail_message = "새 편지";
 
+        Log.i("newm","count lines: " + lines.length);
+
         ss = lines[0].replace("\033[K", "").split("이메일:");
         name = ss[0].replace("이  름:", "").trim();
         email = ss[1].trim();
@@ -65,7 +68,29 @@ public class Query extends Activity {
         where = ss[0].replace("어디서:", "").trim();
         newmail = newmail_message + ss[1].split("\\.")[0] + ".";
 
-        String [] ret = {name, email, login, posting, last, where, newmail};
+        String plan = "";
+        try {
+            ss = lines[3].split("\\[\\d+;\\dH", 2);
+            plan = ss[1];
+            if (lines.length >= 4) {
+                ss = Arrays.copyOfRange(lines, 4, lines.length);
+                plan = plan + "\n" + TextUtils.join("\n", ss).replaceAll("^\\033\\[K", "");
+            }
+            //plan = plan_first_line + "\n" + plan_rest_lines;
+            //Log.i("newm", "plain plan: " + plan);
+            plan = plan.replaceAll("\n\r", "\n");
+            plan = plan.split("\\033\\[80;1H")[0];
+            //plan = plan.replaceAll("\\033\\[K", "\n");
+            plan = plan.replaceAll("\\033\\[K", "\n");
+            plan = plan.replaceAll("\\033\\[\\d+;\\d+H", "\n\n");
+            //Log.i("newm", "final line: " + plan);
+        }
+        catch (Exception e) {
+            Toast.makeText(getApplicationContext(), "Failed to load the plan.",
+                    Toast.LENGTH_SHORT).show();
+        }
+
+        String [] ret = {name, email, login, posting, last, where, newmail, plan};
 
         return ret;
     }
@@ -127,7 +152,7 @@ public class Query extends Activity {
                 String [] parsed = parseResult(s[1]);
                 String name = parsed[0], email = parsed[1], login = parsed[2],
                         posting = parsed[3], last = parsed[4],
-                        where = parsed[5], newmail = parsed[6];
+                        where = parsed[5], newmail = parsed[6], plan = parsed[7];
                 if (!id_result.equals(user_id)) {
                     queryResult.setText(no_such_user);
                     return;
@@ -139,7 +164,8 @@ public class Query extends Activity {
                 output += "포스팅: " + posting + "\n";
                 output += "마지막: " + last + "\n";
                 output += "어디서: " + where + "\n";
-                output += newmail;
+                output += newmail + "\n\n";
+                output += plan;
                 queryResult.setText(output);
             }
             else {
