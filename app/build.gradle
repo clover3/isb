@@ -1,15 +1,15 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 24
+    compileSdkVersion 26
     buildToolsVersion "28.0.3"
     compileOptions.encoding = 'x-windows-949'
 
 
     defaultConfig {
         applicationId "com.postech.isb"
-        minSdkVersion 24
-        targetSdkVersion 24
+        minSdkVersion 26
+        targetSdkVersion 26
 
     }
 
