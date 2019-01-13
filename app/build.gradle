@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.postech.isb"
-        minSdkVersion 14
+        minSdkVersion 24
         targetSdkVersion 26
 
     }
