@@ -1,39 +1,59 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "28.0.3"
-    compileOptions.encoding = 'x-windows-949'
-
+    namespace 'com.postech.isb'  // ADD THIS LINE
+    compileSdkVersion 35         // UPDATE from 26
+    buildToolsVersion "35.0.0"   // UPDATE from 28.0.3
 
     defaultConfig {
         applicationId "com.postech.isb"
-        minSdkVersion 14
-        targetSdkVersion 26
-
+        minSdkVersion 21         // UPDATE from 14 (Android 5.0+)
+        targetSdkVersion 35      // UPDATE from 26 (required for Play Store)
+        versionCode 64
+        versionName "2.0.0"
     }
 
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-
     }
 
+    compileOptions {
+        encoding = 'UTF-8'  // CHANGE from 'x-windows-949'
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 
     externalNativeBuild {
-        cmake {
-            version "3.12.0"
-        }
+        // REMOVE cmake block if you're using ndkBuild
         ndkBuild {
-
             path 'src/main/jni/Android.mk'
         }
+    }
+
+    packagingOptions {
+        pickFirst 'META-INF/LICENSE'
+        pickFirst 'META-INF/NOTICE'
     }
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:24.0.0'
-    compile project(':jsch-0.1.54')
+    // UPDATE from old support library to AndroidX
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.core:core:1.12.0'
+    implementation 'com.google.android.material:material:1.11.0'
+
+    // UPDATE JSch from local module to maven dependency
+    implementation 'com.jcraft:jsch:0.1.55'
+
+    // REMOVE these old lines:
+    // compile 'com.android.support:support-v4:24.0.0'
+    // compile project(':jsch-0.1.54')
+}
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }

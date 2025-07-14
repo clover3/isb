@@ -50,22 +50,22 @@ public class Query extends Activity {
         String [] lines = s.split("\n\r");
         String [] ss;
         String name, email, login, posting, last, where, newmail;
-        String newmail_message = "»õ ÆíÁö";
+        String newmail_message = "ìƒˆ í¸ì§€";
 
         Log.i("newm","count lines: " + lines.length);
 
-        ss = lines[0].replace("\033[K", "").split("ÀÌ¸ŞÀÏ:");
-        name = ss[0].replace("ÀÌ  ¸§:", "").trim();
+        ss = lines[0].replace("\033[K", "").split("ì´ë©”ì¼:");
+        name = ss[0].replace("ì´  ë¦„:", "").trim();
         email = ss[1].trim();
 
-        ss = lines[1].replace("\033[K", "").split("Æ÷½ºÆÃ:");
-        login = ss[0].replace("·Î±×ÀÎ:", "").trim();
+        ss = lines[1].replace("\033[K", "").split("í¬ìŠ¤íŒ…:");
+        login = ss[0].replace("ë¡œê·¸ì¸:", "").trim();
         posting = ss[1].trim();
 
-        last = lines[2].replace("\033[K", "").replace("¸¶Áö¸·:", "").trim();
+        last = lines[2].replace("\033[K", "").replace("ë§ˆì§€ë§‰:", "").trim();
 
         ss = lines[3].replace("\033[K", "").split(newmail_message);
-        where = ss[0].replace("¾îµğ¼­:", "").trim();
+        where = ss[0].replace("ì–´ë””ì„œ:", "").trim();
         newmail = newmail_message + ss[1].split("\\.")[0] + ".";
 
         String plan = "";
@@ -135,13 +135,13 @@ public class Query extends Activity {
                 String result = isb.queryUser(user_id);
 
                 final String no_such_user = "No such user!";
-                String []s = result.split("ÀÌ  ¸§:");
+                String []s = result.split("ì´  ë¦„:");
                 String []s_id_tmp = s[0].split("\\033\\[2;11H");
                 String id_result;
                 if (s_id_tmp.length > 1)
                     id_result = s_id_tmp[1];
                 else {
-                    id_result = s[0].split("»ç¿ëÀÚ¸í: ")[1];
+                    id_result = s[0].split("ì‚¬ìš©ìëª…: ")[1];
                 }
                 id_result = id_result.split("[\\000\\033]")[0].trim();
 
@@ -158,12 +158,12 @@ public class Query extends Activity {
                     return;
                 }
                 String output = "";
-                output += "ÀÌ¸§: " + name + "\n";
-                output += "ÀÌ¸ŞÀÏ: " + email + "\n";
-                output += "·Î±×ÀÎ: " + login + "\n";
-                output += "Æ÷½ºÆÃ: " + posting + "\n";
-                output += "¸¶Áö¸·: " + last + "\n";
-                output += "¾îµğ¼­: " + where + "\n";
+                output += "ì´ë¦„: " + name + "\n";
+                output += "ì´ë©”ì¼: " + email + "\n";
+                output += "ë¡œê·¸ì¸: " + login + "\n";
+                output += "í¬ìŠ¤íŒ…: " + posting + "\n";
+                output += "ë§ˆì§€ë§‰: " + last + "\n";
+                output += "ì–´ë””ì„œ: " + where + "\n";
                 output += newmail + "\n\n";
                 output += plan;
                 queryResult.setText(output);

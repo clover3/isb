@@ -33,7 +33,7 @@ public class HeartbeaterReceiver extends BroadcastReceiver {
             alarm.putExtra("MESSENGER", heartbeatMessageHandler);
             alarm.putExtra("alarmId", alarmId); /* So we can catch the id on BroadcastReceiver */
             //TODO configure your intent
-            PendingIntent alarmIntent = PendingIntent.getBroadcast(context, alarmId, alarm, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent alarmIntent = PendingIntent.getBroadcast(context, alarmId, alarm, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
             // XXX: use setExact for API 19 or later.
             alarmMgr.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + context.getResources().getInteger(R.integer.heartbeat_period), alarmIntent);
         }

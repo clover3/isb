@@ -3,7 +3,7 @@ package com.postech.isb.util;
 /*
  * This file is part of "JTA - Telnet/SSH for the JAVA(tm) platform".
  *
- * (c) Matthias L. Jugel, Marcus Mei©¬ner 1996-2005. All Rights Reserved.
+ * (c) Matthias L. Jugel, Marcus MeiÃŸner 1996-2005. All Rights Reserved.
  *
  * Please visit http://javatelnet.org/ for updates and contact.
  *
@@ -48,7 +48,7 @@ import android.util.Log;
  * <B>Maintainer:</B> Matthias L. Jugel
  *
  * @version $Id: Wrapper.java 499 2005-09-29 08:24:54Z leo $
- * @author Matthias L. Jugel, Marcus Mei©¬ner
+ * @author Matthias L. Jugel, Marcus MeiÃŸner
  */
 
 
@@ -71,7 +71,7 @@ public class TinyTelnet {
 	
 	protected final int port = 23;
 	protected final int timeout = 5000;			// Socket open try timeout
-	protected final int readTimeout = 1500;		// Socket read timeout // Retry 5¹ø.
+	protected final int readTimeout = 1500;		// Socket read timeout // Retry 5ë²ˆ.
 
 	/** debugging level */
 	private final static int debug =0;

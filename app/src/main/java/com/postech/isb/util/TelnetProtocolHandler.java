@@ -2,7 +2,7 @@ package com.postech.isb.util;
 /*
  * This file is part of "JTA - Telnet/SSH for the JAVA(tm) platform".
  *
- * (c) Matthias L. Jugel, Marcus Meißner 1996-2005. All Rights Reserved.
+ * (c) Matthias L. Jugel, Marcus Mei횩ner 1996-2005. All Rights Reserved.
  *
  * Please visit http://javatelnet.org/ for updates and contact.
  *

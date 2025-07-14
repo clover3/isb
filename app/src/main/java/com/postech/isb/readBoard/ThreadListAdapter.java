@@ -26,10 +26,10 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadList>{
 		super(_context, _resource, _items);
 		resource = _resource;
 		headerUsers = new ArrayList<String>();
-		headerUsers.add("³Ä¿Ë");
+		headerUsers.add("ëƒì˜¹");
 		headerUsers.add("akdal");
 		headerUsers.add("lightningz");
-		headerUsers.add("´½•m");
+		headerUsers.add("ëŠ„ë¸");
 		headerUsers.add("clover3");
 		headerUsers.add("dari6");
 		headerUsers.add("zogondragon");
@@ -41,7 +41,7 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadList>{
 		headerUsers.add("yanggil");
 		headerUsers.add("Chun");
 		headerUsers.add("jinmel");
-		headerUsers.add("´Ï¿À´Ã");
+		headerUsers.add("ë‹ˆì˜¤ëŠ˜");
 		headerUsers.add("shinichi");
 		headerUsers.add("icothos");
 		headerUsers.add("il0428");
@@ -157,12 +157,12 @@ public class ThreadListAdapter extends ArrayAdapter<ThreadList>{
 	{
 		boolean f = true;
 		if( item.title.startsWith("MS ") || 
-				item.title.startsWith("À©µµ¿ì ") )
+				item.title.startsWith("ìœˆë„ìš° ") )
 		{
 			item.header = "[MS]";
 		}
-		else if (item.title.contains("½½ºñ¾Û")) {
-			item.header = "[½½ºñ¾Û]";
+		else if (item.title.contains("ìŠ¬ë¹„ì•±")) {
+			item.header = "[ìŠ¬ë¹„ì•±]";
 		}
 		else if (item.title.startsWith("[C++]")) {
 			item.header = "[C++]";

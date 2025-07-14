@@ -70,7 +70,7 @@ public class IsbSession {
 
 	private void checkNewMail(String msg) {
 		// Note! Just entering the board list does not refresh 'new_mail'.
-		if (msg.contains("[»õÆíÁö¿Ô¾î¿ä~]")) {
+		if (msg.contains("[ìƒˆí¸ì§€ì™”ì–´ìš”~]")) {
 			new_mail = true;
 		}
 		else
@@ -248,14 +248,14 @@ public class IsbSession {
 		String result = new String("");
 
 		switch (dst) {
-			case SELECT_BOARD: result = new String("(?s).*°Ô½ÃÆÇ ¼±ÅÃ : (?:\033\\[K)?$"); break;
+			case SELECT_BOARD: result = new String("(?s).*ê²Œì‹œíŒ ì„ íƒ : (?:\033\\[K)?$"); break;
 			case MAIN: result = new String("(?s).*(?:\033\\[2;73H|\\[27m)$"); break;
 			case NOT_CONNECTED: result = new String("(?s).*-\r\n$"); break;
 			case BOARD:
 			case DIARY:
 			case MAIL:
-				result = new String("(?s).*\\[\\d+;2H$|.*°Ô½ÃÆÇÀÌ ºñ¾îÀÖ½À´Ï´Ù.\n\r$"); break;
-			case WRITE_MAIL: result = new String("(?s).*¹ŞÀ» »ç¶÷: $"); break;
+				result = new String("(?s).*\\[\\d+;2H$|.*ê²Œì‹œíŒì´ ë¹„ì–´ìˆìŠµë‹ˆë‹¤.\n\r$"); break;
+			case WRITE_MAIL: result = new String("(?s).*ë°›ì„ ì‚¬ëŒ: $"); break;
 			// Do we need \033[\\d+;2H$ for the end of board/diary/mail?
 		default : debugMessage("Unexpected case for expect!", ERROR); break;
 		}
@@ -352,7 +352,7 @@ public class IsbSession {
 				debugMessage("Match : " + match, INFO);
 			}
 			
-			if (list.contains("°è¼Ó"))
+			if (list.contains("ê³„ì†"))
 				hasNext = true;
 		}
 				
@@ -443,23 +443,23 @@ public class IsbSession {
 	}
 	
 	
-	/* < Á¤±ÔÇ¥Çö½Ä ÇØ¼® >
-	 * Raw String : "  175   pietype       9/ 8   11  > ½½ºñ¹ö±×"
+	/* < ì •ê·œí‘œí˜„ì‹ í•´ì„ >
+	 * Raw String : "  175   pietype       9/ 8   11  > ìŠ¬ë¹„ë²„ê·¸"
 	 * 
-	 * "^(?:\033\\[\\d+;1H) : Ä¿¼­ ÀÌµ¿ ANSI escape code 
-	 * ?[ >]  : °ø¹éÀÌ°Å³ª ²©¼è¹®ÀÚ('>')  
-	 * (\033\\[7m) : Highlight ¿©ºÎ
-	 * ?\\s*(\\d+) : ±Û ¹øÈ£
-	 * (?:\033\\[27m) : Highlight ³¡
-	 * ?(.)(.) : N°ú m À¸·Î ¸¶Å·µÈ ¿©ºÎ
-	 * \\s* : °ø¹é
-	 * (\\S+) : ¾ÆÀÌµğ
-	 * \\s* : °ø¹é 
-	 * ([ 1][0-9]/[ 1-3][0-9]) : ³¯Â¥
-	 * \\s* : °ø¹é
-	 * (\\d+) : Á¶È¸¼ö 
-	 * \\s* : °ø¹é
-	 * (.*?) : Á¦¸ñ 
+	 * "^(?:\033\\[\\d+;1H) : ì»¤ì„œ ì´ë™ ANSI escape code 
+	 * ?[ >]  : ê³µë°±ì´ê±°ë‚˜ êº½ì‡ ë¬¸ì('>')  
+	 * (\033\\[7m) : Highlight ì—¬ë¶€
+	 * ?\\s*(\\d+) : ê¸€ ë²ˆí˜¸
+	 * (?:\033\\[27m) : Highlight ë
+	 * ?(.)(.) : Nê³¼ m ìœ¼ë¡œ ë§ˆí‚¹ëœ ì—¬ë¶€
+	 * \\s* : ê³µë°±
+	 * (\\S+) : ì•„ì´ë””
+	 * \\s* : ê³µë°± 
+	 * ([ 1][0-9]/[ 1-3][0-9]) : ë‚ ì§œ
+	 * \\s* : ê³µë°±
+	 * (\\d+) : ì¡°íšŒìˆ˜ 
+	 * \\s* : ê³µë°±
+	 * (.*?) : ì œëª© 
 	 * (?:\033\\[K) :
 	 * ?(?:\033\\[\\d+;2H)?$");
 	*/
@@ -820,7 +820,7 @@ public class IsbSession {
 
 	public boolean writeMail(String recver, String title, String content) throws IOException {
 		String [] user_list = recver.split("\\s");
-		String expected_response = "(?s).*¹ŞÀ» »ç¶÷: ";
+		String expected_response = "(?s).*ë°›ì„ ì‚¬ëŒ: ";
 		String result;
 		boolean ret;
 
@@ -857,7 +857,7 @@ public class IsbSession {
 		if (user_list.length < 10) {
 			telnet.send("");
 		}
-		telnet.waitfor("(?s).*Á¦  ¸ñ: $");
+		telnet.waitfor("(?s).*ì œ  ëª©: $");
 
 		telnet.send(title);
 		telnet.waitfor("(?s).*\\[1;1H$");
@@ -868,7 +868,7 @@ public class IsbSession {
 
 		telnet.send_wo_r("S");
 		result = telnet.waitfor("(?s).*\\033\\[2;71H$");
-		if (!result.contains("»ç¿ëÀÚ¸íÀÌ Æ²¸³´Ï´Ù.") && result.contains("ÆíÁö¸¦ º¸³Â½À´Ï´Ù."))
+		if (!result.contains("ì‚¬ìš©ìëª…ì´ í‹€ë¦½ë‹ˆë‹¤.") && result.contains("í¸ì§€ë¥¼ ë³´ëƒˆìŠµë‹ˆë‹¤."))
 			ret = true;
 		else
 			ret = false;
@@ -896,11 +896,11 @@ public class IsbSession {
 		}
 
 		telnet.send_wo_r("W"); // We use capital 'W' for writing in an empty board
-		String msg = telnet.waitfor("(?s).*Á¦¸ñ : $");
+		String msg = telnet.waitfor("(?s).*ì œëª© : $");
 
 		telnet.send(title);
 		msg = telnet.waitfor("(?s).*\\[1;1H$");
-		boolean is_vim = !msg.contains("Ctrl-Z¸¦ ´©¸£¸é µµ¿ò¸»ÀÌ ³ª¿É´Ï´Ù.");
+		boolean is_vim = !msg.contains("Ctrl-Zë¥¼ ëˆ„ë¥´ë©´ ë„ì›€ë§ì´ ë‚˜ì˜µë‹ˆë‹¤.");
 
 		// Write content
 		if (is_vim) {
@@ -928,7 +928,7 @@ public class IsbSession {
 
 			telnet.send_wo_r("S");
 		}
-		msg = telnet.waitfor("(?s).*´©¸£¼¼¿ä\\]$");
+		msg = telnet.waitfor("(?s).*ëˆ„ë¥´ì„¸ìš”\\]$");
 
 
 		telnet.send_wo_r(" ");
@@ -975,7 +975,7 @@ public class IsbSession {
 		msg = telnet.waitfor("(?s).*\033\\[3;7H$");
 		telnet.send(title);
 		msg = telnet.waitfor("(?s).*\033\\[1;1H$");
-		boolean is_vim = !msg.contains("Ctrl-Z¸¦ ´©¸£¸é µµ¿ò¸»ÀÌ ³ª¿É´Ï´Ù.");
+		boolean is_vim = !msg.contains("Ctrl-Zë¥¼ ëˆ„ë¥´ë©´ ë„ì›€ë§ì´ ë‚˜ì˜µë‹ˆë‹¤.");
 
 		// Write content
 		if (is_vim) {
@@ -1066,8 +1066,8 @@ public class IsbSession {
 		String title = s.next();
 		t.title = title;
 
-		String commentHeader = "¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡ Ä¿¸àÆ® ¡Ô ¦¡";
-		String commentTail   = "¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡ Ä¿¸àÆ® ¡â ¦¡";
+		String commentHeader = "â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ì»¤ë©˜íŠ¸ âˆ‡ â”€";
+		String commentTail   = "â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ì»¤ë©˜íŠ¸ â–³ â”€";
 
 		boolean end_of_thread = true;
 		Pattern p_comment = Pattern
@@ -1242,7 +1242,7 @@ public class IsbSession {
 		msg = telnet.waitfor(tail);
 		
 		StringBuffer result = new StringBuffer();
-		//result.append(msg.split("\033\\[7m¦¡ °è¼Ó:sp")[0]);
+		//result.append(msg.split("\033\\[7mâ”€ ê³„ì†:sp")[0]);
 		result.append(parsePage(msg)); //For threads in almost empty board
 		if (msg.matches(end_symbol))
 			in_loop = false;

@@ -752,9 +752,9 @@ public class ReadBoards extends ListActivity {
 					String strReader = isb.viewThreadReader(board, t.num);
 
 					if (strReader == null) {
-						strReader = "±ÇÇÑÀÌ ¾ø½À´Ï´Ù.";
+						strReader = "ê¶Œí•œì´ ì—†ìŠµë‹ˆë‹¤.";
 					}
-					String title = String.format("ÀÌ ±ÛÀ» ÀĞÀº »ç¿ëÀÚ(%d)", t.cnt);
+					String title = String.format("ì´ ê¸€ì„ ì½ì€ ì‚¬ìš©ì(%d)", t.cnt);
 					new AlertDialog.Builder(ReadBoards.this)
 							.setTitle(title)
 							.setMessage(strReader)
@@ -763,7 +763,7 @@ public class ReadBoards extends ListActivity {
 										public void onClick(
 												DialogInterface dialog,
 												int whichButton) {
-											// ...ÇÒÀÏ
+											// ...í• ì¼
 										}
 									}).show();
 

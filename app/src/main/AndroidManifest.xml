@@ -2,55 +2,78 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.postech.isb"
-    android:versionCode="63" android:versionName="1.2.13 (for before Nougat)">
+    android:versionCode="64"
+    android:versionName="1.3.0">
+
     <uses-permission android:name="android.permission.INTERNET"/>
-    <application android:icon="@drawable/icon" android:label="@string/app_name" android:name="PostechIsb">
-         
-        <provider android:authorities="com.postech.provider.Isb" android:name=".compose.IsbProvider"
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+
+    <application
+        android:icon="@drawable/icon"
+        android:label="@string/app_name"
+        android:name=".PostechIsb"
+        android:theme="@style/Theme.AppCompat.Light"
+        android:allowBackup="true"
+        android:supportsRtl="true">
+
+        <provider
+            android:authorities="com.postech.provider.Isb"
+            android:name=".compose.IsbProvider"
             android:exported="false"/>
-        
-        <activity android:name=".IsbTabWidget" android:label="@string/app_name"
-        	android:screenOrientation="unspecified">
-        	<intent-filter>
+
+        <!-- Main Activity -->
+        <activity
+            android:name=".IsbTabWidget"
+            android:exported="true"
+            android:label="@string/app_name">
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-            
+
         <!-- <activity android:name=".boardList.BoardList" android:theme="@android:style/Theme.NoTitleBar"> -->
-        <activity android:name=".boardList.BoardList" android:theme="@style/MyNoTitleBar">
+        <activity android:name=".boardList.BoardList"
+            android:exported="false"
+            android:theme="@style/MyNoTitleBar">
         	<intent-filter>
         		<action android:name="android.intent.action.PICK"></action>
         		<category android:name="android.intent.category.DEFAULT"></category>
-                <data android:path="boards" android:scheme="content"></data>
+                <data android:path="/boards"
+                    android:scheme="content"
+                    android:host="com.postech.provider.Isb"></data>
 
         	</intent-filter>
 		</activity>
-        
-		<activity android:label="@string/readBoardTitle" android:name=".readBoard.ReadBoards" android:theme="@style/MyNoTitleBar">
+
+		<activity android:label="@string/readBoardTitle" android:name=".readBoard.ReadBoards" android:theme="@style/MyNoTitleBar"
+            android:exported="false"
+            >
 		</activity>
-		
+
 		<activity android:label="@string/readThreadTitle" android:name=".readThread.ReadThread"
-		android:windowSoftInputMode="stateAlwaysHidden" android:theme="@style/MyNoTitleBar">
-		
+            android:exported="false"
+            android:windowSoftInputMode="stateAlwaysHidden" android:theme="@style/MyNoTitleBar">
+
 		</activity>
 
-		<activity android:name=".info.Info">
+		<activity android:name=".info.Info" android:exported="false">
 		</activity>
-		
 
-		
-		<activity android:name=".login.Login">
+
+
+		<activity android:name=".login.Login" android:exported="false">
         </activity>
 
-        <activity android:name=".myBBS.MyBBS">
+        <activity android:name=".myBBS.MyBBS" android:exported="false">
         </activity>
 
-        <activity android:name=".query.Query"
+        <activity android:name=".query.Query" android:exported="false"
             android:windowSoftInputMode="stateAlwaysHidden" android:theme="@style/MyYesTitleBar">
         </activity>
-        
-        <activity android:label="@string/title_notes_list" android:name=".compose.NotesList" android:theme="@style/MyNotTransparentMenu"
+
+        <activity android:label="@string/title_notes_list" android:name=".compose.NotesList"  android:exported="false" android:theme="@style/MyNotTransparentMenu"
             tools:ignore="AppLinkUrlError">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -69,6 +92,7 @@
         <activity android:theme="@style/MyNotTransparentMenuThemeLight"
             android:label="@string/title_note"
             android:configChanges="keyboardHidden|orientation" android:name=".compose.NoteEditor"
+            android:exported="true"
             tools:ignore="AppLinkUrlError">
             <!-- This filter says that we can view or edit the data of
                  a single note -->
@@ -78,7 +102,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="vnd.android.cursor.item/vnd.postech.isb" />
             </intent-filter>
-            
+
             <!-- This filter says that we can create a new note inside
                  of a directory of notes. -->
             <intent-filter>
@@ -87,9 +111,8 @@
                 <data android:mimeType="vnd.android.cursor.dir/vnd.postech.isb" />
             </intent-filter>
         </activity>
-        <activity android:name=".preference.PreferenceList"></activity>
-        <activity android:name=".viewUser.ViewUser" android:label="@string/viewUserTItle" android:theme="@style/MyNoTitleBar"></activity>
-
-        <receiver android:name=".util.HeartbeaterReceiver"></receiver>
+        <activity android:name=".preference.PreferenceList"  android:exported="false"></activity>
+        <activity android:name=".viewUser.ViewUser" android:label="@string/viewUserTItle"  android:exported="false" android:theme="@style/MyNoTitleBar"></activity>
+        <receiver android:name=".util.HeartbeaterReceiver"  android:exported="false"></receiver>
 	</application>
-</manifest> 
+</manifest>

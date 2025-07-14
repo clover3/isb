@@ -7,10 +7,6 @@ import java.util.List;
 
 import com.postech.isb.PostechIsb;
 import com.postech.isb.R;
-import com.postech.isb.R.drawable;
-import com.postech.isb.R.id;
-import com.postech.isb.R.layout;
-import com.postech.isb.R.string;
 import com.postech.isb.readBoard.ReadBoards;
 import com.postech.isb.util.IsbSession;
 import com.postech.isb.util.MenuOption;
@@ -341,7 +337,7 @@ public class BoardList extends ListActivity {
 					handler.sendEmptyMessage(3);
 					setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
 				}
-			}).start(); // ½º·¹µå ½ÇÇà
+			}).start(); // ìŠ¤ë ˆë“œ ì‹¤í–‰
 
 		} else {
 			Toast.makeText(BoardList.this, "Login first plz.",
@@ -477,56 +473,43 @@ public class BoardList extends ListActivity {
 		setFavoriteIcon(item);
 		return true;
 	}
-
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
 
-		if (MenuOption.useActionBar) {
-			switch (item.getItemId()) {
-				case R.id.refresh: {
-					updateBoard();
-					return true;
-				}
-				case R.id.favorite: {
-					favoriteOnly = !favoriteOnly;
-					favoriteOnly_stored = favoriteOnly;
-					updateArray();
-					setFavoriteIcon(item);
-					return true;
-				}
-				case R.id.search_new: {
-					favoriteOnly = true;
-					favoriteOnly_stored = favoriteOnly;
-					SearchNew();
-					return true;
-				}
-			}
-		}
-		else {
-			switch (item.getItemId()) {
-				case REFRESH: {
-					updateBoard();
-					return true;
-				}
-				case FAVORITE_ONLY: {
-					favoriteOnly = !favoriteOnly;
-					favoriteOnly_stored = favoriteOnly;
-					updateArray();
-					return true;
-				}
-				case SEARCH_NEW: {
-					favoriteOnly = true;
-					favoriteOnly_stored = favoriteOnly;
-					SearchNew();
-					return true;
-				}
-			}
+		int itemId = item.getItemId();
+		int refreshId = MenuOption.useActionBar ? R.id.refresh : REFRESH;
+		int favoriteId = MenuOption.useActionBar ? R.id.favorite : FAVORITE_ONLY;
+		int searchId = MenuOption.useActionBar ? R.id.search_new : SEARCH_NEW;
+
+		if (itemId == refreshId) {
+			updateBoard();
+			return true;
+		} else if (itemId == favoriteId) {
+			toggleFavoriteMode(item);
+			return true;
+		} else if (itemId == searchId) {
+			searchNewFavorites();
+			return true;
 		}
 
 		return false;
 	}
 
+	private void toggleFavoriteMode(MenuItem item) {
+		favoriteOnly = !favoriteOnly;
+		favoriteOnly_stored = favoriteOnly;
+		updateArray();
+		if (MenuOption.useActionBar) {
+			setFavoriteIcon(item);
+		}
+	}
+
+	private void searchNewFavorites() {
+		favoriteOnly = true;
+		favoriteOnly_stored = favoriteOnly;
+		SearchNew();
+	}
 	private void updateBoard() {
 		if (isb.isMain()) {
 			pd = ProgressDialog.show(BoardList.this, "Refresh Board list...",
@@ -544,7 +527,7 @@ public class BoardList extends ListActivity {
 					}
 					handler.sendEmptyMessage(0);
 				}
-			}).start(); // ½º·¹µå ½ÇÇà
+			}).start(); // ìŠ¤ë ˆë“œ ì‹¤í–‰
 		} else {
 			Toast.makeText(BoardList.this, "Login first plz.",
 					Toast.LENGTH_SHORT).show();

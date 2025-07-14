@@ -658,8 +658,8 @@ public class ReadThread extends Activity {
 	}
 
 	private String getWriter(String line) {
-		Pattern p_writer1 = Pattern.compile("±Û¾´ÀÌ: (.*?) \\(");
-		Pattern p_writer2 = Pattern.compile("º¸³½ÀÌ: (.*?) \\(");
+		Pattern p_writer1 = Pattern.compile("ê¸€ì“´ì´: (.*?) \\(");
+		Pattern p_writer2 = Pattern.compile("ë³´ë‚¸ì´: (.*?) \\(");
 
 		Matcher matcher = p_writer1.matcher(line);
 		if (matcher.find())
@@ -673,7 +673,7 @@ public class ReadThread extends Activity {
 		return "";
 	}
 	private String getTitle(String line) {
-		Pattern p_writer = Pattern.compile("Á¦  ¸ñ: (.*)");
+		Pattern p_writer = Pattern.compile("ì œ  ëª©: (.*)");
 		Matcher matcher = p_writer.matcher(line);
 		if (matcher.find())
 			return matcher.group(1);

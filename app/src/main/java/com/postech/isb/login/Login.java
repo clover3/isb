@@ -253,7 +253,7 @@ public class Login extends Activity {
 			alarm.putExtra("MESSENGER", new Messenger(heartbeatMessageHandler));
 			alarm.putExtra("alarmId", alarmId); /* So we can catch the id on BroadcastReceiver */
 
-			PendingIntent pendingIntent = PendingIntent.getBroadcast(this, alarmId, alarm, PendingIntent.FLAG_CANCEL_CURRENT);
+			PendingIntent pendingIntent = PendingIntent.getBroadcast(this, alarmId, alarm, PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 			AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
 			// isb server timeout limit: 15 minutes
@@ -504,7 +504,7 @@ public class Login extends Activity {
 							public void onClick(
 									DialogInterface dialog,
 									int whichButton) {
-								// ...«“¿œ
+								// ...Ìï†Ïùº
 							}
 						}).show();
 	}

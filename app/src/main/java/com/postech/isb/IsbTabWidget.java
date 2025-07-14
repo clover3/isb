@@ -25,7 +25,7 @@ public class IsbTabWidget extends TabActivity {
 		SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 		String savedId = SP.getString("saved_id", "");
 		if (savedId.equals("tester2") ||
-				savedId.equals("¥Ωïm"))
+				savedId.equals("ÎäÑÎ∏Å"))
 			return;
 		setTheme(R.style.MyNoTitleBar);
 	}

@@ -29,25 +29,25 @@ public class IsbUser implements Serializable {
 	{
 		String str;
 		if(state == USER_STATE_MAIN )
-			str = "∏ﬁ¿Œ";
+			str = "Î©îÏù∏";
 		else if(state == USER_STATE_NEW )
-			str = "ªı±€";
+			str = "ÏÉàÍ∏Ä";
 		else if(state == USER_STATE_READ )
-			str = "¿–±‚";
+			str = "ÏùΩÍ∏∞";
 		else if(state == USER_STATE_WRITE )
-			str = "æ≤±‚";
+			str = "Ïì∞Í∏∞";
 		else if(state == USER_STATE_LIST )
-			str = "∏Ò∑œ";
+			str = "Î™©Î°ù";
 		else if(state == USER_STATE_JOURNEY )
-			str = "ø©«‡";
+			str = "Ïó¨Ìñâ";
 		else if(state == USER_STATE_TALK )
-			str = "¥Î»≠";
+			str = "ÎåÄÌôî";
 		else if(state == USER_STATE_MYROOM )
-			str = "≥ªπÊ";
+			str = "ÎÇ¥Î∞©";
 		else if(state == USER_STATE_USER )
-			str = "¡∂ªÁ";
+			str = "Ï°∞ÏÇ¨";
 		else //if(state == USER_STATE_MISC )
-			str = "±‚≈∏";
+			str = "Í∏∞ÌÉÄ";
 		return str;
 	}
 	public String GetStateString()

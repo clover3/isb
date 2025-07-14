@@ -457,49 +457,26 @@ public class NoteEditor extends Activity {
             return true;
         }
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle all of the possible menu actions.
-        if (MenuOption.useActionBar) {
-            switch (item.getItemId()) {
-                case R.id.finish:
-                    finish();
-                    break;
-                case R.id.delete:
-                    deleteNote();
-                    finish();
-                case R.id.discard:
-                    cancelNote();
-                    break;
-                case R.id.save:
-                    saveNote();
-                    break;
-                case R.id.revert:
-                    cancelNote();
-                    break;
-            }
+        int itemId = item.getItemId();
+        int finishId = MenuOption.useActionBar ? R.id.finish : FINISH_ID;
+        int deleteId = MenuOption.useActionBar ? R.id.delete : DELETE_ID;
+        int discardId = MenuOption.useActionBar ? R.id.discard : DISCARD_ID;
+        int saveId = MenuOption.useActionBar ? R.id.save : SAVE_ID;
+        int revertId = MenuOption.useActionBar ? R.id.revert : REVERT_ID;
+
+        if (itemId == finishId) {
+            finish();
+        } else if (itemId == deleteId) {
+            deleteNote();
+            finish();
+        } else if (itemId == discardId || itemId == revertId) {
+            cancelNote();
+        } else if (itemId == saveId) {
+            saveNote();
         }
-        else {
-            switch (item.getItemId()) {
-                case FINISH_ID:
-                    finish();
-                    break;
-                case DELETE_ID:
-                    deleteNote();
-                    finish();
-                    break;
-                case DISCARD_ID:
-                    cancelNote();
-                    break;
-                case SAVE_ID:
-                    saveNote();
-                    break;
-                case REVERT_ID:
-                    cancelNote();
-                    break;
-            }
-        }
+
         return super.onOptionsItemSelected(item);
     }
 
