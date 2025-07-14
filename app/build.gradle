@@ -10,7 +10,7 @@ android {
         minSdkVersion 21         // UPDATE from 14 (Android 5.0+)
         targetSdkVersion 35      // UPDATE from 26 (required for Play Store)
         versionCode 64
-        versionName "2.0.0"
+        versionName "1.3.0"
     }
 
     buildTypes {
