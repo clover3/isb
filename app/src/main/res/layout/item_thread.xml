@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="12dp"
+    android:background="?android:attr/selectableItemBackground">
+
+    <!-- Top line: Author, Pin Icon, and Date -->
+    <TextView
+        android:id="@+id/readBoardWriter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="AuthorName" />
+
+    <ImageView
+        android:id="@+id/notdel"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_marginStart="4dp"
+        android:src="@drawable/black_pin_12"
+        app:layout_constraintStart_toEndOf="@id/readBoardWriter"
+        app:layout_constraintTop_toTopOf="@id/readBoardWriter"
+        app:layout_constraintBottom_toBottomOf="@id/readBoardWriter"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/readBoardDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="10/12/20" />
+
+    <!-- Bottom line: Icons, Header, and Title -->
+    <ImageView
+        android:id="@+id/readBoardNew"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/newt"
+        app:layout_constraintTop_toBottomOf="@id/readBoardWriter"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="8dp"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/readBoardComment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/comment"
+        app:layout_constraintStart_toEndOf="@id/readBoardNew"
+        app:layout_constraintTop_toTopOf="@id/readBoardNew"
+        app:layout_constraintBottom_toBottomOf="@id/readBoardNew"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/readBoardHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#d2691e"
+        android:textSize="12sp"
+        app:layout_constraintStart_toEndOf="@id/readBoardComment"
+        app:layout_constraintTop_toTopOf="@id/readBoardNew"
+        app:layout_constraintBottom_toBottomOf="@id/readBoardNew"
+        android:layout_marginStart="4dp"
+        tools:text="[Header]" />
+
+    <TextView
+        android:id="@+id/readBoardTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@id/readBoardHeader"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/readBoardNew"
+        app:layout_constraintBottom_toBottomOf="@id/readBoardNew"
+        android:layout_marginStart="4dp"
+        tools:text="Title" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

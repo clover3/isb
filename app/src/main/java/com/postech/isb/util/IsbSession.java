@@ -4,18 +4,12 @@ import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.Menu;
 
 import com.postech.isb.boardList.Board;
-import com.postech.isb.compose.NoteEditor;
 import com.postech.isb.viewUser.IsbUser;
 
 public class IsbSession {
@@ -29,7 +23,7 @@ public class IsbSession {
 	private final static int MAIL = 6;
 	private final static int WRITE_MAIL = 7;
 	private final static int MYBBS_MAIN = 8;
-	private int debug = 0;
+	private int debug = 4;
 	
 	private final static int ERROR = 1;
 	private final static int WARN = 2;
@@ -43,7 +37,8 @@ public class IsbSession {
 	public final int THREAD_INVERSE = 2;
 	public final int THREAD_MARK = 3;
 	public final int THREAD_READERS = 4;
-	
+	public static final String EMPTY_RECEIVER = "To:NoSuchUserBoy!!!!!!";
+
 
 	public final int NUM_ROWS = 80; //FIX HERE FOR THE NEW NUMBER OF ROWS
 	
@@ -824,7 +819,7 @@ public class IsbSession {
 		String result;
 		boolean ret;
 
-		if (recver.equals(NoteEditor.EMPTY_RECEIVER )) {
+		if (recver.equals(EMPTY_RECEIVER )) {
 			debugMessage ("Invalid username.", ERROR);
 			return false;
 		}
@@ -1073,7 +1068,7 @@ public class IsbSession {
 		Pattern p_comment = Pattern
 				.compile("^\\s*(\\w+)\\((\\d+,\\d+:\\d+)\\):\"(.*)\"\n?$");
 		Pattern p_not_white_space = Pattern.compile(".+");
-		t.contents = "";
+		t.content = "";
 		t.comments = "";
 		t.cc = "";
 		StringBuffer contents = new StringBuffer();
@@ -1104,7 +1099,7 @@ public class IsbSession {
 				contents.append("\n" + token);
 			}
 
-			t.contents += contents.toString();
+			t.content += contents.toString();
 		
 			StringBuffer comments = new StringBuffer();
 			boolean end_of_comments = true;
@@ -1120,8 +1115,8 @@ public class IsbSession {
 				Matcher match = p_comment.matcher(token.toString());
 				if (token.length() > 0 && !match.matches()){
 					// Unfinished comment!
-					t.contents += commentHeader+"\n";
-					t.contents += comments.toString();
+					t.content += commentHeader+"\n";
+					t.content += comments.toString();
 					t.comments = "";
 					end_of_thread = false;
 					end_of_comments = false;
@@ -1141,10 +1136,10 @@ public class IsbSession {
 				if (s.hasNext(p_not_white_space)){
 					// Lines after comment have been detected!
 					end_of_thread = false;
-					t.contents += commentHeader + "\n";
-					t.contents += t.comments;
-					t.contents += commentTail + "\n";
-					t.contents += remaining_lines.toString();
+					t.content += commentHeader + "\n";
+					t.content += t.comments;
+					t.content += commentTail + "\n";
+					t.content += remaining_lines.toString();
 					t.comments = "";
 					break;
 				}

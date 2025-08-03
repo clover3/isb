@@ -1,259 +1,72 @@
-package com.postech.isb.readBoard;
+package com.postech.isb.readBoard
 
-import com.postech.isb.R;
-import com.postech.isb.R.id;
-import com.postech.isb.util.*;
-import android.content.Context;
-import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.RelativeLayout;
-import android.view.*;
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.core.view.isVisible
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
+import com.postech.isb.R
 
-import java.util.*;
+class ThreadListAdapter(
+    private val onThreadClicked: (IsbThread) -> Unit,
+    // 1. ADDED: A parameter to receive the long-click handler from the Activity.
+    private val onThreadLongClicked: (IsbThread, View) -> Unit
+) : ListAdapter<IsbThread, ThreadListAdapter.ThreadViewHolder>(ThreadDiffCallback) {
 
-public class ThreadListAdapter extends ArrayAdapter<ThreadList>{
-	private int resource;
-	static final private int USER_NONE = 0;
-	static final private int USER_PIETYPE = 1;
-	static final private int USER_CLOVER3 = 2;
-	static final private int USER_HEADERUSER = 3;
-	ArrayList<String> headerUsers;
-	public ThreadListAdapter(Context _context, int _resource, ArrayList<ThreadList> _items) {
-		super(_context, _resource, _items);
-		resource = _resource;
-		headerUsers = new ArrayList<String>();
-		headerUsers.add("냐옹");
-		headerUsers.add("akdal");
-		headerUsers.add("lightningz");
-		headerUsers.add("늄븁");
-		headerUsers.add("clover3");
-		headerUsers.add("dari6");
-		headerUsers.add("zogondragon");
-		headerUsers.add("hersammc");
-		headerUsers.add("jellyfish");
-		headerUsers.add("nyamnyam33");
-		headerUsers.add("uneasiness");
-		headerUsers.add("dreamseed");
-		headerUsers.add("yanggil");
-		headerUsers.add("Chun");
-		headerUsers.add("jinmel");
-		headerUsers.add("니오늘");
-		headerUsers.add("shinichi");
-		headerUsers.add("icothos");
-		headerUsers.add("il0428");
-		headerUsers.add("codinger");
-	}
-	
-	class ViewWrapper {
-		View base;
-		TextView title=null;
-		TextView writer=null;
-		TextView date=null;
-		TextView header=null;
-		ImageView newt=null;
-		ImageView comment=null;
-		ImageView notdel=null;
-		RelativeLayout writter_line = null;
-		LinearLayout title_line = null;
+    class ThreadViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val writer: TextView = itemView.findViewById(R.id.readBoardWriter)
+        private val date: TextView = itemView.findViewById(R.id.readBoardDate)
+        private val title: TextView = itemView.findViewById(R.id.readBoardTitle)
+        private val newIcon: ImageView = itemView.findViewById(R.id.readBoardNew)
+        private val commentIcon: ImageView = itemView.findViewById(R.id.readBoardComment)
+        private val pinIcon: ImageView = itemView.findViewById(R.id.notdel)
 
-		ViewWrapper(View base) {
-			this.base=base;
-		}
-		
-		TextView getTitle() {
-			if (title==null)
-				title=(TextView)base.findViewById(R.id.readBoardTitle);
-			return title;
-		}
+        fun bind(thread: IsbThread) {
+            writer.text = thread.author
+            date.text = thread.date
+            title.text = thread.title
+            newIcon.isVisible = thread.isNew
+            commentIcon.isVisible = thread.hasComment
+            pinIcon.isVisible = thread.isNotice
+            itemView.isActivated = thread.isHighlighted
+        }
+    }
 
-		TextView getWriter() {
-			if (writer==null)
-				writer=(TextView)base.findViewById(R.id.readBoardWriter);
-			return writer;
-		}
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ThreadViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_thread, parent, false)
+        return ThreadViewHolder(view)
+    }
 
-		TextView getDate() {
-			if (date==null)
-				date=(TextView)base.findViewById(R.id.readBoardDate);
-			return date;
-		}	    
+    override fun onBindViewHolder(holder: ThreadViewHolder, position: Int) {
+        val thread = getItem(position)
+        holder.bind(thread)
 
-		TextView getHeader() {
-			if (header==null)
-				header=(TextView)base.findViewById(R.id.readBoardHeader);
-			return header;
-		}	   
-		
-		ImageView getNewt() {
-			if (newt==null)
-				newt=(ImageView)base.findViewById(R.id.readBoardNew);
-			return newt;
-		}
+        // Handle regular clicks
+        holder.itemView.setOnClickListener {
+            onThreadClicked(thread)
+        }
 
-		ImageView getCommnet() {
-			if (comment==null)
-				comment=(ImageView)base.findViewById(R.id.readBoardComment);
-			return comment;
-		}
-		ImageView getNotdel() {
-			if (notdel==null)
-				notdel=(ImageView)base.findViewById(R.id.notdel);
-			return notdel;
-		}
-		RelativeLayout getWritterLine() {
-			if (writter_line==null)
-				writter_line=(RelativeLayout)base.findViewById(R.id.writterLine);
-			return writter_line;
-		}
-		LinearLayout getTitleLine() {
-			if (title_line==null)
-				title_line=(LinearLayout)base.findViewById(R.id.titleLine);
-			return title_line;
-		}
-	}
-	
-	String TranslateHeader_Pietype(String header)
-	{
-		String NewHeader = "";
-		if(header.equals(" "))
-			NewHeader = "[Life]";
-		else if( header.length() > 0)
-		{
-			if(header.equals("M"))
-				NewHeader = "[Math]";
-			else if(header.equals("C"))
-				NewHeader = "[CS]";
-			else if(header.equals("S"))
-				NewHeader = "[Software]";
-			else if(header.equals("E"))
-				NewHeader = "[English]";
-			else if(header.equals("A"))
-				NewHeader = "[Academic]";
-			else if(header.equals("P"))
-				NewHeader = "[People]";
-			else if(header.equals("N"))
-				NewHeader = "[News]";
-			else if(header.equals("B"))
-				NewHeader = "[Book]";
-			else if(header.equals("V"))
-				NewHeader = "[Video]";
-			else if(header.equals("F"))
-				NewHeader = "[Photo]";
-			else if(header.equals("O"))
-				NewHeader = "[Others]";
-			else if(header.equals("K"))
-				NewHeader = "[Musik]";
-			else if(header.equals("Y"))
-				NewHeader = "[Yeonae]";
-		}
-		return NewHeader;
-	}
-	
-	boolean ExtractHeader_Clover(ThreadList item)
-	{
-		boolean f = true;
-		if( item.title.startsWith("MS ") || 
-				item.title.startsWith("윈도우 ") )
-		{
-			item.header = "[MS]";
-		}
-		else if (item.title.contains("슬비앱")) {
-			item.header = "[슬비앱]";
-		}
-		else if (item.title.startsWith("[C++]")) {
-			item.header = "[C++]";
-			item.SetTitle(item.title.substring(6));
-		}
-		else 
-			f = false;
-		
-		return f;
-	}
+        // 2. IMPLEMENTED: Set the long-click listener on the item view.
+        holder.itemView.setOnLongClickListener { view ->
+            // When a long-click happens, call the handler function we received.
+            onThreadLongClicked(thread, view)
+            // Return true to indicate that we have handled the event.
+            true
+        }
+    }
+}
 
-	void TranslateItem(ThreadList item) {
+object ThreadDiffCallback : DiffUtil.ItemCallback<IsbThread>() {
+    override fun areItemsTheSame(oldItem: IsbThread, newItem: IsbThread): Boolean {
+        return oldItem.key == newItem.key
+    }
 
-		int userID = USER_NONE;
-		if( item.writer.equals("pietype") )
-			userID = USER_PIETYPE;
-		else if( item.writer.equals("clover3") )
-			userID = USER_CLOVER3;
-		else if( headerUsers.contains(item.writer) )
-			userID = USER_HEADERUSER;
-		
-		if( userID == USER_PIETYPE )
-		{
-			if (item.title.contains(">")) {
-				int idx = item.title.indexOf(">");
-				item.header = TranslateHeader_Pietype(item.title.substring(0, idx));
-				item.SetTitle(item.title.substring(idx + 1));
-			} else {
-
-			}
-		}
-		else if( userID == USER_CLOVER3 )
-		{
-			ExtractHeader_Clover(item);
-		}
-		else if( userID == USER_HEADERUSER )
-		{
-			if( item.title.startsWith("[") && item.title.contains("]") )
-			{
-				int idx = item.title.indexOf(']')+1;
-				item.header = item.title.substring(0, idx);
-				item.SetTitle(item.title.substring(idx));
-			}
-		}
-	}
-
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		View boardView = convertView;
-		ViewWrapper wrapper=null;
-
-		if (convertView == null) {
-			String inflater = Context.LAYOUT_INFLATER_SERVICE;
-			LayoutInflater vi = (LayoutInflater)getContext().getSystemService(inflater);
-			boardView = vi.inflate(resource, null);
-			
-			wrapper = new ViewWrapper(boardView);
-            boardView.setTag(wrapper);
-            
-		} else {
-			wrapper=(ViewWrapper)convertView.getTag();
-		}
-
-		ThreadList item;
-		try {
-			item = getItem(position);
-		} catch (IndexOutOfBoundsException e) {
-			item = new ThreadList();		
-		}
-		TranslateItem(item);
-		
-		wrapper.getWriter().setText(item.writer);
-		wrapper.getDate().setText(item.date);
-		wrapper.getTitle().setText(item.title);
-		wrapper.getHeader().setText(item.header);
-		wrapper.getNewt().setVisibility(item.newt ? View.VISIBLE : View.GONE);
-		wrapper.getCommnet().setVisibility(item.comment ? View.VISIBLE : View.GONE);
-		wrapper.getNotdel().setVisibility(item.notdel ? View.VISIBLE : View.GONE);
-		if (item.highlight){
-			wrapper.getWriter().setTextColor(0xFFFFFFFF);
-			wrapper.getDate().setTextColor(0xFFFFFFFF);
-			wrapper.getTitleLine().setBackgroundResource(R.drawable.btn_thread_highlight);
-			wrapper.getWritterLine().setBackgroundResource(R.drawable.btn_thread_highlight);
-		}
-		else{
-			wrapper.getWriter().setTextColor(0xFFC8C8C8);
-			wrapper.getDate().setTextColor(0xFFC8C8C8);
-			wrapper.getTitleLine().setBackgroundDrawable(null);
-			wrapper.getWritterLine().setBackgroundDrawable(null);
-		}
-
-		return boardView;
-	}
+    override fun areContentsTheSame(oldItem: IsbThread, newItem: IsbThread): Boolean {
+        return oldItem == newItem
+    }
 }

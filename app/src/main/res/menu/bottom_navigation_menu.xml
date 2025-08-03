@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_compose"
+        android:icon="@drawable/ic_tab_compose"
+        android:title="@string/tab_compose" />
+
+    <item
+        android:id="@+id/nav_login"
+        android:icon="@drawable/ic_tab_login"
+        android:title="@string/tab_login" />
+
+    <item
+        android:id="@+id/nav_mybbs"
+        android:icon="@drawable/ic_tab_mybbs"
+        android:title="@string/tab_mybbs" />
+
+</menu>

@@ -1,17 +1,15 @@
 package com.postech.isb.boardList;
 
-import android.util.Log;
-
 public class Board implements Comparable {
 	public int key;
 	public String name;
 	public boolean favorite;
 	public boolean myBoard;
-	public boolean newt;
-	public boolean comment;
+	public boolean hasNewPost;
+	public boolean hasNewComment;
 	
-	public Board (String name, boolean favorite) {
-		this(-1, name, favorite);
+	public Board (String name, boolean isFavorite) {
+		this(-1, name, isFavorite);
 	}
 	
 	public Board (int key, String name, boolean favorite) {
@@ -19,20 +17,20 @@ public class Board implements Comparable {
 		this.name = name;
 		this.favorite = favorite;
 		this.myBoard = false;
-		this.newt = false;
-		this.comment = false;
+		this.hasNewPost = false;
+		this.hasNewComment = false;
 	}
 
-	public Board (String _name, boolean _favorite, boolean _myboard) {
-		this(-1, _name, _favorite, _myboard);
+	public Board (String name, boolean isFavorite, boolean isMyBoard) {
+		this(-1, name, isFavorite, isMyBoard);
 	}
-	public Board (int key, String _name, boolean _favorite, boolean _myboard) {
+	public Board (int key, String _name, boolean _favorite, boolean isMyBoard) {
 		this.key = key;
 		this.name = _name;
 		this.favorite = _favorite;
-		this.myBoard = _myboard;
-		this.newt = false;
-		this.comment = false;
+		this.myBoard = isMyBoard;
+		this.hasNewPost = false;
+		this.hasNewComment = false;
 	}
 	
 	@Override
@@ -42,10 +40,10 @@ public class Board implements Comparable {
 	
 	public void setNewPost(int result) {
 		if ((result & 0x1) != 0){
-			this.newt = true;
+			this.hasNewPost = true;
 		}
 		if ((result & 0x2) != 0)
-			this.comment = true;
+			this.hasNewComment = true;
 	}
 
 	@Override

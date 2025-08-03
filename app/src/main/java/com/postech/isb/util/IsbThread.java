@@ -1,8 +1,6 @@
 package com.postech.isb.util;
 import java.io.Serializable;
 
-import com.postech.isb.PostechIsb;
-
 /**
  * Route information class. Serializable class to send over activity switching.
  *  
@@ -15,7 +13,7 @@ public class IsbThread implements Serializable{
 	public String writer;
 	public String date;
 	public String title;
-	public String contents;
+	public String content;
 	public String comments;
 	public String cc;
 }

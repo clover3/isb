@@ -1,19 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-     <item
-         android:id="@+id/refresh"
-         android:icon="@drawable/ic_menu_refresh_36"
-         app:showAsAction="ifRoom"
-         android:title="@string/refresh"/>
-     <item
-         android:id="@+id/favorite"
-         android:icon="@drawable/list_all_36"
-         app:showAsAction="always"
-         android:title="@string/list_all"/>
+
+     <!--
+         "Search New" is the primary, most-used action.
+         "ifRoom" makes it an icon if there's space, otherwise it moves to the overflow.
+     -->
      <item
          android:id="@+id/search_new"
          android:icon="@drawable/list_new_36"
-         app:showAsAction="always"
-         android:title="@string/list_new"/>
+         android:title="@string/list_new"
+         app:showAsAction="ifRoom" />
+
+     <!--
+         "Favorite" is a secondary filter, so it goes in the overflow menu.
+     -->
+     <item
+         android:id="@+id/favorite"
+         android:icon="@drawable/list_all_36"
+         android:title="@string/list_all"
+         app:showAsAction="never" />
+
+     <!--
+         "Refresh" is used infrequently and can also be triggered by swipe-to-refresh,
+         so it belongs in the overflow menu.
+     -->
+     <item
+         android:id="@+id/refresh"
+         android:title="@string/refresh"
+         app:showAsAction="never" />
+
 </menu>

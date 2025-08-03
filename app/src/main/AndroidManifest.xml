@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.postech.isb"
-    android:versionCode="64"
-    android:versionName="1.3.0">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
+    <!-- For WorkManager to run on boot -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
 
     <application
         android:icon="@drawable/icon"
@@ -17,102 +16,36 @@
         android:allowBackup="true"
         android:supportsRtl="true">
 
-        <provider
-            android:authorities="com.postech.provider.Isb"
-            android:name=".compose.IsbProvider"
-            android:exported="false"/>
-
-        <!-- Main Activity -->
         <activity
-            android:name=".IsbTabWidget"
+            android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name">
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"> <!-- THIS IS THE FIX -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!-- <activity android:name=".boardList.BoardList" android:theme="@android:style/Theme.NoTitleBar"> -->
-        <activity android:name=".boardList.BoardList"
+        <!-- Modern Activities -->
+        <activity android:name=".boardList.BoardListActivity"
             android:exported="false"
             android:theme="@style/MyNoTitleBar">
-        	<intent-filter>
-        		<action android:name="android.intent.action.PICK"></action>
-        		<category android:name="android.intent.category.DEFAULT"></category>
+            <intent-filter>
+                <action android:name="android.intent.action.PICK"></action>
+                <category android:name="android.intent.category.DEFAULT"></category>
                 <data android:path="/boards"
                     android:scheme="content"
                     android:host="com.postech.provider.Isb"></data>
-
-        	</intent-filter>
-		</activity>
-
-		<activity android:label="@string/readBoardTitle" android:name=".readBoard.ReadBoards" android:theme="@style/MyNoTitleBar"
-            android:exported="false"
-            >
-		</activity>
-
-		<activity android:label="@string/readThreadTitle" android:name=".readThread.ReadThread"
-            android:exported="false"
-            android:windowSoftInputMode="stateAlwaysHidden" android:theme="@style/MyNoTitleBar">
-
-		</activity>
-
-		<activity android:name=".info.Info" android:exported="false">
-		</activity>
-
-
-
-		<activity android:name=".login.Login" android:exported="false">
-        </activity>
-
-        <activity android:name=".myBBS.MyBBS" android:exported="false">
-        </activity>
-
-        <activity android:name=".query.Query" android:exported="false"
-            android:windowSoftInputMode="stateAlwaysHidden" android:theme="@style/MyYesTitleBar">
-        </activity>
-
-        <activity android:label="@string/title_notes_list" android:name=".compose.NotesList"  android:exported="false" android:theme="@style/MyNotTransparentMenu"
-            tools:ignore="AppLinkUrlError">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <action android:name="android.intent.action.EDIT" />
-                <action android:name="android.intent.action.PICK" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="vnd.android.cursor.dir/vnd.postech.isb" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="vnd.android.cursor.item/vnd.postech.isb" />
             </intent-filter>
         </activity>
 
-        <activity android:theme="@style/MyNotTransparentMenuThemeLight"
-            android:label="@string/title_note"
-            android:configChanges="keyboardHidden|orientation" android:name=".compose.NoteEditor"
-            android:exported="true"
-            tools:ignore="AppLinkUrlError">
-            <!-- This filter says that we can view or edit the data of
-                 a single note -->
-            <intent-filter android:label="@string/resolve_edit">
-                <action android:name="android.intent.action.VIEW" />
-                <action android:name="android.intent.action.EDIT" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="vnd.android.cursor.item/vnd.postech.isb" />
-            </intent-filter>
+        <activity android:label="@string/readBoardTitle" android:name=".readBoard.ThreadListActivity" android:theme="@style/MyNoTitleBar" />
+        <activity android:label="@string/readThreadTitle" android:name=".readThread.ReadThreadActivity" android:windowSoftInputMode="stateAlwaysHidden" android:theme="@style/MyNoTitleBar" />
+        <activity android:name=".compose.NoteEditorActivity" android:theme="@style/MyNotTransparentMenuThemeLight" />
+        <activity android:name=".preference.SettingsActivity" android:label="Settings" />
 
-            <!-- This filter says that we can create a new note inside
-                 of a directory of notes. -->
-            <intent-filter>
-                <action android:name="android.intent.action.INSERT" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="vnd.android.cursor.dir/vnd.postech.isb" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".preference.PreferenceList"  android:exported="false"></activity>
-        <activity android:name=".viewUser.ViewUser" android:label="@string/viewUserTItle"  android:exported="false" android:theme="@style/MyNoTitleBar"></activity>
-        <receiver android:name=".util.HeartbeaterReceiver"  android:exported="false"></receiver>
-	</application>
+
+        <!-- The HeartbeaterReceiver is no longer needed as we now use WorkManager -->
+        <!-- <receiver android:name=".util.HeartbeaterReceiver"  android:exported="false"></receiver> -->
+    </application>
 </manifest>

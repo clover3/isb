@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Preference -->
-    <string-array name="preference_menuoption_label">
-        <item>@string/preference_label_menuoption_menubutton</item>
-        <item>@string/preference_label_menuoption_swipe</item>
+    <!--
+        These arrays provide the choices for the "Menu Display Option"
+        in the settings screen. They are based on your original arrays.xml.
+    -->
+    <string-array name="menu_option_labels">
         <item>@string/preference_label_menuoption_actionbar</item>
+        <item>@string/preference_label_menuoption_menubutton</item>
     </string-array>
-    <string-array name="preference_menuoption_value">
-        <item>@string/preference_value_menuoption_menubutton</item>
-        <item>@string/preference_value_menuoption_swipe</item>
+
+    <string-array name="menu_option_values">
         <item>@string/preference_value_menuoption_actionbar</item>
+        <item>@string/preference_value_menuoption_menubutton</item>
     </string-array>
 </resources>

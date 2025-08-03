@@ -105,4 +105,17 @@
 	<string name="preference_value_menuoption_swipe">swipe</string>
 	<string name="preference_value_menuoption_actionbar">actionbar</string>
 	<string name="preference_value_menuoption_not_selected">not_selected</string>
+
+	<string name="tab_compose">Compose</string>
+	<string name="tab_login">Login</string>
+	<string name="tab_mybbs">MyBBS</string>
+
+	<string name="search_board_hint">Search</string>
+	<string name="no_notes">No notes yet. Tap the button to add one.</string>
+	<string name="add_note">Add Note</string>
+	<!-- Strings for activity_read_thread.xml -->
+	<string name="comments_title">Comments</string>
+	<string name="comment_hint">Comment</string>
+	<string name="leave_comment">Leave comment</string>
+
 </resources>

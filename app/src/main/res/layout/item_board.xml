@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:background="?android:attr/selectableItemBackground">
+
+    <!--
+        This ImageView replaces the original CheckBox but uses the same ID.
+        The adapter will be responsible for setting the correct drawable
+        (btn_star_big_on or btn_star_big_off) based on the board's state.
+    -->
+    <ImageView
+        android:id="@+id/favorite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:src="@drawable/btn_star_big_on" />
+
+    <!--
+        ImageView for the "New Post" icon. Uses the original ID.
+        The adapter will control its visibility.
+    -->
+    <ImageView
+        android:id="@+id/BoardListNew"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/newt"
+        app:layout_constraintStart_toEndOf="@id/favorite"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="16dp"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+    <!--
+        ImageView for the "New Comment" icon. Uses the original ID.
+        The adapter will control its visibility.
+    -->
+    <ImageView
+        android:id="@+id/BoardListComment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/comment"
+        app:layout_constraintStart_toEndOf="@id/BoardListNew"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="8dp"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+    <!--
+        TextView for the board title. Uses the original ID.
+    -->
+    <TextView
+        android:id="@+id/BoardListTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:textAppearance="?android:attr/textAppearanceListItem"
+        android:textSize="16sp"
+        app:layout_constraintStart_toEndOf="@id/BoardListComment"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:text="Example Board Name" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

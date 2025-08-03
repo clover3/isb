@@ -1,23 +1,36 @@
-package com.postech.isb;
+package com.postech.isb
 
-import com.postech.isb.util.IsbSession;
-import android.app.Application;
-import android.util.Log;
+import android.app.Application
+import android.util.Log
+import androidx.room.Room
+import com.postech.isb.boardList.BoardDatabase
+import com.postech.isb.boardList.BoardRepository
+import com.postech.isb.preference.SettingsManager
+import com.postech.isb.util.IsbSession
 
-public class PostechIsb extends Application {
 
-	public IsbSession isb;
-	
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		
-		Log.i("PostechIsb", "Create new isb session.");
-		isb = new IsbSession();
-	}
+class PostechIsb : Application() {
 
-	@Override
-	public void onTerminate() {
-		super.onTerminate();
-	}
+    // This retains the original IsbSession instance
+    val isb: IsbSession by lazy {
+        Log.i("PostechIsb", "Create new isb session.")
+        IsbSession()
+    }
+    private val database by lazy {
+        Room.databaseBuilder(
+            this,
+            BoardDatabase::class.java, "board-database"
+        ).fallbackToDestructiveMigration().build()
+    }
+    val boardRepository: BoardRepository by lazy {
+        BoardRepository(
+            boardDao = database.boardDao(),
+            noteDao = database.noteDao(),
+            isbSession = isb
+        )
+    }
+
+    val settingsManager: SettingsManager by lazy {
+        SettingsManager(this)
+    }
 }

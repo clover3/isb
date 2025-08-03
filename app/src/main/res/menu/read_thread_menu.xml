@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- "Previous" action, will show as text in the Toolbar -->
+    <item
+        android:id="@+id/prevThread"
+        android:title="@string/readThreadPrev"
+        app:showAsAction="always" />
+
+    <!-- "Next" action, will show as text in the Toolbar -->
+    <item
+        android:id="@+id/nextThread"
+        android:title="@string/readThreadNext"
+        app:showAsAction="always" />
+</menu>
